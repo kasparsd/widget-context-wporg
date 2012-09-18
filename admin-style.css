@@ -1,0 +1,39 @@
+.widget-context, .wl-visibility label { -moz-border-radius:0.5em; -webkit-border-radius:0.5em; }
+.widget-context-inside { -moz-border-radius:0.25em; -webkit-border-radius:0.25em; }
+
+.widget-context { width:64em; float:right; clear:both; margin-bottom:1em; background:#fff; }
+.widget-context-inside { background-color:#fff; float:left; clear:both; padding:1em 2em 1em 1em; border:1px solid #ccc; border-top-width:thick; margin:1em 0 1em 1em; }
+.widget-context h5 { font-size:1.1em; margin:0; float:left; }
+.widget-context .wl-header { float:left; width:100%; clear:both; margin-bottom:1em; border-bottom:2px solid #ccc; }
+.widget-context .wl-wrap-columns { float:left; width:100%; clear:both; }
+
+.wl-columns { float:left; width:35%; padding-top:0.5em; }
+.wl-columns input { vertical-align:middle; }
+.wl-column-2-1 { float:left; width:47%; }
+.wl-column-2-2 { float:right; width:52%; }
+.wl-columns label { display:block; }
+
+.wl-word-count { clear:both; }
+.wl-word-count .wl-check_wordcount_type select { font-size:1.1em; padding:0; }
+.wl-word-count label { display:inline; }
+.wl-word-count .wl-word_count input { display:inline; width:3em; padding:0; }
+
+.tw-in-widget-list select { width:100%; }
+.wl-options { float:right; width:60%; }
+.wl-options .wl-urls { clear:both; }
+.wl-options .wl-urls textarea { width:100%; height:7em; font-size:0.96em; line-height:1.25em; }
+.wl-tip { font-size:0.9em; line-height:1.25em; }
+.wl-visibility input { vertical-align:middle; }
+.wl-visibility label { margin-left:1em; padding:0.25em 0.5em; }
+
+.wl-notes { float:left; width:100%; clear:both; }
+.wl-notes textarea { float:left; width:100%; clear:both; height:4em; font-size:1em; line-height:1.25em; }
+.wl-visibility label.wl-active { background:#93DB70; }
+
+li.widget-list-control-item div.widget-control p.wl-visibility { float:left; }
+li.widget-list-control-item div.widget-control p.show-support { margin:0; padding:0.5em 0; border-bottom:1px solid #ddd; color:darkgreen; }
+
+.widget-liquid-right .widget, #wp_inactive_widgets .widget { overflow:visible !important; } 
+
+.widget-context p.show-support { background:#F0E68C; margin:0 0 0.5em 0; padding:0.25em 0.5em; float:left; width:100%; clear:both; }
+
