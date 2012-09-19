@@ -593,4 +593,3 @@ class widget_context {
 	}
 }
 
-?>
