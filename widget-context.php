@@ -3,7 +3,7 @@
 Plugin Name: Widget Context
 Plugin URI: http://konstruktors.com/
 Description: Display widgets in context.
-Version: 0.7.1
+Version: 0.7.2
 Author: Kaspars Dambis
 Author URI: http://konstruktors.com/
 
@@ -154,7 +154,7 @@ class widget_context {
 		
 		foreach ($wp_registered_widgets as $widget_id => $widget_data) {
 			// Check if widget will be shown
-			$do_show = $this->check_widget_visibility($this->context_options[$widget_id]);
+			$do_show = ( isset($this->context_options[$widget_id]) ) ? $this->check_widget_visibility($this->context_options[$widget_id]) : true;
 			
 			if (!$do_show) { // If not shown, remove it temporeraly from the list of existing widgets
 				unregister_sidebar_widget($widget_id);
@@ -276,13 +276,11 @@ class widget_context {
 					if (!is_single() && !is_page()) {
 						if (preg_match('/<!--more(.*?)?-->/', $pure_content, $matches)) {
 							$pure_content = explode($matches[0], $pure_content, 2);
-							$words_in_post = str_word_count(strip_tags($pure_content[0]));
+							$this->words_on_page += str_word_count(strip_tags($pure_content[0]));
 						}
 					} else {
-						$words_in_post = str_word_count(strip_tags($pure_content));
+						$this->words_on_page += str_word_count(strip_tags($pure_content));
 					}
-					
-					$this->words_on_page += $words_in_post;
 				}
 			}
 		}
@@ -304,6 +302,7 @@ class widget_context {
 			// Split on line breaks
 			$split_urls = split("[\n ]+", (string)$vis_settings['url']['urls']);
 			$current_url = $this->get_current_url();
+			$ignore_url = false;
 			foreach ($split_urls as $id => $check_url) {
 				$check_url = trim($check_url);
 				if ($check_url !== '') {
@@ -346,8 +345,9 @@ class widget_context {
 			
 			// Check for word count
 			$word_count_to_check = (int)$vis_settings['location']['word_count'];
-			
-			if ($vis_settings['location']['check_wordcount'] == 'on' && $word_count_to_check > 1) {
+
+			$ignore_word_count = false;
+			if (isset($vis_settings['location']['check_wordcount']) && $vis_settings['location']['check_wordcount'] == 'on' && $word_count_to_check > 1) {
 				$check_type = $vis_settings['location']['check_wordcount_type'];
 				
 				if (($check_type == 'more') && ($this->words_on_page > $word_count_to_check)) {

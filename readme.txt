@@ -3,8 +3,8 @@ Contributors: kasparsd
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=kaspars%40konstruktors%2ecom&item_name=Widget%20Context%20Plugin%20for%20WordPress&no_shipping=1&no_note=1&tax=0&currency_code=EUR&lc=LV&bn=PP%2dDonationsBF&charset=UTF%2d8
 Tags: widget, widget context, context, logic, widget logic, cms
 Requires at least: 2.8
-Tested up to: 3.4.2
-Stable tag: 0.7.1
+Tested up to: 3.5.1
+Stable tag: 0.7.2
 
 Show widgets in context - only on certain posts, front page, category or tag pages etc.
 
@@ -23,6 +23,7 @@ For news and updates regarding this plugin, check http://konstruktors.com/blog/
 
 == Changelog ==
 
+*	**0.7.2** - Fix PHP warnings/notices
 *	**0.7.1** - Confirm that the plugin works with the latest version of WP.
 *	**0.7** - Bug fix: check for active sidebars only after $paged has been set.
 *	**0.6** - Don't check for used sidebars on each widget load. Allow absolute URLs in the URL check.
