@@ -108,8 +108,12 @@ class widget_context {
 
 		foreach ( explode( "\n", $patterns ) as $pattern )
 			$patterns_safe[] = trim( trim( $pattern ), '/' );
-		
-		$regexps = '/^('. preg_replace( array( '/(\r\n|\n)+/', '/\\\\\*/' ), array( '|', '.*' ), preg_quote( implode( "\n", array_filter( $patterns_safe, 'trim' ) ), '/' ) ) .')$/';
+
+		$regexps = '/^('. preg_replace( array( '/(\r\n|\n| )+/', '/\\\\\*/' ), array( '|', '.*' ), preg_quote( implode( "\n", array_filter( $patterns_safe, 'trim' ) ), '/' ) ) .')$/';
+
+		// Debug
+		//echo $regexps;
+		//print_r(array_filter( $patterns_safe, 'trim' ));
 
 		return preg_match( $regexps, $path );
 	}
@@ -356,7 +360,7 @@ class widget_context {
 		else 
 			$value = '';
 
-		return $value;
+		return trim( $value );
 	}
 
 
