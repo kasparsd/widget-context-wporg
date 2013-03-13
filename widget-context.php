@@ -37,7 +37,7 @@ class widget_context {
 	
 	
 	function widget_context() {
-		$this->plugin_path = WP_CONTENT_URL . '/plugins/'. plugin_basename(dirname(__FILE__)) . '/';
+		$this->plugin_path = WP_CONTENT_URL . '/plugins/'. basename(__DIR__) . '/';
 		
 		// Amend widget controls with Widget Context controls
 		add_action('sidebar_admin_setup', array($this, 'attach_widget_context_controls'));
