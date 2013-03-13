@@ -3,7 +3,7 @@
 Plugin Name: Widget Context
 Plugin URI: http://konstruktors.com/
 Description: Display widgets in context.
-Version: 0.7.2
+Version: 0.7.3
 Author: Kaspars Dambis
 Author URI: http://konstruktors.com/
 
@@ -298,25 +298,14 @@ class widget_context {
 		$do_show_by_word_count = false;
 		
 		// Check by current URL
-		if (!empty($vis_settings['url']['urls'])) {
+		if ( ! empty( $vis_settings['url']['urls'] ) ) {
 			// Split on line breaks
-			$split_urls = split("[\n ]+", (string)$vis_settings['url']['urls']);
+			$split_urls = array_filter( explode( "\n", (string) $vis_settings['url']['urls'] ) );
 			$current_url = $this->get_current_url();
-			$ignore_url = false;
-			foreach ($split_urls as $id => $check_url) {
-				$check_url = trim($check_url);
-				if ($check_url !== '') {
-					if ($this->match_path($current_url, $check_url)) 
-						$do_show_by_url = true;
-				} else {
-					$ignore_url = true;
-				}
-			}
 			
-			if (!$ignore_url && $do_show_by_url)
-				$do_show_by_url = true;
-			else
-				$do_show_by_url = false;
+			foreach ( $split_urls as $id => $check_url )
+				if ( $this->match_path( $current_url, trim( $check_url ) ) ) 
+					$do_show_by_url = true;
 		}
 
 		// Check by tag settings
