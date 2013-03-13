@@ -37,98 +37,38 @@ class widget_context {
 	
 	
 	function widget_context() {
-		$this->plugin_path = WP_CONTENT_URL . '/plugins/'. basename(__DIR__) . '/';
-		
+		$this->context_options = get_option( $this->options_name );
+
 		// Amend widget controls with Widget Context controls
-		add_action('sidebar_admin_setup', array($this, 'attach_widget_context_controls'));
-		// Enable widget context check only when viewed publicly,
-		add_action('wp_head', array($this, 'replace_widget_output_callback'));
+		add_action( 'sidebar_admin_setup', array($this, 'attach_widget_context_controls') );
+		// Hide the widget if necessary
+		add_filter( 'widget_display_callback', array( $this, 'maybe_hide_widget' ), 10, 3 );
 		// Add admin menu for config
-		add_action('admin_enqueue_scripts', array($this, 'adminCSS'));
+		add_action( 'admin_enqueue_scripts', array($this, 'admin_scripts') );
 		// Save widget context settings, when in admin area
-		add_filter('sidebars_widgets', array($this, 'filter_widgets'), 50);
+		add_filter( 'admin_init', array( $this, 'save_widget_context_settings') );
 		// Check the number of words on page
-		add_action('wp_print_scripts', array($this, 'count_words_on_page'), 750);
+		add_action( 'wp', array($this, 'count_words_on_page') );
 	}
 		
 	
-	function adminCSS() {
-		wp_enqueue_style('widget-context-admin', $this->plugin_path . 'admin-style.css');
+	function admin_scripts() {
+		wp_enqueue_style( 'widget-context-admin', WP_CONTENT_URL . '/plugins/'. basename(__DIR__) . '/admin-style.css' );
 	}
+
 	
-	
-	function filter_widgets($sidebars_widgets) {
-		global $_wp_sidebars_widgets, $paged;
-
-		if (isset($_POST['wl']) && !empty($_POST['wl']) && is_admin()) {
-			$this->save_widget_context();
-			unset($_POST['wl']);
-
-		} elseif (!is_admin() && isset($paged)) {
-
-			// Get widget context options and check visibility settings
-			if (empty($this->context_options))
-				$this->context_options = get_option($this->options_name);
-
-			// If we have done this before, return the truth
-			if ($this->did_filter_sidebars)
-				return $sidebars_widgets; //return $this->active_sidebars;
-
-			foreach ($sidebars_widgets as $sidebar_id => $widgets) {
-				// Check if widget will be shown
-				if ($sidebar_id != 'wp_inactive_widgets' && !empty($widgets)) {
-					foreach ($widgets as $widget_no => $widget_id) {
-						if (!$this->check_widget_visibility($this->context_options[$widget_id])) {
-							unset($sidebars_widgets[$sidebar_id][$widget_no]);
-							unset($_wp_sidebars_widgets[$sidebar_id][$widget_no]);
-						}
-					}
-				}
-			}
-			
-			$this->did_filter_sidebars = true;
-		}
-		
-		return $sidebars_widgets;
-	}	
-	
-	
-	function save_widget_context() {
-		global $wp_registered_widgets;
-			
-		if (empty($_POST['widget-id'])) 
-			$_POST['widget-id'] = array();			
-		
-		if (isset($_POST['sidebar']) && !empty($_POST['sidebar'])) 
-			$sidebar_id = strip_tags((string)$_POST['sidebar']);
-		else
+	function save_widget_context_settings() {
+		if ( ! current_user_can( 'edit_theme_options' ) || empty( $_POST ) || ! isset( $_POST['sidebar'] ) || empty( $_POST['sidebar'] ) )
 			return;
 		
-		// Load widget context settings
-		$options = get_option($this->options_name);
-		
 		// Delete
-		if (isset($_POST['delete_widget']) && $_POST['delete_widget']) {
-			$del_id = $_POST['widget-id'];
-			unset($options[$del_id]);
-		}
+		if ( isset( $_POST['delete_widget'] ) && $_POST['delete_widget'] )
+			unset( $this->context_options[ $_POST['widget-id'] ] );
 		
-		$new_widget_context_settings = array_values($_POST['wl']);	
-		
-		// Add/Update
-		foreach($new_widget_context_settings as $widget_id => $widget_context) {
-			if (empty($widget_context))
-				$widget_context = array();
-			// If neither type of widget logic behaviour is selected, set to default
-			if (!isset($widget_context['incexc'])) 
-				$widget_context['incexc'] = 'notselected';
-				
-			$options[(string)$_POST['widget-id']] = $widget_context;
-		}
+		// Add / Update
+		$this->context_options = array_merge( $this->context_options, $_POST['wl'] );
 
-		update_option($this->options_name, (array)$options);
-		
-		return;
+		update_option( $this->options_name, $this->context_options );
 	}
 	
 	
@@ -143,32 +83,15 @@ class widget_context {
 			$wp_registered_widget_controls[$widget_id]['callback'] = array($this, 'replace_widget_control_callback');
 		}
 	}
-	
-	
-	function replace_widget_output_callback() {
-		global $wp_registered_widgets;
-		
-		// Get widget logic options and check visibility settings
-		if (empty($this->context_options))
-			$this->context_options = get_option($this->options_name);
-		
-		foreach ($wp_registered_widgets as $widget_id => $widget_data) {
-			// Check if widget will be shown
-			$do_show = ( isset($this->context_options[$widget_id]) ) ? $this->check_widget_visibility($this->context_options[$widget_id]) : true;
-			
-			if (!$do_show) { // If not shown, remove it temporeraly from the list of existing widgets
-				unregister_sidebar_widget($widget_id);
-			} else {
-				//if (!$wp_registered_widgets[$widget_id]['params'][0]['widget_id']) {
-				// Save the original widget id
-				$wp_registered_widgets[$widget_id]['params'][]['widget_id'] = $widget_id;
-				// Store original widget callbacks
-				$wp_registered_widgets[$widget_id]['callback_original_wc'] = $wp_registered_widgets[$widget_id]['callback'];
-				$wp_registered_widgets[$widget_id]['callback'] = array($this, 'replace_widget_output');
-			}
-		}
+
+
+	function maybe_hide_widget( $instance, $widget_object, $args ) {
+		if ( ! $this->check_widget_visibility( $args['widget_id'] ) )
+			return false;
+
+		return $instance;
 	}
-	
+
 	
 	function replace_widget_control_callback() {
 		global $wp_registered_widget_controls;
@@ -201,75 +124,56 @@ class widget_context {
 		$url = (!empty($_SERVER['HTTPS'])) 
 			? "https://".$_SERVER['SERVER_NAME'].$uri 
 			: "http://".$_SERVER['SERVER_NAME'].$uri;
-		
-		if (substr($url, -1) == '/') 
-			$url = substr($url, 0, -1);
 			
-		return $url;
+		return trim( $url, '/' );
 	}
+
 	
 	// Thanks to Drupal: http://api.drupal.org/api/function/drupal_match_path/6
-	function match_path($path, $patterns) {
-		static $regexps;
-		
+	function match_path( $path, $patterns ) {		
 		// get home url;
-		$home_url = get_bloginfo('url');
-		
-		// add trailing slash if missing
-		if (substr($home_url, -1) !== '/') 
-			$home_url = $home_url . '/';
-		
+		$home_url = trailingslashit( get_bloginfo('url') );
+
 		// Check if user has specified the absolute url	
 		// else strip home url and check only REQUEST_URI part
 		if ($path !== $home_url && !strstr($patterns, $_SERVER['SERVER_NAME'])) 
 			$path = str_replace($home_url, '', $path);
 		
 		// Remove http:// from the url user has specified
-		if (strstr($patterns, 'http://'))
-			$patterns = str_replace('http://', '', $patterns);
+		$patterns = str_replace( array( 'http://', 'https://' ), '', $patterns);
 		
 		// Remove http:// from the current url
-		if (strstr($path, 'http://'))
-			$path = str_replace('http://', '', $path);
+		$path = str_replace( array( 'http://', 'https://' ), '', $path);
 		
-		if (!isset($regexps[$patterns])) {
-			$regexps[$patterns] = '/^('. preg_replace(array('/(\r\n?|\n)/', '/\\\\\*/', '/(^|\|)\\\\<home\\\\>($|\|)/'), array('|', '.*', '\1'. preg_quote($home_url, '/') .'\2'), preg_quote($patterns, '/')) .')$/';
-		}
-		return preg_match($regexps[$patterns], $path);
+		$regexps = '/^('. preg_replace(array('/(\r\n?|\n)/', '/\\\\\*/', '/(^|\|)\\\\<home\\\\>($|\|)/'), array('|', '.*', '\1'. preg_quote($home_url, '/') .'\2'), preg_quote($patterns, '/')) .')$/';
+		
+		return preg_match( $regexps, $path );
 	}
 	
 	
 	function count_words_on_page() {
 		global $wp_query;
 		
-		$this->words_on_page = 0;
-		
-		if (count($wp_query->posts) > 0 && function_exists('strip_shortcodes')) {
-			foreach ($wp_query->posts as $pid => $post_data) {
-				if ($post_data->post_status == 'publish') {
-					$pure_content = strip_shortcodes($post_data->post_content);
-					if (!is_single() && !is_page()) {
-						if (preg_match('/<!--more(.*?)?-->/', $pure_content, $matches)) {
-							$pure_content = explode($matches[0], $pure_content, 2);
-							$this->words_on_page += str_word_count(strip_tags($pure_content[0]));
-						}
-					} else {
-						$this->words_on_page += str_word_count(strip_tags($pure_content));
-					}
-				}
-			}
-		}
-	}
-	
-	function check_widget_visibility($vis_settings = array()) {
-		global $paged;
-		
-		if ( empty( $vis_settings ) ) 
-			return true;
+		if ( empty( $wp_query->posts ) || is_admin() )
+			return;
 
-		// Hide if forced
+		foreach ( $wp_query->posts as $post_data )
+			$this->words_on_page += str_word_count( strip_tags( strip_shortcodes( $post_data->post_content ) ) );
+	}
+
+	
+	function check_widget_visibility( $widget_id ) {
+		// Show widget because no context settings found
+		if ( ! isset( $this->context_options[ $widget_id ] ) )
+			return true;
+		
+		$vis_settings = $this->context_options[ $widget_id ];
+
+		// Hide/show if forced
 		if ( $vis_settings['incexc'] == 'hide' )
 			return false;
+		elseif ( $vis_settings['incexc'] == 'show' )
+			return true;
 		
 		$do_show = true;
 		$do_show_by_select = false;
@@ -278,62 +182,46 @@ class widget_context {
 		
 		// Check by current URL
 		if ( ! empty( $vis_settings['url']['urls'] ) ) {
-			// Split on line breaks
-			$split_urls = array_filter( explode( "\n", (string) $vis_settings['url']['urls'] ) );
+			// Split on line breaks and remove empty chars before and after URL
+			$split_urls = array_filter( explode( "\n", $vis_settings['url']['urls'] ), 'trim' );
 			$current_url = $this->get_current_url();
 			
 			foreach ( $split_urls as $id => $check_url )
-				if ( $this->match_path( $current_url, trim( $check_url ) ) ) 
+				if ( $this->match_path( $current_url, trim( $check_url, '/' ) ) ) 
 					$do_show_by_url = true;
 		}
 
 		// Check by tag settings
-		if (!empty($vis_settings['location'])) {
+		if ( ! empty( $vis_settings['location'] ) ) {
 			$currently = array();
 			
-			if (is_front_page() && $paged < 2) $currently['is_front_page'] = true;
-			if (is_home() && $paged < 2) $currently['is_home'] = true;
-			if (is_page() && !is_attachment()) $currently['is_page'] = true;
-			if (is_single() && !is_attachment()) $currently['is_single'] = true;
-			if (is_archive()) $currently['is_archive'] = true;
-			if (is_category()) $currently['is_category'] = true;
-			if (is_tag()) $currently['is_tag'] = true;
-			if (is_author()) $currently['is_author'] = true;
-			if (is_search()) $currently['is_search'] = true;
-			if (is_404()) $currently['is_404'] = true;
-			if (is_attachment()) $currently['is_attachment'] = true;
+			if ( is_front_page() && ! is_paged() ) $currently['is_front_page'] = true;
+			if ( is_home() && ! is_paged() ) $currently['is_home'] = true;
+			if ( is_page() && ! is_attachment() ) $currently['is_page'] = true;
+			if ( is_single() && ! is_attachment() ) $currently['is_single'] = true;
+			if ( is_archive() ) $currently['is_archive'] = true;
+			if ( is_category() ) $currently['is_category'] = true;
+			if ( is_tag() ) $currently['is_tag'] = true;
+			if ( is_author() ) $currently['is_author'] = true;
+			if ( is_search() ) $currently['is_search'] = true;
+			if ( is_404() ) $currently['is_404'] = true;
+			if ( is_attachment() ) $currently['is_attachment'] = true;
 			
 			// Check for selected pages/sections
-			$current_location = array_keys($currently); 
-			$visibility_options = array_keys($vis_settings['location']);
-			foreach($current_location as $location_id) {					
-				if (in_array($location_id, $visibility_options)) 
-					$do_show_by_select = true;
-			}
-			
-			// Check for word count
-			$word_count_to_check = (int)$vis_settings['location']['word_count'];
+			if ( array_intersect_key( $currently, $vis_settings['location'] ) )
+				$do_show_by_select = true;
 
-			$ignore_word_count = false;
-			if (isset($vis_settings['location']['check_wordcount']) && $vis_settings['location']['check_wordcount'] == 'on' && $word_count_to_check > 1) {
+			// Word count
+			if ( isset( $vis_settings['location']['check_wordcount'] ) ) {
+				// Check for word count
+				$word_count_to_check = intval( $vis_settings['location']['word_count'] );
 				$check_type = $vis_settings['location']['check_wordcount_type'];
-				
-				if (($check_type == 'more') && ($this->words_on_page > $word_count_to_check)) {
-					print '<!-- showing because '. $this->words_on_page .' > '. $word_count_to_check .' -->';
+
+				if ( $this->words_on_page > $word_count_to_check && $check_type == 'more' )
 					$do_show_by_word_count = true;
-				} elseif (($check_type == 'less') && ($this->words_on_page < $word_count_to_check)) {
-					print '<!-- showing because '. $this->words_on_page .' < '. $word_count_to_check .' -->';
-					$do_show_by_word_count = true;
-				}
-			} else {
-				$ignore_word_count = true;
-			}
-			
-			if (!$ignore_word_count && $do_show_by_word_count)
-				$do_show_by_word_count = true;
-			else 
-				$do_show_by_word_count = false;
-				
+				else
+					$do_show_by_word_count = false;
+			}	
 		}
 		
 		// Combine all context checks
@@ -360,55 +248,43 @@ class widget_context {
 	
 	function display_widget_context( $wid = null ) {
 		
-		$group = 'location'; // Produces: wl[$wid][$group][homepage/singlepost/...]
-		$options = get_option( $this->options_name );
-		
 		return '<div class="widget-context"><div class="widget-context-inside">'
 			. '<p class="wl-visibility">'
-				. $this->make_simple_dropdown( $options, $wid, 'incexc', null, array( 'show' => __('Show everywhere'), 'selected' => __('Show on selected'), 'notselected' => __('Hide on selected'), 'hide' => __('Hide everywhere') ), sprintf( '<strong>%s</strong>', __( 'Widget Context' ) ) )
+				. $this->make_simple_dropdown( array( $wid, 'incexc' ), array( 'show' => __('Show everywhere'), 'selected' => __('Show on selected'), 'notselected' => __('Hide on selected'), 'hide' => __('Hide everywhere') ), sprintf( '<strong>%s</strong>', __( 'Widget Context' ) ) )
 			. '</p>'
 
 			. '<div class="wl-columns">' 
 			. '<div class="wl-column-2-1"><p>' 
-			. $this->make_simple_checkbox($options, $wid, $group, 'is_front_page', __('Front Page'))
-			. $this->make_simple_checkbox($options, $wid, $group, 'is_home', __('Blog Index'))
-			. $this->make_simple_checkbox($options, $wid, $group, 'is_single', __('All Posts'))
-			. $this->make_simple_checkbox($options, $wid, $group, 'is_page', __('All Pages'))
-			. $this->make_simple_checkbox($options, $wid, $group, 'is_attachment', __('All Attachments'))
-			. $this->make_simple_checkbox($options, $wid, $group, 'is_search', __('Search'))
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_front_page' ), __('Front Page') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_home' ), __('Blog Index') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_single' ), __('All Posts') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_page' ), __('All Pages') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_attachment' ), __('All Attachments') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_search' ), __('Search') )
 			. '</p></div>'
 			. '<div class="wl-column-2-2"><p>' 
-			. $this->make_simple_checkbox($options, $wid, $group, 'is_archive', __('All Archives'))
-			. $this->make_simple_checkbox($options, $wid, $group, 'is_category', __('Category Archive'))
-			. $this->make_simple_checkbox($options, $wid, $group, 'is_tag', __('Tag Archive'))
-			. $this->make_simple_checkbox($options, $wid, $group, 'is_author', __('Author Archive'))
-			. $this->make_simple_checkbox($options, $wid, $group, 'is_404', __('404 Error'))
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_archive' ), __('All Archives') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_category' ), __('Category Archive') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_tag' ), __('Tag Archive') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_author' ), __('Author Archive') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_404' ), __('404 Error') )
 			. '</p></div>'
 			
 			. '<div class="wl-word-count"><p>' 
-			. $this->make_simple_checkbox($options, $wid, $group, 'check_wordcount', __('Has'))
-			. $this->make_simple_dropdown($options, $wid, $group, 'check_wordcount_type', array('less' => __('less'), 'more' => __('more')), '', __('than'))
-			. $this->make_simple_textfield($options, $wid, $group, 'word_count', null, __('words'))
+				. $this->make_simple_checkbox( array( $wid, 'location', 'check_wordcount' ), __('Has') )
+				. $this->make_simple_dropdown( array( $wid, 'location', 'check_wordcount_type' ), array('less' => __('less'), 'more' => __('more')), '', __('than') )
+				. $this->make_simple_textfield( array( $wid, 'location', 'word_count' ), __('words') )
 			. '</p></div>'
-			
 			. '</div>'
 			
 			. '<div class="wl-options">'
-			. $this->make_simple_textarea($options, $wid, 'url', 'urls', __('or target by URL'), __('Enter one location fragment per line. Use <strong>*</strong> character as a wildcard. Example: <code>category/peace/*</code> to target all posts in category <em>peace</em>.'))
+				. $this->make_simple_textarea( array( $wid, 'url', 'urls' ), __('or target by URL'), __('Enter one location fragment per line. Use <strong>*</strong> character as a wildcard. Example: <code>category/peace/*</code> to target all posts in category <em>peace</em>.'))
 			. '</div>'
 			
-			. $this->make_simple_textarea($options, $wid, 'general', 'notes', __('Notes (invisible to public)'))
+			. $this->make_simple_textarea( array( $wid, 'general', 'notes' ), __('Notes (invisible to public)'))
 		. '</div></div>';
 
 	}
-	
-	function printAdminOptions() {
-		global $wp_registered_widget_controls, $wp_registered_widgets;
-		
-		print '<div class="wrap"><h2>'.__('Widget Context Plugin Settings') . '</h2></div>';		
-		print '<pre>'; print_r(get_option($this->options_name)); print '</pre>';
-	}
-	
 	
 	
 	/* 
@@ -416,114 +292,58 @@ class widget_context {
 		Interface constructors 
 		
 	*/
+
 	
-	function show_support() {
-		//if (rand(1,3) == 1)	
-		//	return '<p class="show-support"><small>If you find <em>Widget Context</em> plugin useful, please <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=kaspars%40konstruktors%2ecom&item_name=Widget%20Context%20Plugin%20for%20WordPress&no_shipping=1&no_note=1&tax=0&currency_code=EUR&lc=LV&bn=PP%2dDonationsBF&charset=UTF%2d8">donate</a> a few silver coins to support the development. Thanks. <a href="http://konstruktors.com/blog/">Kaspars</a></small></p>';
-	}
-	
-	function makeSubmitButton() {
-		return '<p class="submit"><input type="submit" name="Submit" value="' . __('Save Options') . '" /></p>';
-	}
-	
-	function make_simple_checkbox($options, $prefix, $id, $fieldname = null, $label) {
-		if ($fieldname !== null) {
-			$value = strip_tags($options[$prefix][$id][$fieldname]);
-			$fieldname = '[' . $fieldname . ']';
-		} else {
-			$value = strip_tags($options[$prefix][$id]);
-			$fieldname = '';
-		}
-		
-		$prefix = '[' . $prefix . ']';
-		$id = '[' . $id . ']';
-		
-		if (!empty($value)) {
-			$value = 1; $checked = 'checked="checked"'; $classname = 'wl-active';
-		} else {
-			$value = 0; $checked = ''; $classname = 'wl-inactive'; 
-		}
-		
-		$out = '<label class="' . $classname . '"><input type="checkbox" name="wl'. $prefix . $id . $fieldname . '" '. $checked .' />&nbsp;' 
-			. $label . '</label> ';
-			
-		return $out;
-	}
-	
-	function make_simple_textarea($options, $prefix, $id, $fieldname = null, $label, $tip = null) {
-		$classname = $fieldname;
-		
-		if ($fieldname !== null) {
-			$value = $options[$prefix][$id][$fieldname];
-			$fieldname = '[' . $fieldname . ']';
-		} else {
-			$value = $options[$prefix][$id];
-			$fieldname = '';
-		}
-		$prefix = '[' . $prefix . ']';
-		$id = '[' . $id . ']';
-		
-		if ($tip !== null) $tip = '<p class="wl-tip">' . $tip . '</p>';
-		
-		$out = '<div class="wl-'. $classname .'">'
-			. '<label for="wl'. $prefix . $id . $fieldname . '"><strong>' . $label . '</strong></label>'
-			. '<textarea name="wl'. $prefix . $id . $fieldname . '" id="wl'. $prefix . $id . $fieldname . '">'. stripslashes($value) .'</textarea>'
-			. $tip . '</div>';
-		return $out;
+	function make_simple_checkbox( $name, $label ) {
+		return sprintf( 
+				'<label class="wl-%s"><input type="checkbox" value="1" name="wl%s" %s />&nbsp;%s</label>',
+				$this->get_field_classname( $name ),
+				$this->get_field_name( $name ),
+				checked( (bool) $this->get_field_value( $name ), 1, false ),
+				$label
+			);
 	}
 
-	function make_simple_textfield($options, $prefix, $id, $fieldname = null, $label_before = null, $label_after = null) {
-		$classname = $fieldname;
-		
-		if ($fieldname !== null) {
-			$value = $options[$prefix][$id][$fieldname];
-			$fieldname = '[' . $fieldname . ']';
-		} else {
-			$value = $options[$prefix][$id];
-			$fieldname = '';
-		}
-		$prefix = '[' . $prefix . ']';
-		$id = '[' . $id . ']';
-		
-		return '<label class="wl-'. $classname . '">' . $label_before . ' '
-			. '<input type="text" name="wl'. $prefix . $id . $fieldname . '" value="'. $value .'" /> '
-			. $label_after . '</label>';
-	}	
 	
-	function make_simple_radio($options, $id, $fieldname, $value, $label = null) {
-		if ($options[$id][$fieldname] == $value) {
-			$checked = 'checked="checked"'; $classname = 'wl-active';
-		} else {
-			$checked = ''; $classname = 'wl-inactive'; 
-		}
+	function make_simple_textarea( $name, $label, $tip = null ) {
+		if ( $tip )
+			$tip = sprintf( '<p class="wl-tip">%s</p>', esc_html( $tip ) );
 		
-		$id = '[' . $id . ']';
-		$fieldname = '[' . $fieldname . ']';
-		
-		$out = '<label class="' . $classname . ' label-'. $value .'"><input type="radio" name="wl'. $id . $fieldname . '" value="'. $value .'" '. $checked .' /> ' 
-			. $label . '</label>';
-			
-		return $out;
+		return sprintf(  
+				'<div class="wl-%s">
+					<label>
+						<strong>%s</strong>
+						<textarea name="wl%s">%s</textarea>
+					</label>
+					%s
+				</div>',
+				$this->get_field_classname( $name ),
+				$label,
+				$this->get_field_name( $name ),
+				esc_textarea( $this->get_field_value( $name ) ),
+				$tip
+			);
 	}
 
-	function make_simple_dropdown($options, $prefix, $id, $fieldname = null, $selection = array(), $label_before = null, $label_after = null) {
 
-		if ( ! empty( $fieldname ) ) {
-			$classname = $fieldname;
-			$value = $options[$prefix][$id][$fieldname];
-			$fieldname = '[' . $fieldname . ']';
-		} else {
-			$classname = $id;
-			$value = $options[$prefix][$id];
-			$fieldname = '';
-		}
+	function make_simple_textfield( $name, $label_before = null, $label_after = null) {
+		return sprintf( 
+				'<label class="wl-%s">%s <input type="text" name="wl%s" value="%s" /> %s</label>',
+				$this->get_field_classname( $name ),
+				$label_before,
+				$this->get_field_name( $name ),
+				esc_attr( $this->get_field_value( $name ) ),
+				$label_after
+			);
+	}
 
-		$prefix = '[' . $prefix . ']';
-		$id = '[' . $id . ']';
+
+	function make_simple_dropdown( $name, $selection = array(), $label_before = null, $label_after = null ) {
+		$value = esc_attr( $this->get_field_value( $name ) );
 		$options = array();
 
 		if ( empty( $selection ) )
-			$options[] = sprintf( '<option value="error">%s</option>', __('No options given') );
+			$options[] = sprintf( '<option value="">%s</option>', __('No options given') );
 
 		foreach ( $selection as $sid => $svalue )
 			$options[] = sprintf( '<option value="%s" %s>%s</option>', $sid, selected( $value, $sid, false ), $svalue );
@@ -531,17 +351,56 @@ class widget_context {
 		return sprintf( 
 				'<label class="wl-%s">
 					%s 
-					<select name="wl%s%s%s">
+					<select name="wl%s">
 						%s
 					</select> 
 					%s
-				</label>', 
-				$classname, 
+				</label>',
+				$this->get_field_classname( $name ),
 				$label_before, 
-				$prefix, $id, $fieldname, 
+				$this->get_field_name( $name ), 
 				implode( '', $options ), 
-				$label_after 
+				$label_after
 			);
 	}
+
+	/**
+	 * Returns [part1][part2][partN] from array( 'part1', 'part2', 'part3' )
+	 * @param  array  $parts i.e. array( 'part1', 'part2', 'part3' )
+	 * @return string        i.e. [part1][part2][partN]
+	 */
+	function get_field_name( $parts ) {
+		return esc_attr( sprintf( '[%s]', implode( '][', $parts ) ) );
+	}
+
+	function get_field_classname( $parts ) {
+		return sanitize_html_class( str_replace( '_', '-', end( $parts ) ) );
+	}
+
+
+	/**
+	 * Given option keys return its value
+	 * @param  array  $parts   i.e. array( 'part1', 'part2', 'part3' )
+	 * @param  array  $options i.e. array( 'part1' => array( 'part2' => array( 'part3' => 'VALUE' ) ) )
+	 * @return string          Returns option value
+	 */
+	function get_field_value( $parts, $options = array() ) {
+		if ( empty( $options ) )
+			$options = $this->context_options;
+
+		if ( ! empty( $parts ) )
+			$part = array_shift( $parts );
+
+		if ( isset( $part ) && isset( $options[ $part ] ) && is_array( $options[ $part ] ) )
+			$value = $this->get_field_value( $parts, $options[ $part ] );
+		elseif ( isset( $options[ $part ] ) )
+			$value = $options[ $part ];
+		else 
+			$value = '';
+
+		return $value;
+	}
+
+
 }
 
