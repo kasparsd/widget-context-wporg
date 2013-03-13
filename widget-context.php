@@ -93,32 +93,24 @@ class widget_context {
 		else 
 			$uri = $_SERVER['REQUEST_URI'];
 		
-		$url = (!empty($_SERVER['HTTPS'])) 
+		return (!empty($_SERVER['HTTPS'])) 
 			? "https://".$_SERVER['SERVER_NAME'].$uri 
 			: "http://".$_SERVER['SERVER_NAME'].$uri;
-			
-		return trim( $url, '/' );
 	}
 
 	
 	// Thanks to Drupal: http://api.drupal.org/api/function/drupal_match_path/6
-	function match_path( $path, $patterns ) {		
-		// get home url;
-		$home_url = trailingslashit( get_bloginfo('url') );
+	function match_path( $path, $patterns ) {
+		$patterns_safe = array();
 
-		// Check if user has specified the absolute url	
-		// else strip home url and check only REQUEST_URI part
-		if ($path !== $home_url && !strstr($patterns, $_SERVER['SERVER_NAME'])) 
-			$path = str_replace($home_url, '', $path);
+		// Strip home url and check only the REQUEST_URI part
+		$path = trim( str_replace( trailingslashit( get_bloginfo('url') ), '', $path ), '/' );
+
+		foreach ( explode( "\n", $patterns ) as $pattern )
+			$patterns_safe[] = trim( trim( $pattern ), '/' );
 		
-		// Remove http:// from the url user has specified
-		$patterns = str_replace( array( 'http://', 'https://' ), '', $patterns);
-		
-		// Remove http:// from the current url
-		$path = str_replace( array( 'http://', 'https://' ), '', $path);
-		
-		$regexps = '/^('. preg_replace(array('/(\r\n?|\n)/', '/\\\\\*/', '/(^|\|)\\\\<home\\\\>($|\|)/'), array('|', '.*', '\1'. preg_quote($home_url, '/') .'\2'), preg_quote($patterns, '/')) .')$/';
-		
+		$regexps = '/^('. preg_replace( array( '/(\r\n|\n)+/', '/\\\\\*/' ), array( '|', '.*' ), preg_quote( implode( "\n", array_filter( $patterns_safe, 'trim' ) ), '/' ) ) .')$/';
+
 		return preg_match( $regexps, $path );
 	}
 	
@@ -153,15 +145,9 @@ class widget_context {
 		$do_show_by_word_count = false;
 		
 		// Check by current URL
-		if ( ! empty( $vis_settings['url']['urls'] ) ) {
-			// Split on line breaks and remove empty chars before and after URL
-			$split_urls = array_filter( explode( "\n", $vis_settings['url']['urls'] ), 'trim' );
-			$current_url = $this->get_current_url();
-			
-			foreach ( $split_urls as $id => $check_url )
-				if ( $this->match_path( $current_url, trim( $check_url, '/' ) ) ) 
-					$do_show_by_url = true;
-		}
+		if ( ! empty( $vis_settings['url']['urls'] ) )
+			if ( $this->match_path( $this->get_current_url(), $vis_settings['url']['urls'] ) ) 
+				$do_show_by_url = true;
 
 		// Check by tag settings
 		if ( ! empty( $vis_settings['location'] ) ) {
@@ -250,7 +236,7 @@ class widget_context {
 			. '</div>'
 			
 			. '<div class="wl-options">'
-				. $this->make_simple_textarea( array( $form->id, 'url', 'urls' ), __('or target by URL'), __('Enter one location fragment per line. Use <strong>*</strong> character as a wildcard. Example: <code>category/peace/*</code> to target all posts in category <em>peace</em>.'))
+				. $this->make_simple_textarea( array( $form->id, 'url', 'urls' ), __('or target by URL'), __('Enter one location fragment per line. Use <code>*</code> character as a wildcard. Don\'t include the domain name.'))
 			. '</div>'
 			
 			. $this->make_simple_textarea( array( $form->id, 'general', 'notes' ), __('Notes (invisible to public)'))
@@ -279,7 +265,7 @@ class widget_context {
 	
 	function make_simple_textarea( $name, $label, $tip = null ) {
 		if ( $tip )
-			$tip = sprintf( '<p class="wl-tip">%s</p>', esc_html( $tip ) );
+			$tip = sprintf( '<p class="wl-tip">%s</p>', $tip );
 		
 		return sprintf(  
 				'<div class="wl-%s">
