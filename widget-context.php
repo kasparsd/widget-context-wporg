@@ -406,9 +406,9 @@ class widget_context {
 				. '<div class="wl-column-2-1"><p>' 
 				. $this->make_simple_checkbox($options, $wid, $group, 'is_front_page', __('Front Page'))
 				. $this->make_simple_checkbox($options, $wid, $group, 'is_home', __('Blog Index'))
-				. $this->make_simple_checkbox($options, $wid, $group, 'is_single', __('Single Post'))
-				. $this->make_simple_checkbox($options, $wid, $group, 'is_page', __('Single Page'))
-				. $this->make_simple_checkbox($options, $wid, $group, 'is_attachment', __('Attachment'))
+				. $this->make_simple_checkbox($options, $wid, $group, 'is_single', __('All Posts'))
+				. $this->make_simple_checkbox($options, $wid, $group, 'is_page', __('All Pages'))
+				. $this->make_simple_checkbox($options, $wid, $group, 'is_attachment', __('All Attachments'))
 				. $this->make_simple_checkbox($options, $wid, $group, 'is_search', __('Search'))
 				. '</p></div>'
 				. '<div class="wl-column-2-2"><p>' 
@@ -455,11 +455,8 @@ class widget_context {
 	*/
 	
 	function show_support() {
-		$out = '';
-		if (rand(1,3) == 1)	
-			$out = '<p class="show-support"><small>If you find <em>Widget Context</em> plugin useful, please <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=kaspars%40konstruktors%2ecom&item_name=Widget%20Context%20Plugin%20for%20WordPress&no_shipping=1&no_note=1&tax=0&currency_code=EUR&lc=LV&bn=PP%2dDonationsBF&charset=UTF%2d8">donate</a> a few silver coins to support the development. Thanks. <a href="http://konstruktors.com/blog/">Kaspars</a></small></p>';
-		
-		return $out;
+		//if (rand(1,3) == 1)	
+		//	return '<p class="show-support"><small>If you find <em>Widget Context</em> plugin useful, please <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=kaspars%40konstruktors%2ecom&item_name=Widget%20Context%20Plugin%20for%20WordPress&no_shipping=1&no_note=1&tax=0&currency_code=EUR&lc=LV&bn=PP%2dDonationsBF&charset=UTF%2d8">donate</a> a few silver coins to support the development. Thanks. <a href="http://konstruktors.com/blog/">Kaspars</a></small></p>';
 	}
 	
 	function makeSubmitButton() {
