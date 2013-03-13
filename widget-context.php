@@ -365,7 +365,7 @@ class widget_context {
 		
 		return '<div class="widget-context"><div class="widget-context-inside">'
 			. '<p class="wl-visibility">'
-				. $this->make_simple_dropdown( $options, $wid, 'incexc', null, array( 'selected' => __('Show on selected'), 'notselected' => __('Hide on selected'), 'hide' => __('Hide everywhere') ), sprintf( '<strong>%s</strong>', __( 'Widget Context' ) ) )
+				. $this->make_simple_dropdown( $options, $wid, 'incexc', null, array( 'show' => __('Show everywhere'), 'selected' => __('Show on selected'), 'notselected' => __('Hide on selected'), 'hide' => __('Hide everywhere') ), sprintf( '<strong>%s</strong>', __( 'Widget Context' ) ) )
 			. '</p>'
 
 			. '<div class="wl-columns">' 
