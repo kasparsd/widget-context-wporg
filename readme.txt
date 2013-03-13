@@ -33,6 +33,7 @@ Widget Context allows you to show or hide widgets on certain sections of your si
 **0.8**
 
 * Major code rewrite and refactoring to improve performance and usability.
+* Fix bugs with URL targeting and empty lines in the "Target by URL" textarea.
 
 **0.7.2**
 
