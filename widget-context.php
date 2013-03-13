@@ -3,7 +3,7 @@
 Plugin Name: Widget Context
 Plugin URI: http://konstruktors.com/
 Description: Display widgets in context.
-Version: 0.7.3
+Version: 0.8
 Author: Kaspars Dambis
 Author URI: http://konstruktors.com/
 
@@ -170,31 +170,6 @@ class widget_context {
 	}
 	
 	
-	function replace_widget_output() {
-		global $wp_registered_widgets;
-		
-		$all_params = func_get_args();
-		
-		if (is_array($all_params[2]))
-			$widget_id = $all_params[2]['widget_id'];
-		else
-			$widget_id = $all_params[1]['widget_id'];
-			
-		$widget_callback = $wp_registered_widgets[$widget_id]['callback_original_wc'];
-		
-		if (is_callable($widget_callback)) {
-			call_user_func_array($widget_callback, $all_params);
-			return true;
-		} elseif (!is_callable($widget_callback)) {
-			// print_r($all_params);
-			print '<!-- widget context: could not call the original callback function -->';
-			return false;
-		} else {
-			return false;
-		}
-	}
-	
-	
 	function replace_widget_control_callback() {
 		global $wp_registered_widget_controls;
 		
@@ -213,7 +188,7 @@ class widget_context {
 			print '<!-- widget context [controls]: could not call the original callback function -->';
 		}
 		
-		print $this->display_widget_context($original_callback, $widget_id);
+		print $this->display_widget_context( $widget_id );
 	}
 	
 	
@@ -289,8 +264,12 @@ class widget_context {
 	function check_widget_visibility($vis_settings = array()) {
 		global $paged;
 		
-		if (empty($vis_settings)) 
+		if ( empty( $vis_settings ) ) 
 			return true;
+
+		// Hide if forced
+		if ( $vis_settings['incexc'] == 'hide' )
+			return false;
 		
 		$do_show = true;
 		$do_show_by_select = false;
@@ -361,14 +340,13 @@ class widget_context {
 		if ($do_show_by_word_count || $do_show_by_url || $do_show_by_select)
 			$one_is_true = true;
 		elseif (!$do_show_by_word_count || !$do_show_by_url || !$do_show_by_select)
-			$one_is_true = false;
-			
+			$one_is_true = false;	
 		
 		if (($vis_settings['incexc'] == 'selected') && $one_is_true) {
-		// Show on selected
+			// Show on selected
 			$do_show = true;
 		} elseif (($vis_settings['incexc'] == 'notselected') && !$one_is_true) {
-		// Hide on selected
+			// Hide on selected
 			$do_show = true;
 		} elseif (!empty($vis_settings['incexc'])) {
 			$do_show = false;
@@ -376,67 +354,52 @@ class widget_context {
 			$do_show = true;
 		}
 		
-		// Hide if selected
-		if ($vis_settings['incexc'] == 'hide') {
-			$do_show = false;
-		}
-		
 		return $do_show;
 	}
 	
 	
-	function display_widget_context($args = array(), $wid = null) {
+	function display_widget_context( $wid = null ) {
 		
 		$group = 'location'; // Produces: wl[$wid][$group][homepage/singlepost/...]
-		$options = get_option($this->options_name);
+		$options = get_option( $this->options_name );
 		
-		$out = '<div class="widget-context"><div class="widget-context-inside">';
-		$out .=   '<div class="wl-header"><h5>Widget Context:</h5>'
-			. '<p class="wl-visibility">'		
-				. $this->make_simple_radio($options, $wid, 'incexc', 'selected', '<strong>Show</strong> on selected') 
-				. $this->make_simple_radio($options, $wid, 'incexc', 'notselected', '<strong>Hide</strong> on selected') 
-				. $this->make_simple_radio($options, $wid, 'incexc', 'hide', 'Hide') 
+		return '<div class="widget-context"><div class="widget-context-inside">'
+			. '<p class="wl-visibility">'
+				. $this->make_simple_dropdown( $options, $wid, 'incexc', null, array( 'selected' => __('Show on selected'), 'notselected' => __('Hide on selected'), 'hide' => __('Hide everywhere') ), sprintf( '<strong>%s</strong>', __( 'Widget Context' ) ) )
+			. '</p>'
+
+			. '<div class="wl-columns">' 
+			. '<div class="wl-column-2-1"><p>' 
+			. $this->make_simple_checkbox($options, $wid, $group, 'is_front_page', __('Front Page'))
+			. $this->make_simple_checkbox($options, $wid, $group, 'is_home', __('Blog Index'))
+			. $this->make_simple_checkbox($options, $wid, $group, 'is_single', __('All Posts'))
+			. $this->make_simple_checkbox($options, $wid, $group, 'is_page', __('All Pages'))
+			. $this->make_simple_checkbox($options, $wid, $group, 'is_attachment', __('All Attachments'))
+			. $this->make_simple_checkbox($options, $wid, $group, 'is_search', __('Search'))
+			. '</p></div>'
+			. '<div class="wl-column-2-2"><p>' 
+			. $this->make_simple_checkbox($options, $wid, $group, 'is_archive', __('All Archives'))
+			. $this->make_simple_checkbox($options, $wid, $group, 'is_category', __('Category Archive'))
+			. $this->make_simple_checkbox($options, $wid, $group, 'is_tag', __('Tag Archive'))
+			. $this->make_simple_checkbox($options, $wid, $group, 'is_author', __('Author Archive'))
+			. $this->make_simple_checkbox($options, $wid, $group, 'is_404', __('404 Error'))
 			. '</p></div>'
 			
-			. $this->show_support() // you can comment out this line, if you want.
+			. '<div class="wl-word-count"><p>' 
+			. $this->make_simple_checkbox($options, $wid, $group, 'check_wordcount', __('Has'))
+			. $this->make_simple_dropdown($options, $wid, $group, 'check_wordcount_type', array('less' => __('less'), 'more' => __('more')), '', __('than'))
+			. $this->make_simple_textfield($options, $wid, $group, 'word_count', null, __('words'))
+			. '</p></div>'
 			
-			. '<div class="wl-wrap-columns">'
+			. '</div>'
 			
-				. '<div class="wl-columns">' 
-				. '<div class="wl-column-2-1"><p>' 
-				. $this->make_simple_checkbox($options, $wid, $group, 'is_front_page', __('Front Page'))
-				. $this->make_simple_checkbox($options, $wid, $group, 'is_home', __('Blog Index'))
-				. $this->make_simple_checkbox($options, $wid, $group, 'is_single', __('All Posts'))
-				. $this->make_simple_checkbox($options, $wid, $group, 'is_page', __('All Pages'))
-				. $this->make_simple_checkbox($options, $wid, $group, 'is_attachment', __('All Attachments'))
-				. $this->make_simple_checkbox($options, $wid, $group, 'is_search', __('Search'))
-				. '</p></div>'
-				. '<div class="wl-column-2-2"><p>' 
-				. $this->make_simple_checkbox($options, $wid, $group, 'is_archive', __('All Archives'))
-				. $this->make_simple_checkbox($options, $wid, $group, 'is_category', __('Category Archive'))
-				. $this->make_simple_checkbox($options, $wid, $group, 'is_tag', __('Tag Archive'))
-				. $this->make_simple_checkbox($options, $wid, $group, 'is_author', __('Author Archive'))
-				. $this->make_simple_checkbox($options, $wid, $group, 'is_404', __('404 Error'))
-				. '</p></div>'
-				
-				. '<div class="wl-word-count"><p>' 
-				. $this->make_simple_checkbox($options, $wid, $group, 'check_wordcount', __('Has'))
-				. $this->make_simple_dropdown($options, $wid, $group, 'check_wordcount_type', array('less' => __('less'), 'more' => __('more')), '', __('than'))
-				. $this->make_simple_textfield($options, $wid, $group, 'word_count', null, __('words'))
-				. '</p></div>'
-				
-				. '</div>'
-				
-				. '<div class="wl-options">'
-				. $this->make_simple_textarea($options, $wid, 'url', 'urls', __('or target by URL'), __('Enter one location fragment per line. Use <strong>*</strong> character as a wildcard. Use <strong><code>&lt;home&gt;</code></strong> to select front page. Examples: <strong><code>category/peace/*</code></strong> to target all <em>peace</em> category posts; <strong><code>2012/*</code></strong> to target articles written in year 2012.'))
-				. '</div>'
-			
+			. '<div class="wl-options">'
+			. $this->make_simple_textarea($options, $wid, 'url', 'urls', __('or target by URL'), __('Enter one location fragment per line. Use <strong>*</strong> character as a wildcard. Example: <code>category/peace/*</code> to target all posts in category <em>peace</em>.'))
 			. '</div>'
 			
 			. $this->make_simple_textarea($options, $wid, 'general', 'notes', __('Notes (invisible to public)'))
 		. '</div></div>';
-		
-		return $out;
+
 	}
 	
 	function printAdminOptions() {
@@ -544,38 +507,41 @@ class widget_context {
 	}
 
 	function make_simple_dropdown($options, $prefix, $id, $fieldname = null, $selection = array(), $label_before = null, $label_after = null) {
-		$classname = $fieldname;
-		
-		if ($fieldname !== null) {
+
+		if ( ! empty( $fieldname ) ) {
+			$classname = $fieldname;
 			$value = $options[$prefix][$id][$fieldname];
 			$fieldname = '[' . $fieldname . ']';
 		} else {
+			$classname = $id;
 			$value = $options[$prefix][$id];
 			$fieldname = '';
 		}
+
 		$prefix = '[' . $prefix . ']';
 		$id = '[' . $id . ']';
-	
-		$list = '<label class="wl-'. $classname .'"><select name="wl'. $prefix . $id . $fieldname . '">'
-			. $label_before . ' ';
-		
-		if (!empty($selection)) {
-			foreach ($selection as $sid => $svalue) {
-				if ($value == $sid) {
-					$selected = 'selected="selected"';
-				} else {
-					$selected = '';
-				}
-				
-				$list .= '<option value="' . $sid . '" ' . $selected . '>' . $svalue . '</option>';
-			}
-		} else {
-			$list .= '<option value="error" selected="selected">'. __('No options given') .'</option>';
-		}
-		
-		$list .= '</select> ' . $label_after . '</label>';
-		
-		return $list;
+		$options = array();
+
+		if ( empty( $selection ) )
+			$options[] = sprintf( '<option value="error">%s</option>', __('No options given') );
+
+		foreach ( $selection as $sid => $svalue )
+			$options[] = sprintf( '<option value="%s" %s>%s</option>', $sid, selected( $value, $sid, false ), $svalue );
+
+		return sprintf( 
+				'<label class="wl-%s">
+					%s 
+					<select name="wl%s%s%s">
+						%s
+					</select> 
+					%s
+				</label>', 
+				$classname, 
+				$label_before, 
+				$prefix, $id, $fieldname, 
+				implode( '', $options ), 
+				$label_after 
+			);
 	}
 }
 
