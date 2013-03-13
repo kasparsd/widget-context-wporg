@@ -36,18 +36,26 @@ class widget_context {
 	
 	
 	function widget_context() {
-		$this->context_options = get_option( $this->options_name );
-
+		// Load plugin settings
+		add_action( 'init', array( $this, 'load_plugin_settings' ) );
 		// Amend widget controls with Widget Context controls
-		add_action( 'sidebar_admin_setup', array($this, 'attach_widget_context_controls') );
+		add_action( 'sidebar_admin_setup', array( $this, 'attach_widget_context_controls' ) );
 		// Hide the widget if necessary
 		add_filter( 'widget_display_callback', array( $this, 'maybe_hide_widget' ), 10, 3 );
 		// Add admin menu for config
-		add_action( 'admin_enqueue_scripts', array($this, 'admin_scripts') );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
 		// Save widget context settings, when in admin area
-		add_filter( 'admin_init', array( $this, 'save_widget_context_settings') );
+		add_filter( 'admin_init', array( $this, 'save_widget_context_settings' ) );
 		// Check the number of words on page
-		add_action( 'wp', array($this, 'count_words_on_page') );
+		add_action( 'wp', array( $this, 'count_words_on_page' ) );
+	}
+
+
+	function load_plugin_settings() {
+		$this->context_options = get_option( $this->options_name );
+
+		if ( ! is_array( $this->context_options ) || empty( $this->context_options ) )
+			$this->context_options = array();
 	}
 		
 	
