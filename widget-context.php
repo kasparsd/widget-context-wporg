@@ -33,7 +33,6 @@ class widget_context {
 	var $options_name = 'widget_logic_options'; // Widget context settings (visibility, etc)
 	var $context_options = array();
 	var $words_on_page = 0;
-	var $did_filter_sidebars = false;
 	
 	
 	function widget_context() {
