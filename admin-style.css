@@ -20,6 +20,6 @@
 .wl-visibility {  }
 
 .wl-notes { float:left; width:100%; clear:both; margin-bottom:0.5em; }
-.wl-notes textarea { float:left; width:100%; clear:both; height:4em; font-size:1em; line-height:1.25em; }
+.wl-notes textarea { float:left; width:100%; clear:both; height:3em; font-size:1em; line-height:1.25em; }
 
 .widget .widget-inside .wl-tip { font-size:0.9em; line-height:1.1; margin:0 0 1em 0; }
