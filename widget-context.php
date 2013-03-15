@@ -277,7 +277,7 @@ class widget_context {
 			. '</div>'
 			
 			. '<div class="wl-options">'
-				. $this->make_simple_textarea( array( $wid, 'url', 'urls' ), __('or target by URL'), __('Enter one location fragment per line. Use <strong>*</strong> character as a wildcard. Example: <code>category/peace/*</code> to target all posts in category <em>peace</em>.') )
+				. $this->make_simple_textarea( array( $wid, 'url', 'urls' ), __('Target by URL'), __('Enter one location fragment per line. Use <strong>*</strong> character as a wildcard. Example: <code>category/peace/*</code> to target all posts in category <em>peace</em>.') )
 			. '</div>'
 			
 			. $this->make_simple_textarea( array( $wid, 'general', 'notes' ), __('Notes (invisible to public)'))
