@@ -32,7 +32,8 @@ Widget Context allows you to show or hide widgets on certain sections of your si
 
 **0.8.1**
 
-* Revert back to changing callback function in `$wp_registered_widgets` for attaching widget context setting controlls.
+* Revert back to changing callback function in `$wp_registered_widgets` for attaching widget context setting controls.
+* Fix the word count logic.
 
 **0.8**
 
@@ -75,7 +76,7 @@ Widget Context allows you to show or hide widgets on certain sections of your si
 == Upgrade Notice ==
 
 = 0.8.1 =
-Revert to a legacy method for attaching widget control settings in order to make it work with old plugins.
+(1) Revert to a legacy method for attaching widget control settings in order to make it work with old plugins. (2) Fix the word count context logic.
 
 = 0.8 =
 Major code rewrite and refactoring to improve plugin performance and usability.
