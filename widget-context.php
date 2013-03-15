@@ -3,7 +3,7 @@
 Plugin Name: Widget Context
 Plugin URI: http://wordpress.org/extend/plugins/widget-context/
 Description: Display widgets in context.
-Version: 0.8
+Version: 0.8.1
 Author: Kaspars Dambis
 Author URI: http://konstruktors.com/
 
@@ -39,7 +39,7 @@ class widget_context {
 		// Load plugin settings
 		add_action( 'init', array( $this, 'load_plugin_settings' ) );
 		// Amend widget controls with Widget Context controls
-		add_action( 'in_widget_form', array( $this, 'display_widget_context' ), 10, 3 );
+		add_action( 'sidebar_admin_setup', array( $this, 'attach_widget_context_controls' ) );
 		// Hide the widget if necessary
 		add_filter( 'widget_display_callback', array( $this, 'maybe_hide_widget' ), 10, 3 );
 		// Add admin menu for config
@@ -57,13 +57,13 @@ class widget_context {
 		if ( ! is_array( $this->context_options ) || empty( $this->context_options ) )
 			$this->context_options = array();
 	}
+		
 	
-
 	function admin_scripts() {
 		wp_enqueue_style( 'widget-context-admin', WP_CONTENT_URL . '/plugins/'. basename(__DIR__) . '/admin-style.css' );
 	}
 
-
+	
 	function save_widget_context_settings() {
 		if ( ! current_user_can( 'edit_theme_options' ) || empty( $_POST ) || ! isset( $_POST['sidebar'] ) || empty( $_POST['sidebar'] ) )
 			return;
@@ -77,6 +77,19 @@ class widget_context {
 
 		update_option( $this->options_name, $this->context_options );
 	}
+	
+	
+	function attach_widget_context_controls() {
+		global $wp_registered_widget_controls, $wp_registered_widgets;
+		
+		foreach ($wp_registered_widgets as $widget_id => $widget_data) {
+			// Pass widget id as param, so that we can later call the original callback function
+			$wp_registered_widget_controls[$widget_id]['params'][]['widget_id'] = $widget_id;
+			// Store the original callback functions and replace them with Widget Context
+			$wp_registered_widget_controls[$widget_id]['callback_original_wc'] = $wp_registered_widget_controls[$widget_id]['callback'];
+			$wp_registered_widget_controls[$widget_id]['callback'] = array($this, 'replace_widget_control_callback');
+		}
+	}
 
 
 	function maybe_hide_widget( $instance, $widget_object, $args ) {
@@ -84,6 +97,28 @@ class widget_context {
 			return false;
 
 		return $instance;
+	}
+
+	
+	function replace_widget_control_callback() {
+		global $wp_registered_widget_controls;
+		
+		$all_params = func_get_args();
+		if (is_array($all_params[1]))
+			$widget_id = $all_params[1]['widget_id'];
+		else
+			$widget_id = $all_params[0]['widget_id'];
+			
+		$original_callback = $wp_registered_widget_controls[$widget_id]['callback_original_wc'];
+		
+		// Display the original callback
+		if (isset($original_callback) && is_callable($original_callback)) {
+			call_user_func_array($original_callback, $all_params);
+		} else {
+			print '<!-- widget context [controls]: could not call the original callback function -->';
+		}
+		
+		print $this->display_widget_context( $widget_id );
 	}
 	
 	
@@ -206,44 +241,44 @@ class widget_context {
 		
 		return $do_show;
 	}
-
-
-	function display_widget_context( $form, $return, $instance ) {
-
-		echo '<div class="widget-context"><div class="widget-context-inside">'
+	
+	
+	function display_widget_context( $wid = null ) {
+		
+		return '<div class="widget-context"><div class="widget-context-inside">'
 			. '<p class="wl-visibility">'
-				. $this->make_simple_dropdown( array( $form->id, 'incexc' ), array( 'show' => __('Show everywhere'), 'selected' => __('Show on selected'), 'notselected' => __('Hide on selected'), 'hide' => __('Hide everywhere') ), sprintf( '<strong>%s</strong>', __( 'Widget Context' ) ) )
+				. $this->make_simple_dropdown( array( $wid, 'incexc' ), array( 'show' => __('Show everywhere'), 'selected' => __('Show on selected'), 'notselected' => __('Hide on selected'), 'hide' => __('Hide everywhere') ), sprintf( '<strong>%s</strong>', __( 'Widget Context' ) ) )
 			. '</p>'
 
 			. '<div class="wl-columns">' 
 			. '<div class="wl-column-2-1"><p>' 
-				. $this->make_simple_checkbox( array( $form->id, 'location', 'is_front_page' ), __('Front Page') )
-				. $this->make_simple_checkbox( array( $form->id, 'location', 'is_home' ), __('Blog Index') )
-				. $this->make_simple_checkbox( array( $form->id, 'location', 'is_single' ), __('All Posts') )
-				. $this->make_simple_checkbox( array( $form->id, 'location', 'is_page' ), __('All Pages') )
-				. $this->make_simple_checkbox( array( $form->id, 'location', 'is_attachment' ), __('All Attachments') )
-				. $this->make_simple_checkbox( array( $form->id, 'location', 'is_search' ), __('Search') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_front_page' ), __('Front Page') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_home' ), __('Blog Index') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_single' ), __('All Posts') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_page' ), __('All Pages') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_attachment' ), __('All Attachments') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_search' ), __('Search') )
 			. '</p></div>'
 			. '<div class="wl-column-2-2"><p>' 
-				. $this->make_simple_checkbox( array( $form->id, 'location', 'is_archive' ), __('All Archives') )
-				. $this->make_simple_checkbox( array( $form->id, 'location', 'is_category' ), __('Category Archive') )
-				. $this->make_simple_checkbox( array( $form->id, 'location', 'is_tag' ), __('Tag Archive') )
-				. $this->make_simple_checkbox( array( $form->id, 'location', 'is_author' ), __('Author Archive') )
-				. $this->make_simple_checkbox( array( $form->id, 'location', 'is_404' ), __('404 Error') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_archive' ), __('All Archives') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_category' ), __('Category Archive') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_tag' ), __('Tag Archive') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_author' ), __('Author Archive') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_404' ), __('404 Error') )
 			. '</p></div>'
 			
 			. '<div class="wl-word-count"><p>' 
-				. $this->make_simple_checkbox( array( $form->id, 'location', 'check_wordcount' ), __('Has') )
-				. $this->make_simple_dropdown( array( $form->id, 'location', 'check_wordcount_type' ), array('less' => __('less'), 'more' => __('more')), '', __('than') )
-				. $this->make_simple_textfield( array( $form->id, 'location', 'word_count' ), __('words') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'check_wordcount' ), __('Has') )
+				. $this->make_simple_dropdown( array( $wid, 'location', 'check_wordcount_type' ), array('less' => __('less'), 'more' => __('more')), '', __('than') )
+				. $this->make_simple_textfield( array( $wid, 'location', 'word_count' ), __('words') )
 			. '</p></div>'
 			. '</div>'
 			
 			. '<div class="wl-options">'
-				. $this->make_simple_textarea( array( $form->id, 'url', 'urls' ), __('or target by URL'), __('Enter one location fragment per line. Use <code>*</code> character as a wildcard. Don\'t include the domain name.'))
+				. $this->make_simple_textarea( array( $wid, 'url', 'urls' ), __('or target by URL'), __('Enter one location fragment per line. Use <strong>*</strong> character as a wildcard. Example: <code>category/peace/*</code> to target all posts in category <em>peace</em>.') )
 			. '</div>'
 			
-			. $this->make_simple_textarea( array( $form->id, 'general', 'notes' ), __('Notes (invisible to public)'))
+			. $this->make_simple_textarea( array( $wid, 'general', 'notes' ), __('Notes (invisible to public)'))
 		. '</div></div>';
 
 	}
