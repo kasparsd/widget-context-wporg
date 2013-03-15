@@ -216,6 +216,8 @@ class widget_context {
 
 				if ( $this->words_on_page > $word_count_to_check && $check_type == 'more' )
 					$do_show_by_word_count = true;
+				elseif ( $this->words_on_page < $word_count_to_check && $check_type == 'less' )
+					$do_show_by_word_count = true;
 				else
 					$do_show_by_word_count = false;
 			}	
