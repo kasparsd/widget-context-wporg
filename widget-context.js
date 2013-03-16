@@ -1,9 +1,10 @@
 jQuery(window).ready(function($) {
 
-	$('.widget-context .context-group-wrap').addClass('collapsed');
+	$('.widget-context-inside, .toggle-contexts .collapse').hide();
 
-	$('.widget-context .context-toggle').click(function() {
-		$(this).siblings('.context-group-wrap').toggleClass('collapsed');
+	$('.widget-context .toggle-contexts').click(function() {
+		$(this).siblings('.widget-context-inside').slideToggle('fast');
+		$('span', this).toggle();
 
 		return false;
 	});

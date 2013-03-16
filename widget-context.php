@@ -315,11 +315,17 @@ class widget_context {
 		return sprintf( 
 				'<div class="widget-context">
 					<h3>%s</h3>
+					<a href="#" class="toggle-contexts hide-if-no-js">
+						<span class="expand">%s</span>
+						<span class="collapse">%s</span>
+					</a>
 					<div class="widget-context-inside">
 					%s
 					</div>
 				</div>',
 				__('Widget Context'),
+				__('Expand'),
+				__('Collapse'),
 				implode( '', $controls )
 			);
 
