@@ -328,44 +328,6 @@ class widget_context {
 				__('Collapse'),
 				implode( '', $controls )
 			);
-
-		/*
-		return '<div class="widget-context"><div class="widget-context-inside">'
-			. '<p class="wl-visibility">'
-				. $this->make_simple_dropdown( array( $wid, 'incexc' ), array( 'show' => __('Show everywhere'), 'selected' => __('Show on selected'), 'notselected' => __('Hide on selected'), 'hide' => __('Hide everywhere') ), sprintf( '<strong>%s</strong>', __( 'Widget Context' ) ) )
-			. '</p>'
-
-			. '<div class="wl-columns">' 
-			. '<div class="wl-column-2-1"><p>' 
-				. $this->make_simple_checkbox( array( $wid, 'location', 'is_front_page' ), __('Front Page') )
-				. $this->make_simple_checkbox( array( $wid, 'location', 'is_home' ), __('Blog Index') )
-				. $this->make_simple_checkbox( array( $wid, 'location', 'is_single' ), __('All Posts') )
-				. $this->make_simple_checkbox( array( $wid, 'location', 'is_page' ), __('All Pages') )
-				. $this->make_simple_checkbox( array( $wid, 'location', 'is_attachment' ), __('All Attachments') )
-				. $this->make_simple_checkbox( array( $wid, 'location', 'is_search' ), __('Search') )
-			. '</p></div>'
-			. '<div class="wl-column-2-2"><p>' 
-				. $this->make_simple_checkbox( array( $wid, 'location', 'is_archive' ), __('All Archives') )
-				. $this->make_simple_checkbox( array( $wid, 'location', 'is_category' ), __('Category Archive') )
-				. $this->make_simple_checkbox( array( $wid, 'location', 'is_tag' ), __('Tag Archive') )
-				. $this->make_simple_checkbox( array( $wid, 'location', 'is_author' ), __('Author Archive') )
-				. $this->make_simple_checkbox( array( $wid, 'location', 'is_404' ), __('404 Error') )
-			. '</p></div>'
-			
-			. '<div class="wl-word-count"><p>' 
-				. $this->make_simple_checkbox( array( $wid, 'location', 'check_wordcount' ), __('Has') )
-				. $this->make_simple_dropdown( array( $wid, 'location', 'check_wordcount_type' ), array('less' => __('less'), 'more' => __('more')), '', __('than') )
-				. $this->make_simple_textfield( array( $wid, 'location', 'word_count' ), __('words') )
-			. '</p></div>'
-			. '</div>'
-			
-			. '<div class="wl-options">'
-				. $this->make_simple_textarea( array( $wid, 'url', 'urls' ), __('Target by URL'), __('Enter one location fragment per line. Use <strong>*</strong> character as a wildcard. Example: <code>category/peace/*</code> to target all posts in category <em>peace</em>.') )
-			. '</div>'
-			
-			. $this->make_simple_textarea( array( $wid, 'general', 'notes' ), __('Notes (invisible to public)'))
-		. '</div></div>';
-		*/
 	}
 
 
@@ -388,8 +350,8 @@ class widget_context {
 				'is_single' => __('All Posts'),
 				'is_page' => __('All Pages'),
 				'is_attachment' => __('All Attachments'),
-				'is_search' => __('Search'),
-				'is_404' => __('404 Error'),
+				'is_search' => __('Search Results'),
+				'is_404' => __('404 Error Page'),
 				'is_archive' => __('All Archives'),
 				'is_category' => __('Category Archive'),
 				'is_tag' => __('Tag Archive'),
@@ -414,8 +376,10 @@ class widget_context {
 
 	function control_url( $control_args ) {
 		return sprintf( 
-				'<p>%s</p>',
-				$this->make_simple_textarea( $control_args, 'urls' )
+				'<div>%s</div>
+				<p class="help">%s</p>',
+				$this->make_simple_textarea( $control_args, 'urls' ),
+				__('Enter one location fragment per line. Use <strong>*</strong> character as a wildcard. Example: <code>category/peace/*</code> to target all posts in category <em>peace</em>.')
 			);
 	}
 
@@ -446,27 +410,22 @@ class widget_context {
 	}
 
 	
-	function make_simple_textarea( $control_args, $option, $label = null, $tip = null ) {
+	function make_simple_textarea( $control_args, $option, $label = null ) {
 		if ( isset( $control_args['settings'][ $option ] ) )
 			$value = esc_textarea( $control_args['settings'][ $option ] );
 		else
 			$value = '';
-
-		if ( $tip )
-			$tip = sprintf( '<p class="wl-tip">%s</p>', $tip );
 		
 		return sprintf(  
 				'<label class="wl-%s">
 					<strong>%s</strong>
 					<textarea name="%s[%s]">%s</textarea>
-				</label>
-				%s',
+				</label>',
 				$this->get_field_classname( $option ),
 				$label,
 				$control_args['input_prefix'],
 				$option,
-				$value,
-				$tip
+				$value
 			);
 	}
 
