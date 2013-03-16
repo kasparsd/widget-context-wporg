@@ -2,7 +2,6 @@
 .widget-context { float:left; width:100%; clear:both; margin:0.5em -12px; padding:0.5em 12px; border-top:1px solid #dfdfdf; border-bottom:1px solid #dfdfdf; background:#eee; }
 .widget-context-inside { float:left; width:100%; clear:both; padding-top:0.5em; }
 .widget-context .toggle-contexts { text-decoration:none; float:right; margin:0 0 -10em -100em; }
-.widget-context .toggle-contexts .collapse { display:none; }
 .widget .widget-context-inside p { margin:0 0 0.5em; }
 .widget-context h3 { float:left; width:100%; font-size:1.05em; margin:0; padding:0; }
 .widget-context textarea { display:block; width:100%; height:8em; font:inherit; }
