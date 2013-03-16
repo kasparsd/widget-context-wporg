@@ -32,6 +32,7 @@ class widget_context {
 	
 	var $options_name = 'widget_logic_options'; // Widget context settings (visibility, etc)
 	var $context_options = array();
+	var $contexts = array();
 	var $words_on_page = 0;
 	
 	
@@ -45,7 +46,9 @@ class widget_context {
 		// Add admin menu for config
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
 		// Save widget context settings, when in admin area
-		add_filter( 'admin_init', array( $this, 'save_widget_context_settings' ) );
+		add_action( 'sidebar_admin_setup', array( $this, 'save_widget_context_settings' ) );
+		// Define available widget contexts
+		add_action( 'sidebar_admin_setup', array( $this, 'define_widget_contexts' ), 20 );
 		// Check the number of words on page
 		add_action( 'wp', array( $this, 'count_words_on_page' ) );
 	}
@@ -61,6 +64,7 @@ class widget_context {
 	
 	function admin_scripts() {
 		wp_enqueue_style( 'widget-context-admin', WP_CONTENT_URL . '/plugins/'. basename(__DIR__) . '/admin-style.css' );
+		wp_enqueue_script( 'widget-context-js', WP_CONTENT_URL . '/plugins/'. basename(__DIR__) . '/widget-context.js' );
 	}
 
 	
@@ -76,6 +80,32 @@ class widget_context {
 		$this->context_options = array_merge( $this->context_options, $_POST['wl'] );
 
 		update_option( $this->options_name, $this->context_options );
+	}
+
+
+	function define_widget_contexts() {
+		// Default context
+		$contexts = array(
+				'incexc' => array(
+					'label' => __('Widget Context'),
+					'description' => __('Set the default logic show or hide.')
+				),
+				'location' => array(
+					'label' => __('Global Sections'),
+					'description' => __('Context based on current template.')
+				),
+				'word_count' => array(
+					'label' => __('Word Count'),
+					'description' => __('Context based on word count on the page.')
+				)
+		);
+
+		// Add default context settings
+		foreach ( $contexts as $context_name => $context_desc )
+			add_filter( 'widget_context_control-' . $context_name, array( $this, 'control_' . $context_name ) );
+
+		// Enable other plugins and themes to specify their own contexts
+		$this->contexts = apply_filters( 'widget_contexts', $contexts );
 	}
 	
 	
@@ -245,8 +275,45 @@ class widget_context {
 	}
 	
 	
-	function display_widget_context( $wid = null ) {
-		
+	function display_widget_context( $widget_id = null ) {
+
+		$controls = array();
+
+		foreach ( $this->contexts as $context_name => $context_settings ) {
+			$control_args = array(
+				'name' => $context_name,
+				'input_prefix' => 'wl' . $this->get_field_name( array( $widget_id, $context_name ) ),
+				'settings' => $this->get_field_value( array( $widget_id, $context_name ) )
+			);
+
+			if ( $context_controls = apply_filters( 'widget_context_control-' . $context_name, $control_args ) )
+				if ( is_string( $context_controls ) )
+					$controls[ $context_name ] = sprintf( 
+							'<div class="context-group context-group-%1$s">
+								<h4 class="context-toggle">%2$s</h4>
+								<div class="context-group-wrap">
+									%3$s
+								</div>
+							</div>',
+							$context_name,
+							$context_settings['label'],
+							$context_controls
+						);
+		}
+
+		if ( empty( $controls ) )
+			$controls[] = sprintf( '<p class="error">%s</p>', __('No settings defined.') );
+
+		return sprintf( 
+				'<div class="widget-context">
+					<div class="widget-context-inside">
+					%s
+					</div>
+				</div>',
+				implode( '', $controls )
+			);
+
+		/*
 		return '<div class="widget-context"><div class="widget-context-inside">'
 			. '<p class="wl-visibility">'
 				. $this->make_simple_dropdown( array( $wid, 'incexc' ), array( 'show' => __('Show everywhere'), 'selected' => __('Show on selected'), 'notselected' => __('Hide on selected'), 'hide' => __('Hide everywhere') ), sprintf( '<strong>%s</strong>', __( 'Widget Context' ) ) )
@@ -282,9 +349,48 @@ class widget_context {
 			
 			. $this->make_simple_textarea( array( $wid, 'general', 'notes' ), __('Notes (invisible to public)'))
 		. '</div></div>';
+		*/
+	}
+
+
+	function control_incexc( $control_args ) {
+		$options = array(
+				'show' => __('Show everywhere'), 
+				'selected' => __('Show on selected'), 
+				'notselected' => __('Hide on selected'), 
+				'hide' => __('Hide everywhere')
+			);
+
+		return $this->make_simple_dropdown( $control_args, $options );
+	}
+
+	
+	function control_location( $control_args ) {
+		$options = array(
+				'is_front_page' => __('Front Page'),
+				'is_home' => __('Blog Index'),
+				'is_single' => __('All Posts'),
+				'is_page' => __('All Pages'),
+				'is_attachment' => __('All Attachments'),
+				'is_search' => __('Search'),
+				'is_404' => __('404 Error'),
+				'is_archive' => __('All Archives'),
+				'is_category' => __('Category Archive'),
+				'is_tag' => __('Tag Archive'),
+				'is_author' => __('Author Archive')
+			);
+
+		foreach ( $options as $option => $label )
+			$out[] = $this->make_simple_checkbox( $control_args, $option, $label );
+
+		return implode( '', $out );
+	}
+
+
+	function control_word_count( $control_args ) {
 
 	}
-	
+
 	
 	/* 
 		
@@ -293,18 +399,19 @@ class widget_context {
 	*/
 
 	
-	function make_simple_checkbox( $name, $label ) {
-		return sprintf( 
-				'<label class="wl-%s"><input type="checkbox" value="1" name="wl%s" %s />&nbsp;%s</label>',
-				$this->get_field_classname( $name ),
-				$this->get_field_name( $name ),
-				checked( (bool) $this->get_field_value( $name ), 1, false ),
+	function make_simple_checkbox( $control_args, $option, $label ) {
+		return sprintf(
+				'<label class="wl-location-%s"><input type="checkbox" value="1" name="%s[%s]" %s />&nbsp;%s</label>',
+				$this->get_field_classname( $option ),
+				$control_args['input_prefix'],
+				esc_attr( $option ),
+				checked( isset( $control_args['settings'][ $option ] ), true, false ),
 				$label
 			);
 	}
 
 	
-	function make_simple_textarea( $name, $label, $tip = null ) {
+	function make_simple_textarea( $control_args, $label, $tip = null ) {
 		if ( $tip )
 			$tip = sprintf( '<p class="wl-tip">%s</p>', $tip );
 		
@@ -325,7 +432,7 @@ class widget_context {
 	}
 
 
-	function make_simple_textfield( $name, $label_before = null, $label_after = null) {
+	function make_simple_textfield( $control_args, $label_before = null, $label_after = null) {
 		return sprintf( 
 				'<label class="wl-%s">%s <input type="text" name="wl%s" value="%s" /> %s</label>',
 				$this->get_field_classname( $name ),
@@ -337,27 +444,26 @@ class widget_context {
 	}
 
 
-	function make_simple_dropdown( $name, $selection = array(), $label_before = null, $label_after = null ) {
-		$value = esc_attr( $this->get_field_value( $name ) );
+	function make_simple_dropdown( $control_args, $selection = array(), $label_before = null, $label_after = null ) {
 		$options = array();
 
 		if ( empty( $selection ) )
 			$options[] = sprintf( '<option value="">%s</option>', __('No options given') );
 
 		foreach ( $selection as $sid => $svalue )
-			$options[] = sprintf( '<option value="%s" %s>%s</option>', $sid, selected( $value, $sid, false ), $svalue );
+			$options[] = sprintf( '<option value="%s" %s>%s</option>', $sid, selected( $control_args['settings'], $sid, false ), $svalue );
 
 		return sprintf( 
 				'<label class="wl-%s">
 					%s 
-					<select name="wl%s">
+					<select name="%s">
 						%s
 					</select> 
 					%s
 				</label>',
-				$this->get_field_classname( $name ),
+				'',
 				$label_before, 
-				$this->get_field_name( $name ), 
+				$control_args['input_prefix'], 
 				implode( '', $options ), 
 				$label_after
 			);
@@ -372,8 +478,11 @@ class widget_context {
 		return esc_attr( sprintf( '[%s]', implode( '][', $parts ) ) );
 	}
 
-	function get_field_classname( $parts ) {
-		return sanitize_html_class( str_replace( '_', '-', end( $parts ) ) );
+	function get_field_classname( $name ) {
+		if ( is_array( $name ) )
+			$name = end( $name );
+
+		return sanitize_html_class( str_replace( '_', '-', $name ) );
 	}
 
 
@@ -383,21 +492,23 @@ class widget_context {
 	 * @param  array  $options i.e. array( 'part1' => array( 'part2' => array( 'part3' => 'VALUE' ) ) )
 	 * @return string          Returns option value
 	 */
-	function get_field_value( $parts, $options = array() ) {
-		if ( empty( $options ) )
+	function get_field_value( $parts, $options = null ) {
+		if ( $options == null )
 			$options = $this->context_options;
 
-		if ( ! empty( $parts ) )
-			$part = array_shift( $parts );
+		$value = false;
 
-		if ( isset( $part ) && isset( $options[ $part ] ) && is_array( $options[ $part ] ) )
+		if ( empty( $parts ) || ! is_array( $parts ) )
+			return false;
+
+		$part = array_shift( $parts );
+		
+		if ( ! empty( $parts ) && isset( $options[ $part ] ) && is_array( $options[ $part ] ) )
 			$value = $this->get_field_value( $parts, $options[ $part ] );
 		elseif ( isset( $options[ $part ] ) )
-			$value = $options[ $part ];
-		else 
-			$value = '';
+			return $options[ $part ];
 
-		return trim( $value );
+		return $value;
 	}
 
 
