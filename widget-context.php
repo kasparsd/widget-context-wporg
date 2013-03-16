@@ -188,10 +188,6 @@ class widget_context {
 
 		$regexps = '/^('. preg_replace( array( '/(\r\n|\n| )+/', '/\\\\\*/' ), array( '|', '.*' ), preg_quote( implode( "\n", array_filter( $patterns_safe, 'trim' ) ), '/' ) ) .')$/';
 
-		// Debug
-		//echo $regexps;
-		//print_r(array_filter( $patterns_safe, 'trim' ));
-
 		return preg_match( $regexps, $path );
 	}
 	
