@@ -51,6 +51,8 @@ class widget_context {
 		add_action( 'sidebar_admin_setup', array( $this, 'define_widget_contexts' ), 20 );
 		// Check the number of words on page
 		add_action( 'wp', array( $this, 'count_words_on_page' ) );
+		// Fix legacy context option naming
+		add_filter( 'widget_context_options', array( $this, 'fix_legacy_options' ) );
 	}
 
 
@@ -59,12 +61,13 @@ class widget_context {
 
 		if ( ! is_array( $this->context_options ) || empty( $this->context_options ) )
 			$this->context_options = array();
+
+		$this->context_options = apply_filters( 'widget_context_options', $this->context_options );
 	}
 		
 	
 	function admin_scripts() {
 		wp_enqueue_style( 'widget-context-admin', WP_CONTENT_URL . '/plugins/'. basename(__DIR__) . '/admin-style.css' );
-		wp_enqueue_script( 'widget-context-js', WP_CONTENT_URL . '/plugins/'. basename(__DIR__) . '/widget-context.js' );
 	}
 
 	
@@ -97,6 +100,14 @@ class widget_context {
 				'word_count' => array(
 					'label' => __('Word Count'),
 					'description' => __('Context based on word count on the page.')
+				),
+				'url' => array(
+					'label' => __('Target by URL'),
+					'description' => __('Context based on URL pattern.')
+				),
+				'general' => array(
+					'label' => __('Notes (invisible to public)'),
+					'description' => __('Notes to admins.')
 				)
 		);
 
@@ -306,10 +317,12 @@ class widget_context {
 
 		return sprintf( 
 				'<div class="widget-context">
+					<h3>%s</h3>
 					<div class="widget-context-inside">
 					%s
 					</div>
 				</div>',
+				__('Widget Context'),
 				implode( '', $controls )
 			);
 
@@ -361,7 +374,7 @@ class widget_context {
 				'hide' => __('Hide everywhere')
 			);
 
-		return $this->make_simple_dropdown( $control_args, $options );
+		return $this->make_simple_dropdown( $control_args, 'condition', $options );
 	}
 
 	
@@ -388,7 +401,26 @@ class widget_context {
 
 
 	function control_word_count( $control_args ) {
+		return sprintf( 
+				'<p>%s %s %s</p>',
+				$this->make_simple_checkbox( $control_args, 'check_wordcount', __('Has') ),
+				$this->make_simple_dropdown( $control_args, 'check_wordcount_type', array( 'less' => __('less'), 'more' => __('more') ), null, __('than') ),
+				$this->make_simple_textfield( $control_args, 'word_count', null, __('words') )
+			);
+	}
 
+	function control_url( $control_args ) {
+		return sprintf( 
+				'<p>%s</p>',
+				$this->make_simple_textarea( $control_args, 'urls' )
+			);
+	}
+
+	function control_general( $control_args ) {
+		return sprintf( 
+				'<p>%s</p>',
+				$this->make_simple_textarea( $control_args, 'notes' )
+			);
 	}
 
 	
@@ -411,52 +443,67 @@ class widget_context {
 	}
 
 	
-	function make_simple_textarea( $control_args, $label, $tip = null ) {
+	function make_simple_textarea( $control_args, $option, $label = null, $tip = null ) {
+		if ( isset( $control_args['settings'][ $option ] ) )
+			$value = esc_textarea( $control_args['settings'][ $option ] );
+		else
+			$value = '';
+
 		if ( $tip )
 			$tip = sprintf( '<p class="wl-tip">%s</p>', $tip );
 		
 		return sprintf(  
-				'<div class="wl-%s">
-					<label>
-						<strong>%s</strong>
-						<textarea name="wl%s">%s</textarea>
-					</label>
-					%s
-				</div>',
-				$this->get_field_classname( $name ),
+				'<label class="wl-%s">
+					<strong>%s</strong>
+					<textarea name="%s[%s]">%s</textarea>
+				</label>
+				%s',
+				$this->get_field_classname( $option ),
 				$label,
-				$this->get_field_name( $name ),
-				esc_textarea( $this->get_field_value( $name ) ),
+				$control_args['input_prefix'],
+				$option,
+				$value,
 				$tip
 			);
 	}
 
 
-	function make_simple_textfield( $control_args, $label_before = null, $label_after = null) {
+	function make_simple_textfield( $control_args, $option, $label_before = null, $label_after = null) {
+		if ( isset( $control_args['settings'][ $option ] ) )
+			$value = esc_attr( $control_args['settings'][ $option ] );
+		else
+			$value = false;
+
 		return sprintf( 
-				'<label class="wl-%s">%s <input type="text" name="wl%s" value="%s" /> %s</label>',
-				$this->get_field_classname( $name ),
+				'<label class="wl-%s">%s <input type="text" name="%s[%s]" value="%s" /> %s</label>',
+				$this->get_field_classname( $option ),
 				$label_before,
-				$this->get_field_name( $name ),
-				esc_attr( $this->get_field_value( $name ) ),
+				$control_args['input_prefix'],
+				$option,
+				$value,
 				$label_after
 			);
 	}
 
 
-	function make_simple_dropdown( $control_args, $selection = array(), $label_before = null, $label_after = null ) {
+	function make_simple_dropdown( $control_args, $option, $selection = array(), $label_before = null, $label_after = null ) {
 		$options = array();
+
+		if ( isset( $control_args['settings'][ $option ] ) )
+			$value = $control_args['settings'][ $option ];
+		else
+			$value = false;
 
 		if ( empty( $selection ) )
 			$options[] = sprintf( '<option value="">%s</option>', __('No options given') );
 
 		foreach ( $selection as $sid => $svalue )
-			$options[] = sprintf( '<option value="%s" %s>%s</option>', $sid, selected( $control_args['settings'], $sid, false ), $svalue );
+			$options[] = sprintf( '<option value="%s" %s>%s</option>', $sid, selected( $value, $sid, false ), $svalue );
 
 		return sprintf( 
 				'<label class="wl-%s">
 					%s 
-					<select name="%s">
+					<select name="%s[%s]">
 						%s
 					</select> 
 					%s
@@ -464,6 +511,7 @@ class widget_context {
 				'',
 				$label_before, 
 				$control_args['input_prefix'], 
+				$option,
 				implode( '', $options ), 
 				$label_after
 			);
@@ -509,6 +557,30 @@ class widget_context {
 			return $options[ $part ];
 
 		return $value;
+	}
+
+
+	function fix_legacy_options( $options ) {
+		if ( empty( $options ) || ! is_array( $options ) )
+			return $options;
+		
+		foreach ( $options as $widget_id => $option ) {
+
+			// We moved from [incexc] = 1/0 to [incexc][condition] = 1/0
+			if ( isset( $option['incexc'] ) && is_string( $option['incexc'] ) )
+				$options[ $widget_id ]['incexc'] = array( 'condition' => true );
+			
+			// We moved word count out of location context group
+			if ( isset( $option['location']['check_wordcount'] ) )
+				$options[ $widget_id ]['word_count'] = array(
+						'check_wordcount' => true,
+						'check_wordcount_type' => $option['location']['check_wordcount_type'],
+						'word_count' => $option['location']['word_count']
+					);
+		
+		}
+
+		return $options;
 	}
 
 
