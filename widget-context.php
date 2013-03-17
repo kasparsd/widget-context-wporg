@@ -37,6 +37,8 @@ class widget_context {
 	
 	
 	function widget_context() {
+		// Define available widget contexts
+		add_action( 'init', array( $this, 'define_widget_contexts' ), 5 );
 		// Load plugin settings
 		add_action( 'init', array( $this, 'load_plugin_settings' ) );
 		// Amend widget controls with Widget Context controls
@@ -47,8 +49,6 @@ class widget_context {
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
 		// Save widget context settings, when in admin area
 		add_action( 'sidebar_admin_setup', array( $this, 'save_widget_context_settings' ) );
-		// Define available widget contexts
-		add_action( 'sidebar_admin_setup', array( $this, 'define_widget_contexts' ), 20 );
 		// Check the number of words on page
 		add_action( 'wp', array( $this, 'count_words_on_page' ) );
 		// Fix legacy context option naming
@@ -57,10 +57,10 @@ class widget_context {
 
 
 	function load_plugin_settings() {
-		$this->context_options = get_option( $this->options_name );
-
-		if ( ! is_array( $this->context_options ) || empty( $this->context_options ) )
-			$this->context_options = array();
+		$this->context_options = wp_parse_args(
+				(array) get_option( $this->options_name ),
+				array_fill_keys( array_keys( $this->contexts ), null )			
+			);
 
 		$this->context_options = apply_filters( 'widget_context_options', $this->context_options );
 	}
@@ -112,9 +112,11 @@ class widget_context {
 				)
 		);
 
-		// Add default context settings
-		foreach ( $contexts as $context_name => $context_desc )
+		// Add default context controls and checks
+		foreach ( $contexts as $context_name => $context_desc ) {
 			add_filter( 'widget_context_control-' . $context_name, array( $this, 'control_' . $context_name ) );
+			add_filter( 'widget_context_check-' . $context_name, array( $this, 'check_' . $context_name ) );
+		}
 
 		// Enable other plugins and themes to specify their own contexts
 		$this->contexts = apply_filters( 'widget_contexts', $contexts );
@@ -204,12 +206,15 @@ class widget_context {
 
 	
 	function check_widget_visibility( $widget_id ) {
-		// Show widget because no context settings found
-		if ( ! isset( $this->context_options[ $widget_id ] ) )
-			return true;
-		
-		$vis_settings = $this->context_options[ $widget_id ];
+		$matches = array();
 
+		foreach ( $this->contexts as $context_name => $context_settings )
+			$matches[ $context_name ] = apply_filters( 'widget_context_check-' . $context_name, false, $this->context_options[ $widget_id ][ $context_name ] );
+
+		$matches = array_filter( $matches );
+		
+
+		/*
 		// Hide/show if forced
 		if ( $vis_settings['incexc'] == 'hide' )
 			return false;
@@ -278,11 +283,44 @@ class widget_context {
 		} else {
 			$do_show = true;
 		}
+		*/
 		
-		return $do_show;
+		if ( in_array( true, $matches ) )
+			return true;
+		else
+			return false;
 	}
+
+
+	function check_incexc( $settings ) {
+		print_r($settings);
+		return true;
+	}
+
+
+	function check_location( $settings ) {
+		return true;
+	}
+
+
+	function check_word_count( $settings ) {
+		return false;
+	}
+
+
+	function check_url( $settings ) {
+		return true;
+	}
+
+
+	function check_notes( $settings ) {}
+	function check_general( $settings ) {}
 	
-	
+
+	/*
+		Widget Controls
+	 */
+
 	function display_widget_context( $widget_id = null ) {
 
 		$controls = array();
@@ -529,7 +567,7 @@ class widget_context {
 		foreach ( $options as $widget_id => $option ) {
 
 			// We moved from [incexc] = 1/0 to [incexc][condition] = 1/0
-			if ( isset( $option['incexc'] ) && is_string( $option['incexc'] ) )
+			if ( ! is_array( $option['incexc'] ) )
 				$options[ $widget_id ]['incexc'] = array( 'condition' => true );
 			
 			// We moved word count out of location context group
