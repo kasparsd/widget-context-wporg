@@ -40,8 +40,9 @@ class widget_context {
 		add_action( 'init', array( $this, 'load_plugin_settings' ) );
 		// Amend widget controls with Widget Context controls
 		add_action( 'sidebar_admin_setup', array( $this, 'attach_widget_context_controls' ) );
-		// Hide the widget if necessary
-		add_filter( 'widget_display_callback', array( $this, 'maybe_hide_widget' ), 10, 3 );
+		// Remove widget from widetized area (sidebar) on front end only
+		if ( !is_admin() )
+			add_filter( 'sidebars_widgets', array( $this, 'maybe_unset_widget' ), 10 );
 		// Add admin menu for config
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
 		// Save widget context settings, when in admin area
@@ -92,11 +93,17 @@ class widget_context {
 	}
 
 
-	function maybe_hide_widget( $instance, $widget_object, $args ) {
-		if ( ! $this->check_widget_visibility( $args['widget_id'] ) )
-			return false;
-
-		return $instance;
+	function maybe_unset_widget( $sidebars_widgets ) {	
+			foreach( $sidebars_widgets as $widget_area => $widget_list ) {
+			if ( $widget_area == 'wp_inactive_widgets' || empty( $widget_list )) 
+				continue;
+				
+			foreach( $widget_list as $pos => $widget_id ) {
+				if ( ! $this->check_widget_visibility( $widget_id ) )
+					unset( $sidebars_widgets[$widget_area][$pos] );
+			}
+		}
+		return $sidebars_widgets;
 	}
 
 	
