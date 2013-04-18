@@ -135,7 +135,7 @@ class widget_context {
 		else 
 			$uri = $_SERVER['REQUEST_URI'];
 		
-		return (!empty($_SERVER['HTTPS'])) 
+		return (!(empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off')) 
 			? "https://".$_SERVER['SERVER_NAME'].$uri 
 			: "http://".$_SERVER['SERVER_NAME'].$uri;
 	}
