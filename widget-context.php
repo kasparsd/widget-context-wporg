@@ -49,6 +49,8 @@ class widget_context {
 		add_filter( 'admin_init', array( $this, 'save_widget_context_settings' ) );
 		// Check the number of words on page
 		add_action( 'wp', array( $this, 'count_words_on_page' ) );
+    // Load plugin textdomain for translations
+		load_plugin_textdomain('widget-context', false, basename( dirname( __FILE__ ) ) . '/languages' );
 	}
 
 
@@ -256,38 +258,38 @@ class widget_context {
 		
 		return '<div class="widget-context"><div class="widget-context-inside">'
 			. '<p class="wl-visibility">'
-				. $this->make_simple_dropdown( array( $wid, 'incexc' ), array( 'show' => __('Show everywhere'), 'selected' => __('Show on selected'), 'notselected' => __('Hide on selected'), 'hide' => __('Hide everywhere') ), sprintf( '<strong>%s</strong>', __( 'Widget Context' ) ) )
+				. $this->make_simple_dropdown( array( $wid, 'incexc' ), array( 'show' => __('Show everywhere', 'widget-context'), 'selected' => __('Show on selected', 'widget-context'), 'notselected' => __('Hide on selected', 'widget-context'), 'hide' => __('Hide everywhere', 'widget-context') ), sprintf( '<strong>%s</strong>', __( 'Widget Context' ) ) )
 			. '</p>'
 
 			. '<div class="wl-columns">' 
 			. '<div class="wl-column-2-1"><p>' 
-				. $this->make_simple_checkbox( array( $wid, 'location', 'is_front_page' ), __('Front Page') )
-				. $this->make_simple_checkbox( array( $wid, 'location', 'is_home' ), __('Blog Index') )
-				. $this->make_simple_checkbox( array( $wid, 'location', 'is_single' ), __('All Posts') )
-				. $this->make_simple_checkbox( array( $wid, 'location', 'is_page' ), __('All Pages') )
-				. $this->make_simple_checkbox( array( $wid, 'location', 'is_attachment' ), __('All Attachments') )
-				. $this->make_simple_checkbox( array( $wid, 'location', 'is_search' ), __('Search') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_front_page' ), __('Front Page', 'widget-context') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_home' ), __('Blog Index', 'widget-context') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_single' ), __('All Posts', 'widget-context') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_page' ), __('All Pages', 'widget-context') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_attachment' ), __('All Attachments', 'widget-context') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_search' ), __('Search', 'widget-context') )
 			. '</p></div>'
 			. '<div class="wl-column-2-2"><p>' 
-				. $this->make_simple_checkbox( array( $wid, 'location', 'is_archive' ), __('All Archives') )
-				. $this->make_simple_checkbox( array( $wid, 'location', 'is_category' ), __('Category Archive') )
-				. $this->make_simple_checkbox( array( $wid, 'location', 'is_tag' ), __('Tag Archive') )
-				. $this->make_simple_checkbox( array( $wid, 'location', 'is_author' ), __('Author Archive') )
-				. $this->make_simple_checkbox( array( $wid, 'location', 'is_404' ), __('404 Error') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_archive' ), __('All Archives', 'widget-context') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_category' ), __('Category Archive', 'widget-context') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_tag' ), __('Tag Archive', 'widget-context') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_author' ), __('Author Archive', 'widget-context') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'is_404' ), __('404 Error', 'widget-context') )
 			. '</p></div>'
 			
 			. '<div class="wl-word-count"><p>' 
-				. $this->make_simple_checkbox( array( $wid, 'location', 'check_wordcount' ), __('Has') )
-				. $this->make_simple_dropdown( array( $wid, 'location', 'check_wordcount_type' ), array('less' => __('less'), 'more' => __('more')), '', __('than') )
-				. $this->make_simple_textfield( array( $wid, 'location', 'word_count' ), __('words') )
+				. $this->make_simple_checkbox( array( $wid, 'location', 'check_wordcount' ), __('Has', 'widget-context') )
+				. $this->make_simple_dropdown( array( $wid, 'location', 'check_wordcount_type' ), array('less' => __('less', 'widget-context'), 'more' => __('more', 'widget-context')), '', __('than', 'widget-context') )
+				. $this->make_simple_textfield( array( $wid, 'location', 'word_count' ), __('words', 'widget-context') )
 			. '</p></div>'
 			. '</div>'
 			
 			. '<div class="wl-options">'
-				. $this->make_simple_textarea( array( $wid, 'url', 'urls' ), __('or target by URL'), __('Enter one location fragment per line. Use <strong>*</strong> character as a wildcard. Example: <code>category/peace/*</code> to target all posts in category <em>peace</em>.') )
+				. $this->make_simple_textarea( array( $wid, 'url', 'urls' ), __('or target by URL', 'widget-context'), __('Enter one location fragment per line. Use <strong>*</strong> character as a wildcard. Example: <code>category/peace/*</code> to target all posts in category <em>peace</em>.', 'widget-context') )
 			. '</div>'
 			
-			. $this->make_simple_textarea( array( $wid, 'general', 'notes' ), __('Notes (invisible to public)'))
+			. $this->make_simple_textarea( array( $wid, 'general', 'notes' ), __('Notes (invisible to public)', 'widget-context'))
 		. '</div></div>';
 
 	}
@@ -349,7 +351,7 @@ class widget_context {
 		$options = array();
 
 		if ( empty( $selection ) )
-			$options[] = sprintf( '<option value="">%s</option>', __('No options given') );
+			$options[] = sprintf( '<option value="">%s</option>', __('No options given', 'widget-context') );
 
 		foreach ( $selection as $sid => $svalue )
 			$options[] = sprintf( '<option value="%s" %s>%s</option>', $sid, selected( $value, $sid, false ), $svalue );
