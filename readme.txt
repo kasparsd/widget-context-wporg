@@ -30,6 +30,10 @@ Widget Context allows you to show or hide widgets on certain sections of your si
 
 == Changelog ==
 
+**0.8.2**
+
+* Improved SSL/HTTPS detection.
+
 **0.8.1**
 
 * Revert back to changing callback function in `$wp_registered_widgets` for attaching widget context setting controls.
