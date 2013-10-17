@@ -250,6 +250,9 @@ class widget_context {
 		} else {
 			$do_show = true;
 		}
+
+		// Allow other plugins to override any of the above logic
+		$do_show = apply_filters( 'widget_context_visibility', $do_show, $widget_id, $vis_settings );
 		
 		return $do_show;
 	}
