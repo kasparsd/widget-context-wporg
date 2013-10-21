@@ -33,6 +33,7 @@ Widget Context allows you to show or hide widgets on certain sections of your si
 **0.8.2**
 
 * Improved SSL/HTTPS detection.
+* Two new filters so that other plugins can override widget context display/visibility logic.
 
 **0.8.1**
 
