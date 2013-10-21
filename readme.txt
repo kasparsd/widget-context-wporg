@@ -33,6 +33,7 @@ Widget Context allows you to show or hide widgets on certain sections of your si
 **0.8.2**
 
 * Improved SSL/HTTPS detection.
+* Fix: Ensure that is_active_sidebar() & is_dynamic_sidebar() don't return true when there are no widgets displayed on a page.
 * Two new filters so that other plugins can override widget context display/visibility logic.
 
 **0.8.1**
