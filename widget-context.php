@@ -3,7 +3,7 @@
 Plugin Name: Widget Context
 Plugin URI: http://wordpress.org/plugins/widget-context/
 Description: Display widgets in context.
-Version: 0.8.2
+Version: 0.8.3-dev
 Author: Kaspars Dambis
 Author URI: http://konstruktors.com/
 
