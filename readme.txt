@@ -30,6 +30,10 @@ Widget Context allows you to show or hide widgets on certain sections of your si
 
 == Changelog ==
 
+**0.8.3**
+
+* Fix PHP warning that occurred on PHP 5.2.x.
+
 **0.8.2**
 
 * Improved SSL/HTTPS detection.
