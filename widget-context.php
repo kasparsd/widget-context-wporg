@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Widget Context
-Plugin URI: http://wordpress.org/extend/plugins/widget-context/
+Plugin URI: http://wordpress.org/plugins/widget-context/
 Description: Display widgets in context.
 Version: 0.8.2-dev
 Author: Kaspars Dambis
