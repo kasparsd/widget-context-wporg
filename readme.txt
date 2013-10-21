@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=kaspa
 Tags: widget, widget context, context, logic, widget logic, cms
 Requires at least: 3.0
 Tested up to: 3.6.1
-Stable tag: 0.8.1
+Stable tag: 0.8.2
 License: GPLv2 or later
 
 Show or hide widgets on specific posts, pages or sections of your site.
