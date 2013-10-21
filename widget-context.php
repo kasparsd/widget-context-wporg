@@ -61,7 +61,7 @@ class widget_context {
 		
 	
 	function admin_scripts() {
-		wp_enqueue_style( 'widget-context-admin', WP_CONTENT_URL . '/plugins/'. basename(__DIR__) . '/admin-style.css' );
+		wp_enqueue_style( 'widget-context-admin', plugins_url( 'admin-style.css', __FILE__ ) );
 	}
 
 	
