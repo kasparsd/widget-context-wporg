@@ -3,9 +3,9 @@
 Plugin Name: Widget Context
 Plugin URI: http://wordpress.org/extend/plugins/widget-context/
 Description: Display widgets in context.
-Version: 0.8.1
+Version: 0.8.1-filters
 Author: Kaspars Dambis
-Author URI: http://konstruktors.com/
+Author URI: http://kaspars.net
 
 For changelog see readme.txt
 ----------------------------
@@ -35,44 +35,57 @@ class widget_context {
 	var $contexts = array();
 	var $words_on_page = 0;
 	
-	
 	function widget_context() {
+
 		// Define available widget contexts
 		add_action( 'init', array( $this, 'define_widget_contexts' ), 5 );
+
 		// Load plugin settings
 		add_action( 'init', array( $this, 'load_plugin_settings' ) );
+		
 		// Amend widget controls with Widget Context controls
 		add_action( 'sidebar_admin_setup', array( $this, 'attach_widget_context_controls' ) );
+		
 		// Hide the widget if necessary
 		add_filter( 'widget_display_callback', array( $this, 'maybe_hide_widget' ), 10, 3 );
+		
 		// Add admin menu for config
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
+		
 		// Save widget context settings, when in admin area
 		add_action( 'sidebar_admin_setup', array( $this, 'save_widget_context_settings' ) );
+		
 		// Check the number of words on page
 		add_action( 'wp', array( $this, 'count_words_on_page' ) );
+		
 		// Fix legacy context option naming
-		add_filter( 'widget_context_options', array( $this, 'fix_legacy_options' ) );
+		// add_filter( 'widget_context_options', array( $this, 'fix_legacy_options' ) );
+
 	}
 
 
 	function load_plugin_settings() {
+
 		$this->context_options = wp_parse_args(
 				(array) get_option( $this->options_name ),
 				array_fill_keys( array_keys( $this->contexts ), null )			
 			);
 
 		$this->context_options = apply_filters( 'widget_context_options', $this->context_options );
+
 	}
 		
 	
 	function admin_scripts() {
-		wp_enqueue_style( 'widget-context-css', WP_CONTENT_URL . '/plugins/'. basename(__DIR__) . '/admin-style.css' );
-		wp_enqueue_script( 'widget-context-js', WP_CONTENT_URL . '/plugins/'. basename(__DIR__) . '/widget-context.js' );
+
+		wp_enqueue_style( 'widget-context-css', WP_CONTENT_URL . '/plugins/widget-context/admin-style.css' );
+		wp_enqueue_script( 'widget-context-js', WP_CONTENT_URL . '/plugins/widget-context/widget-context.js' );
+	
 	}
 
 	
 	function save_widget_context_settings() {
+
 		if ( ! current_user_can( 'edit_theme_options' ) || empty( $_POST ) || ! isset( $_POST['sidebar'] ) || empty( $_POST['sidebar'] ) )
 			return;
 		
@@ -84,70 +97,85 @@ class widget_context {
 		$this->context_options = array_merge( $this->context_options, $_POST['wl'] );
 
 		update_option( $this->options_name, $this->context_options );
+
 	}
 
 
 	function define_widget_contexts() {
+
 		// Default context
 		$contexts = array(
 				'incexc' => array(
-					'label' => __('Widget Context'),
-					'description' => __('Set the default logic show or hide.')
+					'label' => __( 'Widget Context' ),
+					'description' => __( 'Set the default logic to show or hide.', 'widget-context' )
 				),
 				'location' => array(
-					'label' => __('Global Sections'),
-					'description' => __('Context based on current template.')
+					'label' => __( 'Global Sections' ),
+					'description' => __( 'Context based on current template.', 'widget-context' )
 				),
 				'word_count' => array(
-					'label' => __('Word Count'),
-					'description' => __('Context based on word count on the page.')
+					'label' => __( 'Word Count' ),
+					'description' => __( 'Context based on word count on the page.', 'widget-context' )
 				),
 				'url' => array(
-					'label' => __('Target by URL'),
-					'description' => __('Context based on URL pattern.')
+					'label' => __( 'Target by URL' ),
+					'description' => __( 'Context based on URL pattern.', 'widget-context' )
 				),
 				'general' => array(
-					'label' => __('Notes (invisible to public)'),
+					'label' => __( 'Notes (invisible to public)', 'widget-context' ),
 					'description' => __('Notes to admins.')
 				)
 		);
 
 		// Add default context controls and checks
 		foreach ( $contexts as $context_name => $context_desc ) {
-			add_filter( 'widget_context_control-' . $context_name, array( $this, 'control_' . $context_name ) );
-			add_filter( 'widget_context_check-' . $context_name, array( $this, 'check_' . $context_name ) );
+
+			add_filter( 'widget_context_control-' . $context_name, array( $this, 'control_' . $context_name ), 10, 2 );
+			add_filter( 'widget_context_check-' . $context_name, array( $this, 'context_check_' . $context_name ), 10, 2 );
+
 		}
 
 		// Enable other plugins and themes to specify their own contexts
 		$this->contexts = apply_filters( 'widget_contexts', $contexts );
+
 	}
 	
 	
 	function attach_widget_context_controls() {
+
 		global $wp_registered_widget_controls, $wp_registered_widgets;
 		
 		foreach ($wp_registered_widgets as $widget_id => $widget_data) {
+
 			// Pass widget id as param, so that we can later call the original callback function
 			$wp_registered_widget_controls[$widget_id]['params'][]['widget_id'] = $widget_id;
 			// Store the original callback functions and replace them with Widget Context
 			$wp_registered_widget_controls[$widget_id]['callback_original_wc'] = $wp_registered_widget_controls[$widget_id]['callback'];
 			$wp_registered_widget_controls[$widget_id]['callback'] = array($this, 'replace_widget_control_callback');
+
 		}
+
 	}
 
 
 	function maybe_hide_widget( $instance, $widget_object, $args ) {
-		if ( ! $this->check_widget_visibility( $args['widget_id'] ) )
+
+		// Make sure that widget is not being hidden already,
+		// then check our visibility settings
+		if ( $instance && ! $this->check_widget_visibility( $args['widget_id'] ) )
 			return false;
 
 		return $instance;
+
 	}
 
 	
 	function replace_widget_control_callback() {
+
 		global $wp_registered_widget_controls;
 		
 		$all_params = func_get_args();
+
 		if (is_array($all_params[1]))
 			$widget_id = $all_params[1]['widget_id'];
 		else
@@ -163,10 +191,12 @@ class widget_context {
 		}
 		
 		print $this->display_widget_context( $widget_id );
+
 	}
 	
 	
 	function get_current_url() {
+
 		if ($_SERVER['REQUEST_URI'] == '') 
 			$uri = $_SERVER['REDIRECT_URL'];
 		else 
@@ -175,11 +205,13 @@ class widget_context {
 		return (!empty($_SERVER['HTTPS'])) 
 			? "https://".$_SERVER['SERVER_NAME'].$uri 
 			: "http://".$_SERVER['SERVER_NAME'].$uri;
+
 	}
 
 	
 	// Thanks to Drupal: http://api.drupal.org/api/function/drupal_match_path/6
 	function match_path( $path, $patterns ) {
+
 		$patterns_safe = array();
 
 		// Strip home url and check only the REQUEST_URI part
@@ -191,10 +223,12 @@ class widget_context {
 		$regexps = '/^('. preg_replace( array( '/(\r\n|\n| )+/', '/\\\\\*/' ), array( '|', '.*' ), preg_quote( implode( "\n", array_filter( $patterns_safe, 'trim' ) ), '/' ) ) .')$/';
 
 		return preg_match( $regexps, $path );
+
 	}
 	
 	
 	function count_words_on_page() {
+
 		global $wp_query;
 		
 		if ( empty( $wp_query->posts ) || is_admin() )
@@ -202,17 +236,29 @@ class widget_context {
 
 		foreach ( $wp_query->posts as $post_data )
 			$this->words_on_page += str_word_count( strip_tags( strip_shortcodes( $post_data->post_content ) ) );
+
 	}
 
 	
 	function check_widget_visibility( $widget_id ) {
+
 		$matches = array();
 
-		foreach ( $this->contexts as $context_name => $context_settings )
-			$matches[ $context_name ] = apply_filters( 'widget_context_check-' . $context_name, false, $this->context_options[ $widget_id ][ $context_name ] );
+		foreach ( $this->contexts as $context_id => $context_settings ) {
 
-		$matches = array_filter( $matches );
-		
+			// Make sure that context settings for this widget are defined
+			if ( ! isset( $this->context_options[ $widget_id ][ $context_id ] ) )
+				$widget_context_args = array();
+			else
+				$widget_context_args = $this->context_options[ $widget_id ][ $context_id ];
+
+			$matches[ $context_id ] = apply_filters( 
+					'widget_context_check-' . $context_id, 
+					null, 
+					$widget_context_args
+				);
+
+		}
 
 		/*
 		// Hide/show if forced
@@ -285,37 +331,108 @@ class widget_context {
 		}
 		*/
 		
-		if ( in_array( true, $matches ) )
+		// Get the current match rule
+		$match_rule = $this->context_options[ $widget_id ][ 'incexc' ][ 'condition' ];
+
+		// Force show or hide the widget!
+		if ( $match_rule == 'show' )
+			return true;
+		elseif ( $match_rule == 'hide' )
+			return false;
+
+		if ( $match_rule == 'selected' )
+			$inc = true;
+		else
+			$inc = false;
+
+		if ( $inc && in_array( true, $matches ) )
+			return true;
+		elseif ( ! $inc && ! in_array( true, $matches ) )
 			return true;
 		else
 			return false;
+
 	}
 
 
-	function check_incexc( $settings ) {
-		print_r($settings);
-		return true;
+	function context_check_incexc( $check, $settings ) {
+
+		return $check;
+
 	}
 
 
-	function check_location( $settings ) {
-		return true;
+	function context_check_location( $check, $settings ) {
+
+		$status = array(
+				'is_front_page' => is_front_page(),
+				'is_home' => is_home(),
+				'is_single' => is_single(),
+				'is_page' => is_page(),
+				'is_attachment' => is_attachment(),
+				'is_search' => is_search(),
+				'is_404' => is_404(),
+				'is_archive' => is_archive(),
+				'is_category' => is_category(),
+				'is_tag' => is_tag(),
+				'is_author' => is_author()
+			);
+
+		$matched = array_intersect_assoc( $settings, $status );
+
+		if ( ! empty( $matched ) )
+			return true;
+
+		return $check;
+
 	}
 
 
-	function check_word_count( $settings ) {
-		return false;
+	function context_check_word_count( $check, $settings ) {
+		
+		$settings = wp_parse_args( $settings, array(
+				'word_count' => null,
+				'check_wordcount_type' => null
+			) );
+
+		$word_count = (int) $settings['word_count'];
+
+		// No word count specified, bail out
+		if ( ! $word_count )
+			return $check;
+
+		if ( $settings['check_wordcount_type'] == 'less' && $this->words_on_page < $word_count )
+			return true;
+		elseif ( $settings['check_wordcount_type'] == 'more' && $this->words_on_page > $word_count )
+			return true;
+
+		return $check;
+
 	}
 
 
-	function check_url( $settings ) {
-		return true;
+	function context_check_url( $check, $settings ) {
+
+		$urls = trim( $settings['urls'] );
+
+		if ( empty( $urls ) )
+			return $check;
+
+		if ( $this->match_path( $this->get_current_url(), $urls ) ) 
+			return true;
+
+		return $check;
+
 	}
 
 
-	function check_notes( $settings ) {}
-	function check_general( $settings ) {}
-	
+	// Dummy function
+	function context_check_notes( $check, $widget_id ) {}
+
+
+	// Dummy function
+	function context_check_general( $check, $widget_id ) {}
+
 
 	/*
 		Widget Controls
@@ -361,64 +478,73 @@ class widget_context {
 					%s
 					</div>
 				</div>',
-				__('Widget Context'),
-				__('Expand'),
-				__('Collapse'),
+				__( 'Widget Context', 'widget-context' ),
+				__( 'Expand', 'widget-context' ),
+				__( 'Collapse', 'widget-context' ),
 				implode( '', $controls )
 			);
+
 	}
 
 
 	function control_incexc( $control_args ) {
+
 		$options = array(
-				'show' => __('Show everywhere'), 
-				'selected' => __('Show on selected'), 
-				'notselected' => __('Hide on selected'), 
-				'hide' => __('Hide everywhere')
+				'show' => __( 'Show widget everywhere', 'widget-context' ), 
+				'selected' => __( 'Show widget on selected', 'widget-context' ), 
+				'notselected' => __( 'Hide widget on selected', 'widget-context' ), 
+				'hide' => __( 'Hide widget everywhere', 'widget-context' )
 			);
 
 		return $this->make_simple_dropdown( $control_args, 'condition', $options );
+
 	}
 
 	
 	function control_location( $control_args ) {
+
 		$options = array(
-				'is_front_page' => __('Front Page'),
-				'is_home' => __('Blog Index'),
-				'is_single' => __('All Posts'),
-				'is_page' => __('All Pages'),
-				'is_attachment' => __('All Attachments'),
-				'is_search' => __('Search Results'),
-				'is_404' => __('404 Error Page'),
-				'is_archive' => __('All Archives'),
-				'is_category' => __('Category Archive'),
-				'is_tag' => __('Tag Archive'),
-				'is_author' => __('Author Archive')
+				'is_front_page' => __( 'Front Page', 'widget-context' ),
+				'is_home' => __( 'Blog Page', 'widget-context' ),
+				'is_single' => __( 'All Posts', 'widget-context' ),
+				'is_page' => __( 'All Pages', 'widget-context' ),
+				'is_attachment' => __( 'All Attachments', 'widget-context' ),
+				'is_search' => __( 'Search Results', 'widget-context' ),
+				'is_404' => __( '404 Error Page', 'widget-context' ),
+				'is_archive' => __( 'All Archives', 'widget-context' ),
+				'is_category' => __( 'All Category Archives', 'widget-context' ),
+				'is_tag' => __( 'All Tag Archives', 'widget-context' ),
+				'is_author' => __( 'Author Archive', 'widget-context' )
 			);
 
 		foreach ( $options as $option => $label )
 			$out[] = $this->make_simple_checkbox( $control_args, $option, $label );
 
 		return implode( '', $out );
+
 	}
 
 
 	function control_word_count( $control_args ) {
+
 		return sprintf( 
 				'<p>%s %s %s</p>',
 				$this->make_simple_checkbox( $control_args, 'check_wordcount', __('Has') ),
 				$this->make_simple_dropdown( $control_args, 'check_wordcount_type', array( 'less' => __('less'), 'more' => __('more') ), null, __('than') ),
 				$this->make_simple_textfield( $control_args, 'word_count', null, __('words') )
 			);
+
 	}
 
 	function control_url( $control_args ) {
+
 		return sprintf( 
 				'<div>%s</div>
 				<p class="help">%s</p>',
 				$this->make_simple_textarea( $control_args, 'urls' ),
 				__('Enter one location fragment per line. Use <strong>*</strong> character as a wildcard. Example: <code>category/peace/*</code> to target all posts in category <em>peace</em>.')
 			);
+
 	}
 
 	function control_general( $control_args ) {
@@ -437,14 +563,16 @@ class widget_context {
 
 	
 	function make_simple_checkbox( $control_args, $option, $label ) {
+
 		return sprintf(
-				'<label class="wl-location-%s"><input type="checkbox" value="1" name="%s[%s]" %s />&nbsp;%s</label>',
+				'<label class="wc-location-%s"><input type="checkbox" value="1" name="%s[%s]" %s />&nbsp;%s</label>',
 				$this->get_field_classname( $option ),
 				$control_args['input_prefix'],
 				esc_attr( $option ),
 				checked( isset( $control_args['settings'][ $option ] ), true, false ),
 				$label
 			);
+
 	}
 
 	
@@ -455,7 +583,7 @@ class widget_context {
 			$value = '';
 		
 		return sprintf(  
-				'<label class="wl-%s">
+				'<label class="wc-%s">
 					<strong>%s</strong>
 					<textarea name="%s[%s]">%s</textarea>
 				</label>',
@@ -469,6 +597,7 @@ class widget_context {
 
 
 	function make_simple_textfield( $control_args, $option, $label_before = null, $label_after = null) {
+
 		if ( isset( $control_args['settings'][ $option ] ) )
 			$value = esc_attr( $control_args['settings'][ $option ] );
 		else
@@ -483,10 +612,12 @@ class widget_context {
 				$value,
 				$label_after
 			);
+		
 	}
 
 
 	function make_simple_dropdown( $control_args, $option, $selection = array(), $label_before = null, $label_after = null ) {
+
 		$options = array();
 
 		if ( isset( $control_args['settings'][ $option ] ) )
@@ -515,7 +646,9 @@ class widget_context {
 				implode( '', $options ), 
 				$label_after
 			);
+
 	}
+
 
 	/**
 	 * Returns [part1][part2][partN] from array( 'part1', 'part2', 'part3' )
@@ -561,6 +694,7 @@ class widget_context {
 
 
 	function fix_legacy_options( $options ) {
+
 		if ( empty( $options ) || ! is_array( $options ) )
 			return $options;
 		
@@ -581,6 +715,7 @@ class widget_context {
 		}
 
 		return $options;
+
 	}
 
 

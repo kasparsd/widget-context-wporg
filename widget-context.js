@@ -1,5 +1,6 @@
 jQuery(window).ready(function($) {
 
+	/*
 	$('.widget-context-inside, .toggle-contexts .collapse').hide();
 
 	$(document).ajaxComplete( function( e, xhr, settings ) {
@@ -17,5 +18,6 @@ jQuery(window).ready(function($) {
 
 		return false;
 	});
+	*/
 
 });

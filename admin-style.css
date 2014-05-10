@@ -1,9 +1,9 @@
 
-.widget-context { float:left; width:100%; clear:both; margin:0.5em -12px; padding:0.5em 12px; border-top:1px solid #dfdfdf; border-bottom:1px solid #dfdfdf; background:#eee; }
+.widget-context { float:left; width:100%; clear:both; margin:1em -16px; padding:1em 16px; border-top:1px solid #dfdfdf; border-bottom:1px solid #dfdfdf; }
 .widget-context-inside { float:left; width:100%; clear:both; padding-top:0.5em; }
-.widget-context .toggle-contexts { text-decoration:none; float:right; margin:0 0 -10em -100em; }
+.widget-context .toggle-contexts { display:none; }
 .widget .widget-context-inside p { margin:0 0 0.5em; }
-.widget-context h3 { float:left; width:100%; font-size:1.05em; margin:0; padding:0; }
+.widget-context h3 { font-size:1em; margin:0; padding:0; }
 .widget-context textarea { display:block; width:100%; height:8em; font:inherit; }
 .widget-context .help { line-height:1.2; color:#666; }
 
@@ -13,8 +13,8 @@
 .context-group-incexc select { width:100%; }
 .context-group-incexc .context-toggle { display:none; } 
 
-.context-group-location .context-group-wrap { max-height:7em; overflow:scroll; padding:0.5em; margin-bottom:0.5em; background:#fff; border:1px solid #ddd; } 
-.context-group-location label { display:block; }
+.context-group-location .context-group-wrap { max-height:10em; overflow:auto; padding:0.5em; margin-bottom:0.5em; background:#fff; border:1px solid #ddd; } 
+.context-group-location label { display:block; padding:0.25em 0; }
 
 .context-group-wrap .wl-word-count input { width:3em; }
 
