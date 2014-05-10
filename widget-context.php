@@ -31,6 +31,7 @@ widget_context::instance();
 class widget_context {
 	
 	private static $instance;
+	private $sidebars_widgets;
 
 	var $options_name = 'widget_logic_options'; // Widget context settings (visibility, etc)
 	var $context_options = array();
@@ -53,13 +54,12 @@ class widget_context {
 		// Define available widget contexts
 		add_action( 'init', array( $this, 'define_widget_contexts' ), 5 );
 
-		// Load plugin settings
-		add_action( 'init', array( $this, 'load_plugin_settings' ) );
+		// Load plugin settings and show/hide widgets by altering the 
+		// $sidebars_widgets global variable
+		add_action( 'init', array( $this, 'init_widget_context' ) );
 		
+		// Append Widget Context settings to widget controls
 		add_action( 'in_widget_form', array( $this, 'widget_context_controls' ), 10, 3 );
-		
-		// Hide the widget if necessary
-		add_filter( 'widget_display_callback', array( $this, 'maybe_hide_widget' ), 10, 3 );
 		
 		// Add admin menu for config
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
@@ -70,7 +70,7 @@ class widget_context {
 	}
 
 
-	function load_plugin_settings() {
+	function init_widget_context() {
 
 		$this->context_options = wp_parse_args(
 				(array) get_option( $this->options_name ),
@@ -78,6 +78,9 @@ class widget_context {
 			);
 
 		$this->context_options = apply_filters( 'widget_context_options', $this->context_options );
+
+		// Remove widgets for is_active_sidebar() to work
+		add_filter( 'sidebars_widgets', array( $this, 'maybe_unset_widgets_by_context' ), 10 );
 
 	}
 		
@@ -177,51 +180,43 @@ class widget_context {
 	}
 
 
-	function maybe_hide_widget( $instance, $widget_object, $args ) {
+	function maybe_unset_widgets_by_context( $sidebars_widgets ) {
 
-		// Make sure that widget is not being hidden already,
-		// then check our visibility settings
-		if ( $instance && ! $this->check_widget_visibility( $args['widget_id'] ) )
-			return false;
+		// Don't run this on the backend
+		if ( is_admin() )
+			return $sidebars_widgets;
 
-		return $instance;
+		// Return from cache if we have done the context checks already
+		if ( ! empty( $this->sidebars_widgets ) )
+			return $this->sidebars_widgets;
 
-	}
-	
-	
-	function get_current_url() {
+		foreach( $sidebars_widgets as $widget_area => $widget_list ) {
 
-		if ($_SERVER['REQUEST_URI'] == '') 
-			$uri = $_SERVER['REDIRECT_URL'];
-		else 
-			$uri = $_SERVER['REQUEST_URI'];
-		
-		return (!empty($_SERVER['HTTPS'])) 
-			? "https://".$_SERVER['SERVER_NAME'].$uri 
-			: "http://".$_SERVER['SERVER_NAME'].$uri;
+			if ( $widget_area == 'wp_inactive_widgets' || empty( $widget_list ) ) 
+				continue;
 
-	}
+			foreach( $widget_list as $pos => $widget_id ) {
 
-	
-	// Thanks to Drupal: http://api.drupal.org/api/function/drupal_match_path/6
-	function match_path( $path, $patterns ) {
+				if ( ! $this->check_widget_visibility( $widget_id ) )
+					unset( $sidebars_widgets[ $widget_area ][ $pos ] );
 
-		$patterns_safe = array();
+			}
 
-		// Strip home url and check only the REQUEST_URI part
-		$path = trim( str_replace( trailingslashit( get_bloginfo('url') ), '', $path ), '/' );
+		}
 
-		foreach ( explode( "\n", $patterns ) as $pattern )
-			$patterns_safe[] = trim( trim( $pattern ), '/' );
+		// Store in class cache
+		$this->sidebars_widgets = $sidebars_widgets;
 
-		$regexps = '/^('. preg_replace( array( '/(\r\n|\n| )+/', '/\\\\\*/' ), array( '|', '.*' ), preg_quote( implode( "\n", array_filter( $patterns_safe, 'trim' ) ), '/' ) ) .')$/';
-
-		return preg_match( $regexps, $path );
+		return $sidebars_widgets;
 
 	}
 
 	
 	function check_widget_visibility( $widget_id ) {
+
+		// Check if this widget even has context enabled
+		if ( ! isset( $this->context_options[ $widget_id ] ) )
+			return true;
 
 		$matches = array();
 
@@ -240,77 +235,6 @@ class widget_context {
 				);
 
 		}
-
-		/*
-		// Hide/show if forced
-		if ( $vis_settings['incexc'] == 'hide' )
-			return false;
-		elseif ( $vis_settings['incexc'] == 'show' )
-			return true;
-		
-		$do_show = true;
-		$do_show_by_select = false;
-		$do_show_by_url = false;
-		$do_show_by_word_count = false;
-		
-		// Check by current URL
-		if ( ! empty( $vis_settings['url']['urls'] ) )
-			if ( $this->match_path( $this->get_current_url(), $vis_settings['url']['urls'] ) ) 
-				$do_show_by_url = true;
-
-		// Check by tag settings
-		if ( ! empty( $vis_settings['location'] ) ) {
-			$currently = array();
-			
-			if ( is_front_page() && ! is_paged() ) $currently['is_front_page'] = true;
-			if ( is_home() && ! is_paged() ) $currently['is_home'] = true;
-			if ( is_page() && ! is_attachment() ) $currently['is_page'] = true;
-			if ( is_single() && ! is_attachment() ) $currently['is_single'] = true;
-			if ( is_archive() ) $currently['is_archive'] = true;
-			if ( is_category() ) $currently['is_category'] = true;
-			if ( is_tag() ) $currently['is_tag'] = true;
-			if ( is_author() ) $currently['is_author'] = true;
-			if ( is_search() ) $currently['is_search'] = true;
-			if ( is_404() ) $currently['is_404'] = true;
-			if ( is_attachment() ) $currently['is_attachment'] = true;
-			
-			// Check for selected pages/sections
-			if ( array_intersect_key( $currently, $vis_settings['location'] ) )
-				$do_show_by_select = true;
-
-			// Word count
-			if ( isset( $vis_settings['location']['check_wordcount'] ) ) {
-				// Check for word count
-				$word_count_to_check = intval( $vis_settings['location']['word_count'] );
-				$check_type = $vis_settings['location']['check_wordcount_type'];
-
-				if ( $this->words_on_page > $word_count_to_check && $check_type == 'more' )
-					$do_show_by_word_count = true;
-				elseif ( $this->words_on_page < $word_count_to_check && $check_type == 'less' )
-					$do_show_by_word_count = true;
-				else
-					$do_show_by_word_count = false;
-			}	
-		}
-		
-		// Combine all context checks
-		if ($do_show_by_word_count || $do_show_by_url || $do_show_by_select)
-			$one_is_true = true;
-		elseif (!$do_show_by_word_count || !$do_show_by_url || !$do_show_by_select)
-			$one_is_true = false;	
-		
-		if (($vis_settings['incexc'] == 'selected') && $one_is_true) {
-			// Show on selected
-			$do_show = true;
-		} elseif (($vis_settings['incexc'] == 'notselected') && !$one_is_true) {
-			// Hide on selected
-			$do_show = true;
-		} elseif (!empty($vis_settings['incexc'])) {
-			$do_show = false;
-		} else {
-			$do_show = true;
-		}
-		*/
 		
 		// Get the match rule for this widget (show/hide/selected/notselected)
 		$match_rule = $this->context_options[ $widget_id ][ 'incexc' ][ 'condition' ];
@@ -380,10 +304,30 @@ class widget_context {
 		if ( empty( $urls ) )
 			return $check;
 
-		if ( $this->match_path( $this->get_current_url(), $urls ) ) 
+		if ( $this->match_path( $urls ) ) 
 			return true;
 
 		return $check;
+
+	}
+
+	
+	// Thanks to Drupal: http://api.drupal.org/api/function/drupal_match_path/6
+	function match_path( $patterns ) {
+
+		global $wp;
+
+		$patterns_safe = array();
+
+		foreach ( explode( "\n", $patterns ) as $pattern )
+			$patterns_safe[] = trim( trim( $pattern ), '/' ); // Trim trailing and leading slashes
+
+		// Remove empty URL patterns
+		$patterns_safe = array_filter( $patterns_safe );
+
+		$regexps = '/^('. preg_replace( array( '/(\r\n|\n| )+/', '/\\\\\*/' ), array( '|', '.*' ), preg_quote( implode( "\n", array_filter( $patterns_safe, 'trim' ) ), '/' ) ) .')$/';
+
+		return preg_match( $regexps, $wp->request );
 
 	}
 
