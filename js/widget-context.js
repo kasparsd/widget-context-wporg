@@ -13,10 +13,14 @@ jQuery(window).ready(function($) {
 	});
 
 	$('.widget-context .toggle-contexts').live( 'click', function() {
-		$(this).siblings('.widget-context-inside').slideToggle('fast');
-		$('span', this).toggle();
+
+		var widget_id = $(this).attr('href');
+
+		$( widget_id ).slideToggle('fast');
+		$( 'span', this ).toggle();
 
 		return false;
+
 	});
 	*/
 

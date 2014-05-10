@@ -1,11 +1,13 @@
 
-.widget-context { float:left; width:100%; clear:both; margin:1em -16px; padding:1em 16px; border-top:1px solid #dfdfdf; border-bottom:1px solid #dfdfdf; }
-.widget-context-inside { float:left; width:100%; clear:both; padding-top:0.5em; }
-.widget-context .toggle-contexts { display:none; }
+.widget-context { float:left; width:100%; clear:both; margin:1em -16px; padding:0.5em 16px; border-top:1px solid #dfdfdf; border-bottom:1px solid #dfdfdf; }
+.widget-context-inside { float:left; width:100%; clear:both; padding-top:1em; }
+.widget-context .toggle-contexts { }
 .widget .widget-context-inside p { margin:0 0 0.5em; }
-.widget-context h3 { font-size:1em; margin:0; padding:0; }
 .widget-context textarea { display:block; width:100%; height:8em; font:inherit; }
 .widget-context .help { line-height:1.2; color:#666; }
+
+.widget-context .widget-context-header { float:left; width:100%; clear:both; }
+.widget-context .widget-context-header h3 { font-size:1em; margin:0 0.5em 0 0; padding:0; display:inline; }
 
 .widget-context .context-group { float:left; width:100%; clear:both; margin-bottom:0.5em; }
 .widget-context .context-toggle { margin:0 0 0.3em 0; display:block; text-decoration:none; color:inherit; font-weight:bold; }
