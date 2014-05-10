@@ -72,9 +72,14 @@ class WidgetContextWordCount {
 	function context_check_word_count( $check, $settings ) {
 		
 		$settings = wp_parse_args( $settings, array(
+				'check_wordcount' => false,
 				'word_count' => null,
 				'check_wordcount_type' => null
 			) );
+
+		// Make sure this context check was enabled
+		if ( ! $settings['check_wordcount'] )
+			return $check;
 
 		$word_count = (int) $settings['word_count'];
 
