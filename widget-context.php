@@ -3,7 +3,7 @@
 Plugin Name: Widget Context
 Plugin URI: http://wordpress.org/extend/plugins/widget-context/
 Description: Display widgets in context.
-Version: 0.8.1-filters
+Version: 1.0-alpha
 Author: Kaspars Dambis
 Author URI: http://kaspars.net
 
@@ -26,16 +26,29 @@ For changelog see readme.txt
 */
 
 // Go!
-new widget_context();
+widget_context::instance();
 
 class widget_context {
 	
+	private static $instance;
+
 	var $options_name = 'widget_logic_options'; // Widget context settings (visibility, etc)
 	var $context_options = array();
 	var $contexts = array();
-	var $words_on_page = 0;
+	var $plugin_path;
+
 	
-	function widget_context() {
+	static function instance() {
+
+		if ( ! self::$instance )
+			self::$instance = new self();
+
+		return self::$instance;
+
+	}
+
+	
+	private function widget_context() {
 
 		// Define available widget contexts
 		add_action( 'init', array( $this, 'define_widget_contexts' ), 5 );
@@ -43,8 +56,7 @@ class widget_context {
 		// Load plugin settings
 		add_action( 'init', array( $this, 'load_plugin_settings' ) );
 		
-		// Amend widget controls with Widget Context controls
-		add_action( 'sidebar_admin_setup', array( $this, 'attach_widget_context_controls' ) );
+		add_action( 'in_widget_form', array( $this, 'widget_context_controls' ), 10, 3 );
 		
 		// Hide the widget if necessary
 		add_filter( 'widget_display_callback', array( $this, 'maybe_hide_widget' ), 10, 3 );
@@ -54,12 +66,6 @@ class widget_context {
 		
 		// Save widget context settings, when in admin area
 		add_action( 'sidebar_admin_setup', array( $this, 'save_widget_context_settings' ) );
-		
-		// Check the number of words on page
-		add_action( 'wp', array( $this, 'count_words_on_page' ) );
-		
-		// Fix legacy context option naming
-		// add_filter( 'widget_context_options', array( $this, 'fix_legacy_options' ) );
 
 	}
 
@@ -77,10 +83,25 @@ class widget_context {
 		
 	
 	function admin_scripts() {
+		
+		wp_enqueue_style( 
+			'widget-context-css', 
+			plugins_url( 'css/admin.css', plugin_basename( __FILE__ ) ) 
+		);
 
-		wp_enqueue_style( 'widget-context-css', WP_CONTENT_URL . '/plugins/widget-context/admin-style.css' );
-		wp_enqueue_script( 'widget-context-js', WP_CONTENT_URL . '/plugins/widget-context/widget-context.js' );
+		wp_enqueue_script( 
+			'widget-context-js', 
+			plugins_url( 'js/widget-context.js', plugin_basename( __FILE__ ) ), 
+			array( 'jquery' ) 
+		);
 	
+	}
+
+
+	function widget_context_controls( $object, $return, $instance ) {
+
+		echo $this->display_widget_context( $object->id );
+
 	}
 
 	
@@ -104,31 +125,31 @@ class widget_context {
 	function define_widget_contexts() {
 
 		// Default context
-		$contexts = array(
-				'incexc' => array(
-					'label' => __( 'Widget Context' ),
-					'description' => __( 'Set the default logic to show or hide.', 'widget-context' )
-				),
-				'location' => array(
-					'label' => __( 'Global Sections' ),
-					'description' => __( 'Context based on current template.', 'widget-context' )
-				),
-				'word_count' => array(
-					'label' => __( 'Word Count' ),
-					'description' => __( 'Context based on word count on the page.', 'widget-context' )
-				),
-				'url' => array(
-					'label' => __( 'Target by URL' ),
-					'description' => __( 'Context based on URL pattern.', 'widget-context' )
-				),
-				'general' => array(
-					'label' => __( 'Notes (invisible to public)', 'widget-context' ),
-					'description' => __('Notes to admins.')
-				)
+		$default_contexts = array(
+			'incexc' => array(
+				'label' => __( 'Widget Context' ),
+				'description' => __( 'Set the default logic to show or hide.', 'widget-context' ),
+				'weight' => -100
+			),
+			'location' => array(
+				'label' => __( 'Global Sections' ),
+				'description' => __( 'Context based on current template.', 'widget-context' ),
+				'weight' => 10
+			),
+			'url' => array(
+				'label' => __( 'Target by URL' ),
+				'description' => __( 'Context based on URL pattern.', 'widget-context' ),
+				'weight' => 10
+			),
+			'general' => array(
+				'label' => __( 'Notes (invisible to public)', 'widget-context' ),
+				'description' => __('Notes to admins.'),
+				'weight' => 90
+			)
 		);
 
 		// Add default context controls and checks
-		foreach ( $contexts as $context_name => $context_desc ) {
+		foreach ( $default_contexts as $context_name => $context_desc ) {
 
 			add_filter( 'widget_context_control-' . $context_name, array( $this, 'control_' . $context_name ), 10, 2 );
 			add_filter( 'widget_context_check-' . $context_name, array( $this, 'context_check_' . $context_name ), 10, 2 );
@@ -136,24 +157,22 @@ class widget_context {
 		}
 
 		// Enable other plugins and themes to specify their own contexts
-		$this->contexts = apply_filters( 'widget_contexts', $contexts );
+		$this->contexts = apply_filters( 'widget_contexts', $default_contexts );
+
+		uasort( $this->contexts, array( $this, 'sort_context_by_weight' ) );
 
 	}
-	
-	
-	function attach_widget_context_controls() {
 
-		global $wp_registered_widget_controls, $wp_registered_widgets;
-		
-		foreach ($wp_registered_widgets as $widget_id => $widget_data) {
 
-			// Pass widget id as param, so that we can later call the original callback function
-			$wp_registered_widget_controls[$widget_id]['params'][]['widget_id'] = $widget_id;
-			// Store the original callback functions and replace them with Widget Context
-			$wp_registered_widget_controls[$widget_id]['callback_original_wc'] = $wp_registered_widget_controls[$widget_id]['callback'];
-			$wp_registered_widget_controls[$widget_id]['callback'] = array($this, 'replace_widget_control_callback');
+	function sort_context_by_weight( $a, $b ) {
 
-		}
+		if ( ! isset( $a['weight'] ) )
+			$a['weight'] = 10;
+
+		if ( ! isset( $b['weight'] ) )
+			$b['weight'] = 10;
+
+		return ( $a['weight'] < $b['weight'] ) ? -1 : 1;
 
 	}
 
@@ -166,31 +185,6 @@ class widget_context {
 			return false;
 
 		return $instance;
-
-	}
-
-	
-	function replace_widget_control_callback() {
-
-		global $wp_registered_widget_controls;
-		
-		$all_params = func_get_args();
-
-		if (is_array($all_params[1]))
-			$widget_id = $all_params[1]['widget_id'];
-		else
-			$widget_id = $all_params[0]['widget_id'];
-			
-		$original_callback = $wp_registered_widget_controls[$widget_id]['callback_original_wc'];
-		
-		// Display the original callback
-		if (isset($original_callback) && is_callable($original_callback)) {
-			call_user_func_array($original_callback, $all_params);
-		} else {
-			print '<!-- widget context [controls]: could not call the original callback function -->';
-		}
-		
-		print $this->display_widget_context( $widget_id );
 
 	}
 	
@@ -223,19 +217,6 @@ class widget_context {
 		$regexps = '/^('. preg_replace( array( '/(\r\n|\n| )+/', '/\\\\\*/' ), array( '|', '.*' ), preg_quote( implode( "\n", array_filter( $patterns_safe, 'trim' ) ), '/' ) ) .')$/';
 
 		return preg_match( $regexps, $path );
-
-	}
-	
-	
-	function count_words_on_page() {
-
-		global $wp_query;
-		
-		if ( empty( $wp_query->posts ) || is_admin() )
-			return;
-
-		foreach ( $wp_query->posts as $post_data )
-			$this->words_on_page += str_word_count( strip_tags( strip_shortcodes( $post_data->post_content ) ) );
 
 	}
 
@@ -331,7 +312,7 @@ class widget_context {
 		}
 		*/
 		
-		// Get the current match rule
+		// Get the match rule for this widget (show/hide/selected/notselected)
 		$match_rule = $this->context_options[ $widget_id ][ 'incexc' ][ 'condition' ];
 
 		// Force show or hide the widget!
@@ -354,6 +335,10 @@ class widget_context {
 
 	}
 
+
+	/**
+	 * Default context checks
+	 */
 
 	function context_check_incexc( $check, $settings ) {
 
@@ -381,29 +366,6 @@ class widget_context {
 		$matched = array_intersect_assoc( $settings, $status );
 
 		if ( ! empty( $matched ) )
-			return true;
-
-		return $check;
-
-	}
-
-
-	function context_check_word_count( $check, $settings ) {
-		
-		$settings = wp_parse_args( $settings, array(
-				'word_count' => null,
-				'check_wordcount_type' => null
-			) );
-
-		$word_count = (int) $settings['word_count'];
-
-		// No word count specified, bail out
-		if ( ! $word_count )
-			return $check;
-
-		if ( $settings['check_wordcount_type'] == 'less' && $this->words_on_page < $word_count )
-			return true;
-		elseif ( $settings['check_wordcount_type'] == 'more' && $this->words_on_page > $word_count )
 			return true;
 
 		return $check;
@@ -443,6 +405,7 @@ class widget_context {
 		$controls = array();
 
 		foreach ( $this->contexts as $context_name => $context_settings ) {
+
 			$control_args = array(
 				'name' => $context_name,
 				'input_prefix' => 'wl' . $this->get_field_name( array( $widget_id, $context_name ) ),
@@ -462,6 +425,7 @@ class widget_context {
 							$context_settings['label'],
 							$context_controls
 						);
+
 		}
 
 		if ( empty( $controls ) )
@@ -469,18 +433,22 @@ class widget_context {
 
 		return sprintf( 
 				'<div class="widget-context">
-					<h3>%s</h3>
-					<a href="#" class="toggle-contexts hide-if-no-js">
-						<span class="expand">%s</span>
-						<span class="collapse">%s</span>
-					</a>
-					<div class="widget-context-inside">
+					<div class="widget-context-header">
+						<h3>%s</h3>
+						<!-- <a href="#widget-context-%s" class="toggle-contexts hide-if-no-js">
+							<span class="expand">%s</span>
+							<span class="collapse">%s</span>
+						</a> -->
+					</div>
+					<div class="widget-context-inside" id="widget-context-%s">
 					%s
 					</div>
 				</div>',
 				__( 'Widget Context', 'widget-context' ),
+				esc_attr( $widget_id ),
 				__( 'Expand', 'widget-context' ),
 				__( 'Collapse', 'widget-context' ),
+				esc_attr( $widget_id ),
 				implode( '', $controls )
 			);
 
@@ -525,27 +493,17 @@ class widget_context {
 	}
 
 
-	function control_word_count( $control_args ) {
-
-		return sprintf( 
-				'<p>%s %s %s</p>',
-				$this->make_simple_checkbox( $control_args, 'check_wordcount', __('Has') ),
-				$this->make_simple_dropdown( $control_args, 'check_wordcount_type', array( 'less' => __('less'), 'more' => __('more') ), null, __('than') ),
-				$this->make_simple_textfield( $control_args, 'word_count', null, __('words') )
-			);
-
-	}
-
 	function control_url( $control_args ) {
 
 		return sprintf( 
 				'<div>%s</div>
 				<p class="help">%s</p>',
 				$this->make_simple_textarea( $control_args, 'urls' ),
-				__('Enter one location fragment per line. Use <strong>*</strong> character as a wildcard. Example: <code>category/peace/*</code> to target all posts in category <em>peace</em>.')
+				__( 'Enter one location fragment per line. Use <strong>*</strong> character as a wildcard. Example: <code>category/peace/*</code> to target all posts in category <em>peace</em>.', 'widget-context' )
 			);
 
 	}
+
 
 	function control_general( $control_args ) {
 		return sprintf( 
@@ -577,6 +535,7 @@ class widget_context {
 
 	
 	function make_simple_textarea( $control_args, $option, $label = null ) {
+
 		if ( isset( $control_args['settings'][ $option ] ) )
 			$value = esc_textarea( $control_args['settings'][ $option ] );
 		else
@@ -593,6 +552,7 @@ class widget_context {
 				$option,
 				$value
 			);
+
 	}
 
 
@@ -612,7 +572,7 @@ class widget_context {
 				$value,
 				$label_after
 			);
-		
+
 	}
 
 
@@ -639,7 +599,7 @@ class widget_context {
 					</select> 
 					%s
 				</label>',
-				'',
+				$this->get_field_classname( $option ),
 				$label_before, 
 				$control_args['input_prefix'], 
 				$option,
@@ -720,4 +680,12 @@ class widget_context {
 
 
 }
+
+
+/**
+ * Load core modules
+ */
+
+include plugin_dir_path( __FILE__ ) . '/modules/word-count/word-count.php';
+
 
