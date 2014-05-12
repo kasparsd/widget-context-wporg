@@ -32,8 +32,8 @@ class widget_context {
 	
 	private static $instance;
 	private $sidebars_widgets;
+	private $options_name = 'widget_logic_options'; // Widget context settings (visibility, etc)
 
-	var $options_name = 'widget_logic_options'; // Widget context settings (visibility, etc)
 	var $context_options = array();
 	var $contexts = array();
 	var $plugin_path;
@@ -67,19 +67,20 @@ class widget_context {
 		// Save widget context settings, when in admin area
 		add_action( 'sidebar_admin_setup', array( $this, 'save_widget_context_settings' ) );
 
+		// Fix legacy context option naming
+		add_filter( 'widget_context_options', array( $this, 'fix_legacy_options' ) );
+
 	}
 
 
 	function init_widget_context() {
 
-		$this->context_options = wp_parse_args(
-				(array) get_option( $this->options_name ),
-				array_fill_keys( array_keys( $this->contexts ), null )			
+		$this->context_options = apply_filters( 
+				'widget_context_options', 
+				(array) get_option( $this->options_name, array() ) 
 			);
 
-		$this->context_options = apply_filters( 'widget_context_options', $this->context_options );
-
-		// Remove widgets for is_active_sidebar() to work
+		// Hide/show widgets for is_active_sidebar() to work
 		add_filter( 'sidebars_widgets', array( $this, 'maybe_unset_widgets_by_context' ), 10 );
 
 	}
@@ -113,12 +114,25 @@ class widget_context {
 		if ( ! current_user_can( 'edit_theme_options' ) || empty( $_POST ) || ! isset( $_POST['sidebar'] ) || empty( $_POST['sidebar'] ) )
 			return;
 		
-		// Delete
-		if ( isset( $_POST['delete_widget'] ) && $_POST['delete_widget'] )
-			unset( $this->context_options[ $_POST['widget-id'] ] );
+		// Delete a widget
+		if ( isset( $_POST['delete_widget'] ) && isset( $_POST['the-widget-id'] ) )
+			unset( $this->context_options[ $_POST['the-widget-id'] ] );
 		
 		// Add / Update
 		$this->context_options = array_merge( $this->context_options, $_POST['wl'] );
+
+		$sidebars_widgets = wp_get_sidebars_widgets();
+		$all_widget_ids = array();
+
+		// Get a lits of all widget IDs
+		foreach ( $sidebars_widgets as $widget_area => $widgets )
+			foreach ( $widgets as $widget_order => $widget_id )
+				$all_widget_ids[] = $widget_id;
+
+		// Remove non-existant widget contexts from the settings
+		foreach ( $this->context_options as $widget_id => $widget_context )
+			if ( ! in_array( $widget_id, $all_widget_ids ) )
+				unset( $this->context_options[ $widget_id ] );
 
 		update_option( $this->options_name, $this->context_options );
 
@@ -235,7 +249,7 @@ class widget_context {
 				);
 
 		}
-		
+
 		// Get the match rule for this widget (show/hide/selected/notselected)
 		$match_rule = $this->context_options[ $widget_id ][ 'incexc' ][ 'condition' ];
 
@@ -316,8 +330,15 @@ class widget_context {
 	function match_path( $patterns ) {
 
 		global $wp;
-
+		
 		$patterns_safe = array();
+
+		// Get the request URI from WP
+		$url_request = $wp->request;
+
+		// Append the query string
+		if ( ! empty( $_SERVER['QUERY_STRING'] ) )
+			$url_request .= '?' . $_SERVER['QUERY_STRING'];
 
 		foreach ( explode( "\n", $patterns ) as $pattern )
 			$patterns_safe[] = trim( trim( $pattern ), '/' ); // Trim trailing and leading slashes
@@ -327,7 +348,7 @@ class widget_context {
 
 		$regexps = '/^('. preg_replace( array( '/(\r\n|\n| )+/', '/\\\\\*/' ), array( '|', '.*' ), preg_quote( implode( "\n", array_filter( $patterns_safe, 'trim' ) ), '/' ) ) .')$/';
 
-		return preg_match( $regexps, $wp->request );
+		return preg_match( $regexps, $url_request );
 
 	}
 
@@ -578,6 +599,7 @@ class widget_context {
 	 * @return string          Returns option value
 	 */
 	function get_field_value( $parts, $options = null ) {
+
 		if ( $options == null )
 			$options = $this->context_options;
 
@@ -594,6 +616,7 @@ class widget_context {
 			return $options[ $part ];
 
 		return $value;
+
 	}
 
 
@@ -606,7 +629,7 @@ class widget_context {
 
 			// We moved from [incexc] = 1/0 to [incexc][condition] = 1/0
 			if ( ! is_array( $option['incexc'] ) )
-				$options[ $widget_id ]['incexc'] = array( 'condition' => true );
+				$options[ $widget_id ]['incexc'] = array( 'condition' => $option['incexc'] );
 			
 			// We moved word count out of location context group
 			if ( isset( $option['location']['check_wordcount'] ) )
