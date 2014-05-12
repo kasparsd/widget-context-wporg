@@ -3,7 +3,7 @@
 Plugin Name: Widget Context
 Plugin URI: http://wordpress.org/extend/plugins/widget-context/
 Description: Display widgets in context.
-Version: 1.0-alpha
+Version: 1.0-alpha2
 Author: Kaspars Dambis
 Author URI: http://kaspars.net
 
@@ -32,7 +32,8 @@ class widget_context {
 	
 	private static $instance;
 	private $sidebars_widgets;
-	private $options_name = 'widget_logic_options'; // Widget context settings (visibility, etc)
+	private $options_name = 'widget_logic_options'; // Context settings for widgets (visibility, etc)
+	private $settings_name = 'widget_context_settings'; // Widget Context global settings
 
 	var $context_options = array();
 	var $contexts = array();
@@ -69,6 +70,12 @@ class widget_context {
 
 		// Fix legacy context option naming
 		add_filter( 'widget_context_options', array( $this, 'fix_legacy_options' ) );
+
+		// Register admin settings menu
+		add_action( 'admin_menu', array( $this, 'widget_context_settings_menu' ) );
+
+		// Register admin settings
+		add_action( 'admin_init', array( $this, 'widget_context_settings_init' ) );
 
 	}
 
@@ -146,21 +153,22 @@ class widget_context {
 			'incexc' => array(
 				'label' => __( 'Widget Context' ),
 				'description' => __( 'Set the default logic to show or hide.', 'widget-context' ),
-				'weight' => -100
+				'weight' => -100,
+				'type' => 'core',
 			),
 			'location' => array(
 				'label' => __( 'Global Sections' ),
-				'description' => __( 'Context based on current template.', 'widget-context' ),
+				'description' => __( 'Based on standard WordPress template tags.', 'widget-context' ),
 				'weight' => 10
 			),
 			'url' => array(
 				'label' => __( 'Target by URL' ),
-				'description' => __( 'Context based on URL pattern.', 'widget-context' ),
+				'description' => __( 'Based on URL patterns.', 'widget-context' ),
 				'weight' => 10
 			),
-			'general' => array(
+			'admin_notes' => array(
 				'label' => __( 'Notes (invisible to public)', 'widget-context' ),
-				'description' => __('Notes to admins.'),
+				'description' => __( 'Enables private notes on widget context settings.'),
 				'weight' => 90
 			)
 		);
@@ -354,7 +362,7 @@ class widget_context {
 
 
 	// Dummy function
-	function context_check_notes( $check, $widget_id ) {}
+	function context_check_admin_notes( $check, $widget_id ) {}
 
 
 	// Dummy function
@@ -470,19 +478,20 @@ class widget_context {
 	}
 
 
-	function control_general( $control_args ) {
+	function control_admin_notes( $control_args ) {
+
 		return sprintf( 
 				'<p>%s</p>',
 				$this->make_simple_textarea( $control_args, 'notes' )
 			);
+
 	}
 
 	
-	/* 
-		
-		Interface constructors 
-		
-	*/
+
+	/**
+	 * Widget control helpers
+	 */
 
 	
 	function make_simple_checkbox( $control_args, $option, $label ) {
@@ -631,6 +640,12 @@ class widget_context {
 			if ( ! is_array( $option['incexc'] ) )
 				$options[ $widget_id ]['incexc'] = array( 'condition' => $option['incexc'] );
 			
+			// Move notes from "general" group to "admin_notes"
+			if ( isset( $option['general']['notes'] ) ) {
+				$options[ $widget_id ]['admin_notes']['notes'] = $option['general']['notes'];
+				unset( $option['general']['notes'] );
+			}
+
 			// We moved word count out of location context group
 			if ( isset( $option['location']['check_wordcount'] ) )
 				$options[ $widget_id ]['word_count'] = array(
@@ -642,6 +657,118 @@ class widget_context {
 		}
 
 		return $options;
+
+	}
+
+
+
+	/**
+	 * Admin Settings
+	 */
+
+
+	function widget_context_settings_menu() {
+
+		add_options_page( 
+			__( 'Widget Context Settings', 'widget-context' ), 
+			__( 'Widget Context', 'widget-context' ), 
+			'manage_options', 
+			$this->settings_name, 
+			array( $this, 'widget_context_admin_view' )
+		);
+
+	}
+
+
+	function widget_context_settings_init() {
+
+		register_setting( $this->settings_name, $this->settings_name );
+
+	}
+
+
+	function widget_context_admin_view() {
+
+		// Load admin settings
+		$context_settings = wp_parse_args( 
+				get_option( $this->settings_name, array() ), 
+				array(
+					'contexts' => array()
+				) 
+			);
+
+		$context_controls = array();
+
+		foreach ( $this->contexts as $context_id => $context_args ) {
+			
+			// Hide core modules from being disabled
+			if ( isset( $context_args['type'] ) && $context_args['type'] == 'core' )
+				continue;
+
+			if ( ! empty( $context_args['description'] ) )
+				$context_description = sprintf( 
+					'<em class="context-desc">&mdash; %s</em>', 
+					esc_html( $context_args['description'] ) 
+				);
+			else
+				$context_description = null;
+
+			// Enable new modules by default
+			if ( ! isset( $context_settings['contexts'][ $context_id ] ) )
+				$context_settings['contexts'][ $context_id ] = 1;
+
+			$context_controls[] = sprintf(
+					'<div class="context-%s">
+						<p>
+							<label>
+								<input type="hidden" name="%s[contexts][%s]" value="0" />
+								<input type="checkbox" name="%s[contexts][%s]" value="1" %s /> %s
+							</label> 
+							%s
+						</p>
+					</div>',
+					esc_attr( $context_id ),
+					$this->settings_name,
+					esc_attr( $context_id ),
+					$this->settings_name,
+					esc_attr( $context_id ),
+					checked( $context_settings['contexts'][ $context_id ], 1, false ),
+					esc_html( $context_args['label'] ),
+					$context_description
+				);
+
+		}
+
+		?>
+		<div class="wrap wrap-widget-context">
+			<h2><?php esc_html_e( 'Widget Context Settings', 'widget-context' ); ?></h2>
+			<form method="post" action="options.php">
+				<?php
+					settings_fields( $this->settings_name );
+					do_settings_sections( $this->settings_name );
+				?>
+
+				<table class="form-table">
+					<?php
+						printf( 
+							'<tr class="settings-section settings-section-modules">
+								<th>%s</th>
+								<td>
+									%s
+								</td>
+							</div>',
+							esc_html__( 'Enabled Modules', 'widget-context' ),
+							implode( '', $context_controls )
+						);
+					?>
+				</table>
+					
+				<?php
+					submit_button();
+				?>
+			</form>
+		</div>
+		<?php
 
 	}
 

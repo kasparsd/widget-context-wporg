@@ -20,4 +20,9 @@
 
 .context-group-wrap .wl-word-count input { width:3em; }
 
-.context-group-general textarea { height:3em; }
+.context-group-admin_notes textarea { height:4em; }
+
+
+/** Settings UI **/
+
+.context-desc { color:#666; }
