@@ -1,4 +1,5 @@
 <?php
+return;
 
 
 // Check for Widget Context plugin

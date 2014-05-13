@@ -1,5 +1,6 @@
 
 .widget-context { float:left; width:100%; clear:both; margin:1em -16px; padding:0.5em 16px; border-top:1px solid #dfdfdf; border-bottom:1px solid #dfdfdf; }
+.widget-context select { max-width:100%; }
 .widget-context-inside { float:left; width:100%; clear:both; padding-top:1em; }
 .widget-context .toggle-contexts { }
 .widget .widget-context-inside p { margin:0 0 0.5em; }
@@ -12,8 +13,19 @@
 .widget-context .context-group { float:left; width:100%; clear:both; margin-bottom:0.5em; }
 .widget-context .context-toggle { margin:0 0 0.3em 0; display:block; text-decoration:none; color:inherit; font-weight:bold; }
 
-.context-group-incexc select { width:100%; }
-.context-group-incexc .context-toggle { display:none; } 
+.widget-context .context-logic { margin-bottom:1em; }
+.widget-context .context-logic select { width:100%; }
+
+.widget-context .context-type select { width:100%; }
+.widget-context .context-selected-heading { font-weight:normal; margin:0 0 0 0; padding:0 0 0.5em 0; border-bottom:1px solid #ddd; display:none; }
+.widget-context .context-selected-items { padding:0.75em 0; margin:0; border-top:1px solid #ddd; }
+.widget-context .context-item-delete { display:block; width:2em; height:2em; background:red; float:right; position:absolute; top:0.1em; right:0; overflow:hidden; text-indent:-987px; border-radius:50%; }
+.widget-context .context-item-delete:before { float:left; font-family:'dashicons'; content:"\f335";  }
+.widget-context .context-type { position:relative; }
+.widget-context .context-item-placeholder { display:none; }
+.widget-context .context-group-wrap { padding-top:0.5em; }
+
+.widget-context .context-type-wrap { padding-right:2.5em; }
 
 .context-group-location .context-group-wrap { max-height:10em; overflow:auto; padding:0.5em; margin-bottom:0.5em; background:#fff; border:1px solid #ddd; } 
 .context-group-location label { display:block; padding:0.25em 0; }
@@ -26,6 +38,8 @@
 .context-group-admin_notes textarea { height:4em; }
 
 .widget-context .context-inactive { display:none; }
+
+.context-item { display:none; }
 
 /** Settings UI **/
 

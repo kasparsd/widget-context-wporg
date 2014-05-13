@@ -158,14 +158,8 @@ class widget_context {
 
 		// Default context
 		$default_contexts = array(
-			'incexc' => array(
-				'label' => __( 'Widget Context' ),
-				'description' => __( 'Set the default logic to show or hide.', 'widget-context' ),
-				'weight' => -100,
-				'type' => 'core',
-			),
-			'location' => array(
-				'label' => __( 'Global Sections' ),
+			'page' => array(
+				'label' => __( 'Page' ),
 				'description' => __( 'Based on standard WordPress template tags.', 'widget-context' ),
 				'weight' => 10
 			),
@@ -173,11 +167,6 @@ class widget_context {
 				'label' => __( 'Target by URL' ),
 				'description' => __( 'Based on URL patterns.', 'widget-context' ),
 				'weight' => 20
-			),
-			'admin_notes' => array(
-				'label' => __( 'Notes (invisible to public)', 'widget-context' ),
-				'description' => __( 'Enables private notes on widget context settings.'),
-				'weight' => 90
 			)
 		);
 
@@ -392,50 +381,132 @@ class widget_context {
 	function display_widget_context( $widget_id = null ) {
 
 		$controls = array();
+		$options = array();
 
-		foreach ( $this->contexts as $context_name => $context_settings ) {
+		if ( empty( $options ) )
+			$options[] = array();
 
-			$context_classes = array(
-				'context-group',
-				sprintf( 'context-group-%s', esc_attr( $context_name ) )
-			);
+		$options['__i__'] = array();
 
-			// Hide this context from the admin UX
-			if ( isset( $this->context_settings['contexts'][ $context_name ] ) && ! $this->context_settings['contexts'][ $context_name ] )
-				$context_classes[] = 'context-inactive';
+		foreach ( $options as $context_i => $context_options ) {
 
-			$control_args = array(
-				'name' => $context_name,
-				'input_prefix' => 'wl' . $this->get_field_name( array( $widget_id, $context_name ) ),
-				'settings' => $this->get_field_value( array( $widget_id, $context_name ) )
-			);
+			$context_elements = array();
 
-			$context_controls = apply_filters( 'widget_context_control-' . $context_name, $control_args );
-			$context_classes = apply_filters( 'widget_context_classes-' . $context_name, $context_classes, $control_args );
+			$context_type_dropdown = array(
+					'' => sprintf( 
+						'<option value="">&mdash; %s &mdash;</option>', 
+						__( 'Select Context', 'widget-context' ) 
+					)
+				);
 
-			if ( ! empty( $context_controls ) && is_string( $context_controls ) ) {
-				
-				$controls[ $context_name ] = sprintf( 
-						'<div class="%s">
-							<h4 class="context-toggle">%s</h4>
-							<div class="context-group-wrap">
-								%s
-							</div>
-						</div>',
-						esc_attr( implode( ' ', $context_classes ) ), 
-						esc_html( $context_settings['label'] ),
-						$context_controls
-					);
+			foreach ( $this->contexts as $context_name => $context_settings )
+				$context_type_dropdown[] = sprintf( 
+					'<option value="%s" %s>%s</option>',
+					esc_attr( $context_name ),
+					checked( 1, 0, false ),
+					esc_html( $context_settings['label'] )
+				);
+
+			$context_elements[] = sprintf(
+					'<div class="context-type">
+						<div class="context-type-wrap">
+							<select name="wl%s" data-widget-id="%s" data-id="%s">%s</select>
+						</div>
+						<a href="#" data-widget-id="%s" data-id="%s" class="context-item-delete">%s</a>
+					</div>',
+					$this->get_field_name( array( $widget_id, 'contexts', $context_i, 'type' ) ),
+					esc_attr( $widget_id ),
+					esc_attr( $context_i ),
+					implode( '', $context_type_dropdown ),
+					esc_attr( $widget_id ),
+					esc_attr( $context_i ),
+					esc_html__( 'Delete Context', 'widget-context' )
+				);
+
+			foreach ( $this->contexts as $context_name => $context_settings ) {
+
+				$context_classes = array(
+					'context-item',
+					sprintf( 'context-item-%s', esc_attr( $context_name ) )
+				);
+
+				// Hide this context from the admin UX
+				//if ( isset( $this->context_settings['contexts'][ $context_name ] ) && ! $this->context_settings['contexts'][ $context_name ] )
+				//	$context_classes[] = 'context-inactive';
+
+				$control_args = array(
+					'name' => $context_name,
+					'input_prefix' => sprintf( 
+						'wl%s',
+						$this->get_field_name( array( $widget_id, $context_i, $context_name ) )
+					),
+					'settings' => $this->get_field_value( array( $widget_id, $context_i, $context_name ) )
+				);
+
+				$context_controls = apply_filters( 'widget_context_control-' . $context_name, $control_args );
+				$context_classes = apply_filters( 'widget_context_classes-' . $context_name, $context_classes, $control_args );
+
+				if ( ! empty( $context_controls ) && is_string( $context_controls ) ) {
+					
+					$context_elements[ $context_name ] = sprintf( 
+							'<div class="%s">
+								<div class="context-group-wrap">
+									%s
+								</div>
+							</div>',
+							esc_attr( implode( ' ', $context_classes ) ),
+							$context_controls
+						);
+
+				}
 
 			}
 
+			$context_items_classes = array(
+					'context-selected-items'
+				);
+
+			if ( ! is_numeric( $context_i ) && '__i__' == $context_i )
+				$context_items_classes[] = 'context-item-placeholder';
+
+			$controls[] = sprintf(
+					'<div class="%s" id="%s-%s">
+						%s
+					</div>',
+					esc_attr( implode( ' ', $context_items_classes ) ),
+					esc_attr( $widget_id ),
+					esc_attr( $context_i ),
+					implode( '', $context_elements )
+				);
+
 		}
+
 
 		if ( empty( $controls ) )
 			$controls[] = sprintf( '<p class="error">%s</p>', __( 'No settings defined.', 'widget-context' ) );
 
+		// Generate context logic option
+		$context_logic = array(
+				'show' => __( 'Show widget everywhere', 'widget-context' ), 
+				'selected' => __( 'Show widget on selected', 'widget-context' ), 
+				'notselected' => __( 'Hide widget on selected', 'widget-context' ), 
+				'hide' => __( 'Hide widget everywhere', 'widget-context' )
+			);
+
+		$context_logic_dropdown = array();
+
+		foreach ( $context_logic as $item_value => $item_label )
+			$context_logic_dropdown[] = sprintf( 
+				'<option value="%s" %s>%s</option>',
+				esc_attr( $item_value ),
+				checked( 1, 0, false ),
+				esc_html( $item_label )
+			);
+
+
 		return sprintf( 
 				'<div class="widget-context">
+
 					<div class="widget-context-header">
 						<h3>%s</h3>
 						<!-- <a href="#widget-context-%s" class="toggle-contexts hide-if-no-js">
@@ -443,31 +514,116 @@ class widget_context {
 							<span class="collapse">%s</span>
 						</a> -->
 					</div>
+				
 					<div class="widget-context-inside" id="widget-context-%s">
-					%s
+						
+						<div class="context-logic">
+							<div class="context-logic-wrap">
+								<select name="wl[%s][context-logic]">%s</select>
+							</div>
+						</div>
+
+						<h4 class="context-selected-heading">Selected Contexts</h4>
+
+						<div class="context-selected">
+							%s
+						</div>
+						
+						<p class="context-actions">
+							<input class="button" type="button" value="%s" data-widget-id="%s" />
+						</p>
+
 					</div>
+
 				</div>',
 				__( 'Widget Context', 'widget-context' ),
 				esc_attr( $widget_id ),
 				__( 'Expand', 'widget-context' ),
 				__( 'Collapse', 'widget-context' ),
 				esc_attr( $widget_id ),
-				implode( '', $controls )
+				esc_attr( $widget_id ),
+				implode( '', $context_logic_dropdown ),
+				implode( '', $controls ),
+				esc_attr__( 'Add Context', 'widget-context' ),
+				esc_attr( $widget_id )
 			);
 
 	}
 
 
-	function control_incexc( $control_args ) {
+	function control_page( $control_args ) {
 
-		$options = array(
-				'show' => __( 'Show widget everywhere', 'widget-context' ), 
-				'selected' => __( 'Show widget on selected', 'widget-context' ), 
-				'notselected' => __( 'Hide widget on selected', 'widget-context' ), 
-				'hide' => __( 'Hide widget everywhere', 'widget-context' )
+		$html = array();
+
+		$page_id_items = array();
+		$post_type_items = array();
+
+		$all_pages = get_pages();
+
+		foreach ( $all_pages as $page )
+			$page_id_items[ $page->ID ] = $page->post_title;
+
+		$post_types = get_post_types( 
+				array( 
+					'public' => true, 
+					'_builtin' => false, 
+					'publicly_queryable' => true 
+				),
+				'objects'
 			);
 
-		return $this->make_simple_dropdown( $control_args, 'condition', $options );
+		foreach ( $post_types as $post_type => $post_type_settings )
+			$post_type_items[ $post_type ] = $post_type_settings->label;
+
+		$options = array(
+				'is_page_type' => array(
+					'label' => __( 'Page Type', 'widget-context' ),
+					'items' => array(
+						'is_front_page' => __( 'Front page', 'widget-context' ),
+						'is_home' => __( 'Blog page', 'widget-context' ),
+						'is_singular' => __( 'All posts and pages', 'widget-context' ),
+						'is_single' => __( 'All posts', 'widget-context' ),
+						'is_page' => __( 'All pages', 'widget-context' ),
+						'is_attachment' => __( 'All attachments', 'widget-context' ),
+						'is_search' => __( 'Search results', 'widget-context' ),
+						'is_404' => __( '404 error page', 'widget-context' ),
+					)
+				),
+				'is_singular-post_type' => array(
+					'label' => __( 'Post Type', 'widget-context' ),
+					'items' => $post_type_items
+				),
+				'is_page-id' => array(
+					'label' => __( 'Page', 'widget-context' ),
+					'items' => $page_id_items
+				)
+			);
+
+		foreach ( $options as $option_group_id => $option_group ) {
+
+			$opt_group_html = array();
+
+			foreach ( $option_group['items'] as $item_value => $item_label )
+				$opt_group_html[] = sprintf( 
+					'<option value="%s" %s>%s</option>',
+					esc_attr( $item_value ),
+					checked( 1, 0, false ),
+					esc_html( $item_label )
+				);
+
+			$html[] = sprintf(
+				'<optgroup label="%s">%s</optgroup>',
+				esc_attr( $option_group['label'] ),
+				implode( '', $opt_group_html )
+			);
+
+		}
+
+		return sprintf( 
+				'<select name="%s">%s</select>',
+				'',
+				implode( '', $html ) 
+			);
 
 	}
 
@@ -475,28 +631,96 @@ class widget_context {
 	function control_location( $control_args ) {
 
 		$options = array(
-				'is_front_page' => __( 'Front Page', 'widget-context' ),
-				'is_home' => __( 'Blog Page', 'widget-context' ),
-				'is_singular' => __( 'All Posts and Pages', 'widget-context' ),
-				'is_single' => __( 'All Posts', 'widget-context' ),
-				'is_page' => __( 'All Pages', 'widget-context' ),
-				'is_attachment' => __( 'All Attachments', 'widget-context' ),
-				'is_search' => __( 'Search Results', 'widget-context' ),
-				'is_404' => __( '404 Error Page', 'widget-context' ),
-				'is_archive' => __( 'All Archives', 'widget-context' ),
-				'is_date' => __( 'All Date Archives', 'widget-context' ),
-				'is_day' => __( 'Daily Archives', 'widget-context' ),
-				'is_month' => __( 'Monthly Archives', 'widget-context' ),
-				'is_year' => __( 'Yearly Archives', 'widget-context' ),
-				'is_category' => __( 'All Category Archives', 'widget-context' ),
-				'is_tag' => __( 'All Tag Archives', 'widget-context' ),
-				'is_author' => __( 'All Author Archives', 'widget-context' )
-			);
+			'archives' => array(
+				'label' => __( 'Archives', 'widget-context' ),
+				'items' => array(
+					'is_archive' => __( 'All archives', 'widget-context' )
+				)
+			),
+			'date' => array(
+				'label' => __( 'Date', 'widget-context' ),
+				'items' => array(
+					'is_date' => __( 'All date archives', 'widget-context' ),
+					'is_day' => __( 'Daily archives', 'widget-context' ),
+					'is_month' => __( 'Monthly archives', 'widget-context' ),
+					'is_year' => __( 'Yearly archives', 'widget-context' ),
+				)
+			),
+			'category' => array(
+				'label' => __( 'Category', 'widget-context' ),
+				'items' => array(
+					'is_category' => __( 'All category archives', 'widget-context' ),
+					'is_category-id' => array(
+						'label' => 'Category',
+						'items' => array(
 
-		foreach ( $options as $option => $label )
-			$out[] = $this->make_simple_checkbox( $control_args, $option, $label );
+						)
+					)
+				)
+			),
+			'tag' => array(
+				'label' => __( 'Tag', 'widget-context' ),
+				'items' => array(
+					'is_tag' => __( 'All tag archives', 'widget-context' ),
+					'is_tag-id' => array(
+						'label' => 'Tag',
+						'items' => array(
+							
+						)
+					)
+				)
+			),
+			'author' => array(
+				'label' => __( 'Author', 'widget-context' ),
+				'items' => array(
+					'is_author' => __( 'All author archives', 'widget-context' ),
+					'is_author-id' => array(
+						'label' => 'Author',
+						'items' => array(
+							
+						)
+					)
+				)
+			)
+		);
 
-		return implode( '', $out );
+
+
+		$context_dropdown = array();
+		$context_a = array();
+
+
+		foreach ( $options as $context_id => $context_options ) {
+			
+			$select_items = array();
+
+			$context_dropdown[] = sprintf( 
+					'<option name="wc[][contexts][type]" value="%s">%s</option>',
+					esc_attr( $context_id ),
+					esc_html( $context_options['label'] )
+				);
+
+			foreach ( $context_options['items'] as $item_id => $item_label ) {
+
+				if ( ! is_string( $item_label ) )
+					continue;
+
+				$select_items[] = sprintf( 
+						'<option value="%s" %s>%s</option>', 
+						esc_attr( $item_id ),
+						checked( 0, 1, false ),
+						esc_html( $item_label )
+					);
+
+			}
+
+			$context_a[ $context_id ] = sprintf( '<select id="">%s</select>', implode( '', $select_items ) );
+ 
+		}
+
+		$context_type_select = sprintf( '<select id="">%s</select>', implode( '', $context_dropdown ) );
+		
+		return $context_type_select . implode( '', $context_a );
 
 	}
 
@@ -684,7 +908,7 @@ class widget_context {
 		foreach ( $options as $widget_id => $option ) {
 
 			// We moved from [incexc] = 1/0 to [incexc][condition] = 1/0
-			if ( ! is_array( $option['incexc'] ) )
+			if ( isset( $option['incexc'] ) && ! is_array( $option['incexc'] ) )
 				$options[ $widget_id ]['incexc'] = array( 'condition' => $option['incexc'] );
 			
 			// Move notes from "general" group to "admin_notes"

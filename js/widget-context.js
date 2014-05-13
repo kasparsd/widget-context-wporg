@@ -1,27 +1,35 @@
 jQuery(window).ready(function($) {
 
-	/*
-	$('.widget-context-inside, .toggle-contexts .collapse').hide();
+	$( '.widget-context' ).on( 'change', '.context-type select', function() {
 
-	$(document).ajaxComplete( function( e, xhr, settings ) {
-		$('.widget-context').each(function() {
-			if ( $( '.widget-context-inside', this ).is(':visible') )
-				$( '.toggle-contexts .expand', this ).hide();
-			else
-				$( '.toggle-contexts .collapse', this ).hide();
-		});
+		var item_id = $(this).data('id');
+		var widget_id = $(this).data('widget-id');
+		var context_type = $(this).val();
+
+		if ( '' == context_type )
+			$( '#' + widget_id + '-' + item_id + ' .context-item' ).hide();
+		else
+			$( '#' + widget_id + '-' + item_id + ' .context-item-' + context_type ).show().siblings('.context-item').hide();
+
+	}).on( 'click', '.context-actions input', function(e) {
+
+		var widget_id = $(this).data('widget-id');
+		var next_no = $( '#widget-context-' + widget_id + ' .context-selected-items' ).size() - 1;
+		var placeholder = $('<div>').append( $( '#widget-context-' + widget_id + ' .context-item-placeholder' ).clone() );
+
+		placeholder.children().removeClass('context-item-placeholder');
+
+		$( '#widget-context-' + widget_id + ' .context-selected' ).append( placeholder.html().replace( /__i__/g, next_no ) );
+
+	}).on('click', '.context-item-delete', function(e) {
+
+		e.preventDefault();
+
+		var item_id = $(this).data('id');
+		var widget_id = $(this).data('widget-id');
+
+		$( '#' + widget_id + '-' + item_id ).remove();
+
 	});
-
-	$('.widget-context .toggle-contexts').live( 'click', function() {
-
-		var widget_id = $(this).attr('href');
-
-		$( widget_id ).slideToggle('fast');
-		$( 'span', this ).toggle();
-
-		return false;
-
-	});
-	*/
 
 });
