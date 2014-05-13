@@ -30,3 +30,6 @@
 /** Settings UI **/
 
 .context-desc { color:#666; }
+.widget-context-settings-wrap { padding-right:300px; }
+.widget-context-form { float:left; width:100%; margin-right:-100em; border-right:1px solid #ccc; }
+.widget-context-sidebar { float:right; width:280px; position:relative; right:-300px; }

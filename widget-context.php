@@ -781,31 +781,42 @@ class widget_context {
 		?>
 		<div class="wrap wrap-widget-context">
 			<h2><?php esc_html_e( 'Widget Context Settings', 'widget-context' ); ?></h2>
-			<form method="post" action="options.php">
-				<?php
-					settings_fields( $this->settings_name );
-					do_settings_sections( $this->settings_name );
-				?>
 
-				<table class="form-table">
-					<?php
-						printf( 
-							'<tr class="settings-section settings-section-modules">
-								<th>%s</th>
-								<td>
-									%s
-								</td>
-							</div>',
-							esc_html__( 'Enabled Modules', 'widget-context' ),
-							implode( '', $context_controls )
-						);
-					?>
-				</table>
-					
-				<?php
-					submit_button();
-				?>
-			</form>
+			<div class="widget-context-settings-wrap">
+
+				<div class="widget-context-form">
+					<form method="post" action="options.php">
+						<?php
+							settings_fields( $this->settings_name );
+							do_settings_sections( $this->settings_name );
+						?>
+
+						<table class="form-table">
+							<?php
+								printf( 
+									'<tr class="settings-section settings-section-modules">
+										<th>%s</th>
+										<td>
+											%s
+										</td>
+									</div>',
+									esc_html__( 'Enabled Modules', 'widget-context' ),
+									implode( '', $context_controls )
+								);
+							?>
+						</table>
+							
+						<?php
+							submit_button();
+						?>
+					</form>
+				</div>
+
+				<div class="widget-context-sidebar">
+					<p><strong>Widget Context</strong> is created and maintained by <a href="http://kaspars.net">Kaspars Dambis</a>.</p>
+				</div>
+
+			</div>
 		</div>
 		<?php
 
