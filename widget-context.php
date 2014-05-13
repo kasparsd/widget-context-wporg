@@ -172,7 +172,7 @@ class widget_context {
 			'url' => array(
 				'label' => __( 'Target by URL' ),
 				'description' => __( 'Based on URL patterns.', 'widget-context' ),
-				'weight' => 10
+				'weight' => 20
 			),
 			'admin_notes' => array(
 				'label' => __( 'Notes (invisible to public)', 'widget-context' ),
@@ -473,6 +473,7 @@ class widget_context {
 		$options = array(
 				'is_front_page' => __( 'Front Page', 'widget-context' ),
 				'is_home' => __( 'Blog Page', 'widget-context' ),
+				'is_singular' => __( 'All Posts and Pages', 'widget-context' ),
 				'is_single' => __( 'All Posts', 'widget-context' ),
 				'is_page' => __( 'All Pages', 'widget-context' ),
 				'is_attachment' => __( 'All Attachments', 'widget-context' ),
@@ -528,7 +529,7 @@ class widget_context {
 				$control_args['input_prefix'],
 				esc_attr( $option ),
 				checked( isset( $control_args['settings'][ $option ] ), true, false ),
-				$label
+				esc_html( $label )
 			);
 
 	}
@@ -547,7 +548,7 @@ class widget_context {
 					<textarea name="%s[%s]">%s</textarea>
 				</label>',
 				$this->get_field_classname( $option ),
-				$label,
+				esc_html( $label ),
 				$control_args['input_prefix'],
 				$option,
 				$value
@@ -569,8 +570,8 @@ class widget_context {
 				$label_before,
 				$control_args['input_prefix'],
 				$option,
-				$value,
-				$label_after
+				esc_attr( $value ),
+				esc_html( $label_after )
 			);
 
 	}
@@ -586,10 +587,18 @@ class widget_context {
 			$value = false;
 
 		if ( empty( $selection ) )
-			$options[] = sprintf( '<option value="">%s</option>', __('No options given') );
+			$options[] = sprintf( 
+					'<option value="">%s</option>', 
+					esc_html__( 'No options given', 'widget-context' ) 
+				);
 
 		foreach ( $selection as $sid => $svalue )
-			$options[] = sprintf( '<option value="%s" %s>%s</option>', $sid, selected( $value, $sid, false ), $svalue );
+			$options[] = sprintf( 
+					'<option value="%s" %s>%s</option>', 
+					esc_attr( $sid ), 
+					selected( $value, $sid, false ), 
+					esc_html( $svalue ) 
+				);
 
 		return sprintf( 
 				'<label class="wl-%s">
@@ -616,14 +625,18 @@ class widget_context {
 	 * @return string        i.e. [part1][part2][partN]
 	 */
 	function get_field_name( $parts ) {
+
 		return esc_attr( sprintf( '[%s]', implode( '][', $parts ) ) );
+
 	}
 
 	function get_field_classname( $name ) {
+
 		if ( is_array( $name ) )
 			$name = end( $name );
 
 		return sanitize_html_class( str_replace( '_', '-', $name ) );
+
 	}
 
 
@@ -798,6 +811,10 @@ class widget_context {
  * Load core modules
  */
 
+// Word Count
 include plugin_dir_path( __FILE__ ) . '/modules/word-count/word-count.php';
+
+// Custom Post Types and Taxonomies
+include plugin_dir_path( __FILE__ ) . '/modules/custom-post-types-taxonomies/custom-cpt-tax.php';
 
 

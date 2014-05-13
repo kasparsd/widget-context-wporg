@@ -18,6 +18,9 @@
 .context-group-location .context-group-wrap { max-height:10em; overflow:auto; padding:0.5em; margin-bottom:0.5em; background:#fff; border:1px solid #ddd; } 
 .context-group-location label { display:block; padding:0.25em 0; }
 
+.context-group-custom_post_types_taxonomies .context-group-wrap { max-height:10em; overflow:auto; padding:0.5em; margin-bottom:0.5em; background:#fff; border:1px solid #ddd; }
+.context-group-custom_post_types_taxonomies label { display:block; padding:0.25em 0; }
+
 .context-group-wrap .wl-word-count input { width:3em; }
 
 .context-group-admin_notes textarea { height:4em; }
