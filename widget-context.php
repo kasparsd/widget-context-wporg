@@ -3,7 +3,7 @@
 Plugin Name: Widget Context
 Plugin URI: http://wordpress.org/extend/plugins/widget-context/
 Description: Display widgets in context.
-Version: 1.0-alpha2
+Version: 1.0-alpha.2
 Author: Kaspars Dambis
 Author URI: http://kaspars.net
 
@@ -35,7 +35,8 @@ class widget_context {
 	private $options_name = 'widget_logic_options'; // Context settings for widgets (visibility, etc)
 	private $settings_name = 'widget_context_settings'; // Widget Context global settings
 
-	var $context_options = array();
+	var $context_options = array(); // Store visibility settings
+	var $context_settings = array(); // Store admin settings
 	var $contexts = array();
 	var $plugin_path;
 
@@ -85,6 +86,13 @@ class widget_context {
 		$this->context_options = apply_filters( 
 				'widget_context_options', 
 				(array) get_option( $this->options_name, array() ) 
+			);
+
+		$this->context_settings = wp_parse_args( 
+				(array) get_option( $this->settings_name, array() ), 
+				array(
+					'contexts' => array()
+				) 
 			);
 
 		// Hide/show widgets for is_active_sidebar() to work
@@ -236,13 +244,17 @@ class widget_context {
 	
 	function check_widget_visibility( $widget_id ) {
 
-		// Check if this widget even has context enabled
+		// Check if this widget even has context set
 		if ( ! isset( $this->context_options[ $widget_id ] ) )
 			return true;
 
 		$matches = array();
 
 		foreach ( $this->contexts as $context_id => $context_settings ) {
+
+			// This context check has been disabled in the plugin settings
+			if ( isset( $this->context_settings['contexts'][ $context_id ] ) && ! $this->context_settings['contexts'][ $context_id ] )
+				continue;
 
 			// Make sure that context settings for this widget are defined
 			if ( ! isset( $this->context_options[ $widget_id ][ $context_id ] ) )
@@ -379,30 +391,44 @@ class widget_context {
 
 		foreach ( $this->contexts as $context_name => $context_settings ) {
 
+			$context_classes = array(
+				'context-group',
+				sprintf( 'context-group-%s', esc_attr( $context_name ) )
+			);
+
+			// Hide this context from the admin UX
+			if ( isset( $this->context_settings['contexts'][ $context_name ] ) && ! $this->context_settings['contexts'][ $context_name ] )
+				$context_classes[] = 'context-inactive';
+
 			$control_args = array(
 				'name' => $context_name,
 				'input_prefix' => 'wl' . $this->get_field_name( array( $widget_id, $context_name ) ),
 				'settings' => $this->get_field_value( array( $widget_id, $context_name ) )
 			);
 
-			if ( $context_controls = apply_filters( 'widget_context_control-' . $context_name, $control_args ) )
-				if ( is_string( $context_controls ) )
-					$controls[ $context_name ] = sprintf( 
-							'<div class="context-group context-group-%1$s">
-								<h4 class="context-toggle">%2$s</h4>
-								<div class="context-group-wrap">
-									%3$s
-								</div>
-							</div>',
-							$context_name,
-							$context_settings['label'],
-							$context_controls
-						);
+			$context_controls = apply_filters( 'widget_context_control-' . $context_name, $control_args );
+			$context_classes = apply_filters( 'widget_context_classes-' . $context_name, $context_classes, $control_args );
+
+			if ( ! empty( $context_controls ) && is_string( $context_controls ) ) {
+				
+				$controls[ $context_name ] = sprintf( 
+						'<div class="%s">
+							<h4 class="context-toggle">%s</h4>
+							<div class="context-group-wrap">
+								%s
+							</div>
+						</div>',
+						esc_attr( implode( ' ', $context_classes ) ), 
+						esc_html( $context_settings['label'] ),
+						$context_controls
+					);
+
+			}
 
 		}
 
 		if ( empty( $controls ) )
-			$controls[] = sprintf( '<p class="error">%s</p>', __('No settings defined.') );
+			$controls[] = sprintf( '<p class="error">%s</p>', __( 'No settings defined.', 'widget-context' ) );
 
 		return sprintf( 
 				'<div class="widget-context">
@@ -689,14 +715,6 @@ class widget_context {
 
 	function widget_context_admin_view() {
 
-		// Load admin settings
-		$context_settings = wp_parse_args( 
-				get_option( $this->settings_name, array() ), 
-				array(
-					'contexts' => array()
-				) 
-			);
-
 		$context_controls = array();
 
 		foreach ( $this->contexts as $context_id => $context_args ) {
@@ -714,8 +732,8 @@ class widget_context {
 				$context_description = null;
 
 			// Enable new modules by default
-			if ( ! isset( $context_settings['contexts'][ $context_id ] ) )
-				$context_settings['contexts'][ $context_id ] = 1;
+			if ( ! isset( $this->context_settings['contexts'][ $context_id ] ) )
+				$this->context_settings['contexts'][ $context_id ] = 1;
 
 			$context_controls[] = sprintf(
 					'<div class="context-%s">
@@ -732,7 +750,7 @@ class widget_context {
 					esc_attr( $context_id ),
 					$this->settings_name,
 					esc_attr( $context_id ),
-					checked( $context_settings['contexts'][ $context_id ], 1, false ),
+					checked( $this->context_settings['contexts'][ $context_id ], 1, false ),
 					esc_html( $context_args['label'] ),
 					$context_description
 				);
