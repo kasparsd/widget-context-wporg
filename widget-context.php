@@ -3,7 +3,7 @@
 Plugin Name: Widget Context
 Plugin URI: http://wordpress.org/extend/plugins/widget-context/
 Description: Display widgets in context.
-Version: 1.0-alpha.2
+Version: 1.0-alpha.3
 Author: Kaspars Dambis
 Author URI: http://kaspars.net
 
@@ -316,6 +316,10 @@ class widget_context {
 				'is_search' => is_search(),
 				'is_404' => is_404(),
 				'is_archive' => is_archive(),
+				'is_date' => is_date(),
+				'is_day' => is_day(),
+				'is_month' => is_month(),
+				'is_year' => is_year(),
 				'is_category' => is_category(),
 				'is_tag' => is_tag(),
 				'is_author' => is_author()
@@ -480,9 +484,13 @@ class widget_context {
 				'is_search' => __( 'Search Results', 'widget-context' ),
 				'is_404' => __( '404 Error Page', 'widget-context' ),
 				'is_archive' => __( 'All Archives', 'widget-context' ),
+				'is_date' => __( 'All Date Archives', 'widget-context' ),
+				'is_day' => __( 'Daily Archives', 'widget-context' ),
+				'is_month' => __( 'Monthly Archives', 'widget-context' ),
+				'is_year' => __( 'Yearly Archives', 'widget-context' ),
 				'is_category' => __( 'All Category Archives', 'widget-context' ),
 				'is_tag' => __( 'All Tag Archives', 'widget-context' ),
-				'is_author' => __( 'Author Archive', 'widget-context' )
+				'is_author' => __( 'All Author Archives', 'widget-context' )
 			);
 
 		foreach ( $options as $option => $label )
