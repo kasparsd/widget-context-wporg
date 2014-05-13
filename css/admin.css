@@ -22,6 +22,7 @@
 
 .context-group-admin_notes textarea { height:4em; }
 
+.widget-context .context-inactive { display:none; }
 
 /** Settings UI **/
 
