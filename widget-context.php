@@ -748,7 +748,7 @@ class widget_context {
 
 			if ( ! empty( $context_args['description'] ) )
 				$context_description = sprintf( 
-					'<em class="context-desc">&mdash; %s</em>', 
+					'<p class="context-desc">%s</p>', 
 					esc_html( $context_args['description'] ) 
 				);
 			else
@@ -759,15 +759,13 @@ class widget_context {
 				$this->context_settings['contexts'][ $context_id ] = 1;
 
 			$context_controls[] = sprintf(
-					'<div class="context-%s">
-						<p>
-							<label>
-								<input type="hidden" name="%s[contexts][%s]" value="0" />
-								<input type="checkbox" name="%s[contexts][%s]" value="1" %s /> %s
-							</label> 
-							%s
-						</p>
-					</div>',
+					'<li class="context-%s">
+						<label>
+							<input type="hidden" name="%s[contexts][%s]" value="0" />
+							<input type="checkbox" name="%s[contexts][%s]" value="1" %s /> %s
+						</label>
+						%s
+					</li>',
 					esc_attr( $context_id ),
 					$this->settings_name,
 					esc_attr( $context_id ),
@@ -799,7 +797,7 @@ class widget_context {
 									'<tr class="settings-section settings-section-modules">
 										<th>%s</th>
 										<td>
-											%s
+											<ul>%s</ul>
 										</td>
 									</div>',
 									esc_html__( 'Enabled Modules', 'widget-context' ),

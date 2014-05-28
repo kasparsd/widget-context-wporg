@@ -29,7 +29,13 @@
 
 /** Settings UI **/
 
-.context-desc { color:#666; }
+.widget-context-form th { width:auto; }
+.widget-context-form .context-desc { color:#666; font-style:italic; margin:0 0 0 1.75em; }
 .widget-context-settings-wrap { padding-right:300px; }
-.widget-context-form { float:left; width:100%; margin-right:-100em; border-right:1px solid #ccc; }
+.widget-context-form { float:left; width:100%; margin-right:-100em; }
 .widget-context-sidebar { float:right; width:280px; position:relative; right:-300px; }
+
+@media screen and ( max-width: 900px ) {
+	.widget-context-form { margin:0; }
+	.widget-context-sidebar { width:100%; right:0; }
+}
