@@ -3,7 +3,7 @@
 Plugin Name: Widget Context
 Plugin URI: http://wordpress.org/extend/plugins/widget-context/
 Description: Display widgets in context.
-Version: 1.0-alpha.4
+Version: 1.0-alpha.5
 Author: Kaspars Dambis
 Author URI: http://kaspars.net
 
@@ -538,6 +538,11 @@ class widget_context {
 	
 	function make_simple_checkbox( $control_args, $option, $label ) {
 
+		if ( isset( $control_args['settings'][ $option ] ) && $control_args['settings'][ $option ] )
+			$value = true;
+		else
+			$value = false;
+
 		return sprintf(
 				'<label class="wc-field-checkbox-%s" data-widget-id="%s">
 					<input type="hidden" value="0" name="%s[%s]" />
@@ -551,7 +556,7 @@ class widget_context {
 				// Input value
 				$control_args['input_prefix'],
 				esc_attr( $option ),
-				checked( isset( $control_args['settings'][ $option ] ), true, false ),
+				checked( $value, true, false ),
 				// Label
 				esc_html( $label )
 			);
