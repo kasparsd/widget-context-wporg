@@ -1,6 +1,5 @@
 <?php
 
-
 // Check for Widget Context plugin
 if ( ! class_exists( 'widget_context' ) )
 	die;
