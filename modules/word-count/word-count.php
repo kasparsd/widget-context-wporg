@@ -48,7 +48,7 @@ class WidgetContextWordCount {
 		$contexts[ 'word_count' ] = array(
 				'label' => __( 'Word Count', 'widget-context' ),
 				'description' => __( 'Context based on word count on the page.', 'widget-context' ),
-				'weight' => 10
+				'weight' => 15
 			);
 
 		return $contexts;

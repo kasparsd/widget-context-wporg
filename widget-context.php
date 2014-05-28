@@ -407,10 +407,11 @@ class widget_context {
 				$context_classes[] = 'context-inactive';
 
 			$control_args = array(
-				'name' => $context_name,
-				'input_prefix' => 'wl' . $this->get_field_name( array( $widget_id, $context_name ) ),
-				'settings' => $this->get_field_value( array( $widget_id, $context_name ) )
-			);
+					'name' => $context_name,
+					'input_prefix' => 'wl' . $this->get_field_name( array( $widget_id, $context_name ) ),
+					'settings' => $this->get_field_value( array( $widget_id, $context_name ) ),
+					'widget_id' => $widget_id
+				);
 
 			$context_controls = apply_filters( 'widget_context_control-' . $context_name, $control_args );
 			$context_classes = apply_filters( 'widget_context_classes-' . $context_name, $context_classes, $control_args );
@@ -445,15 +446,19 @@ class widget_context {
 							<span class="collapse">%s</span>
 						</a> -->
 					</div>
-					<div class="widget-context-inside" id="widget-context-%s">
+					<div class="widget-context-inside" id="widget-context-%s" data-widget-id="%s">
 					%s
 					</div>
 				</div>',
 				__( 'Widget Context', 'widget-context' ),
 				esc_attr( $widget_id ),
+				// Toggle buttons
 				__( 'Expand', 'widget-context' ),
 				__( 'Collapse', 'widget-context' ),
+				// Inslide classes
 				esc_attr( $widget_id ),
+				esc_attr( $widget_id ),
+				// Controls
 				implode( '', $controls )
 			);
 
@@ -518,7 +523,7 @@ class widget_context {
 	function control_admin_notes( $control_args ) {
 
 		return sprintf( 
-				'<p>%s</p>',
+				'<div>%s</div>',
 				$this->make_simple_textarea( $control_args, 'notes' )
 			);
 
@@ -534,11 +539,20 @@ class widget_context {
 	function make_simple_checkbox( $control_args, $option, $label ) {
 
 		return sprintf(
-				'<label class="wc-location-%s"><input type="checkbox" value="1" name="%s[%s]" %s />&nbsp;%s</label>',
+				'<label class="wc-field-checkbox-%s" data-widget-id="%s">
+					<input type="hidden" value="0" name="%s[%s]" />
+					<input type="checkbox" value="1" name="%s[%s]" %s />&nbsp;%s
+				</label>',
 				$this->get_field_classname( $option ),
+				esc_attr( $control_args['widget_id'] ),
+				// Input hidden
+				$control_args['input_prefix'],
+				esc_attr( $option ),
+				// Input value
 				$control_args['input_prefix'],
 				esc_attr( $option ),
 				checked( isset( $control_args['settings'][ $option ] ), true, false ),
+				// Label
 				esc_html( $label )
 			);
 
@@ -553,12 +567,15 @@ class widget_context {
 			$value = '';
 		
 		return sprintf(  
-				'<label class="wc-%s">
+				'<label class="wc-field-textarea-%s" data-widget-id="%s">
 					<strong>%s</strong>
 					<textarea name="%s[%s]">%s</textarea>
 				</label>',
 				$this->get_field_classname( $option ),
+				esc_attr( $control_args['widget_id'] ),
+				// Label
 				esc_html( $label ),
+				// Input
 				$control_args['input_prefix'],
 				$option,
 				$value
@@ -575,12 +592,20 @@ class widget_context {
 			$value = false;
 
 		return sprintf( 
-				'<label class="wl-%s">%s <input type="text" name="%s[%s]" value="%s" /> %s</label>',
+				'<label class="wc-field-text-%s" data-widget-id="%s">
+					%s 
+					<input type="text" name="%s[%s]" value="%s" /> 
+					%s
+				</label>',
 				$this->get_field_classname( $option ),
+				esc_attr( $control_args['widget_id'] ),
+				// Before
 				$label_before,
+				// Input
 				$control_args['input_prefix'],
 				$option,
 				esc_attr( $value ),
+				// After
 				esc_html( $label_after )
 			);
 
@@ -599,7 +624,7 @@ class widget_context {
 		if ( empty( $selection ) )
 			$options[] = sprintf( 
 					'<option value="">%s</option>', 
-					esc_html__( 'No options given', 'widget-context' ) 
+					esc_html__( 'No options available', 'widget-context' ) 
 				);
 
 		foreach ( $selection as $sid => $svalue )
@@ -611,7 +636,7 @@ class widget_context {
 				);
 
 		return sprintf( 
-				'<label class="wl-%s">
+				'<label class="wc-field-select-%s" data-widget-id="%s">
 					%s 
 					<select name="%s[%s]">
 						%s
@@ -619,10 +644,14 @@ class widget_context {
 					%s
 				</label>',
 				$this->get_field_classname( $option ),
+				esc_attr( $control_args['widget_id'] ),
+				// Before
 				$label_before, 
+				// Input
 				$control_args['input_prefix'], 
 				$option,
-				implode( '', $options ), 
+				implode( '', $options ),
+				// After
 				$label_after
 			);
 
