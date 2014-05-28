@@ -159,18 +159,18 @@ class widget_context {
 		// Default context
 		$default_contexts = array(
 			'incexc' => array(
-				'label' => __( 'Widget Context' ),
+				'label' => __( 'Widget Context', 'widget-context' ),
 				'description' => __( 'Set the default logic to show or hide.', 'widget-context' ),
 				'weight' => -100,
 				'type' => 'core',
 			),
 			'location' => array(
-				'label' => __( 'Global Sections' ),
+				'label' => __( 'Global Sections', 'widget-context' ),
 				'description' => __( 'Based on standard WordPress template tags.', 'widget-context' ),
 				'weight' => 10
 			),
 			'url' => array(
-				'label' => __( 'Target by URL' ),
+				'label' => __( 'Target by URL', 'widget-context' ),
 				'description' => __( 'Based on URL patterns.', 'widget-context' ),
 				'weight' => 20
 			),
@@ -192,6 +192,7 @@ class widget_context {
 		// Enable other plugins and themes to specify their own contexts
 		$this->contexts = apply_filters( 'widget_contexts', $default_contexts );
 
+		// Sort contexts by their weight
 		uasort( $this->contexts, array( $this, 'sort_context_by_weight' ) );
 
 	}
@@ -310,6 +311,7 @@ class widget_context {
 		$status = array(
 				'is_front_page' => is_front_page(),
 				'is_home' => is_home(),
+				'is_singular' => is_singular(),
 				'is_single' => is_single(),
 				'is_page' => is_page(),
 				'is_attachment' => is_attachment(),
@@ -684,7 +686,7 @@ class widget_context {
 		foreach ( $options as $widget_id => $option ) {
 
 			// We moved from [incexc] = 1/0 to [incexc][condition] = 1/0
-			if ( ! is_array( $option['incexc'] ) )
+			if ( isset( $option['incexc'] ) && ! is_array( $option['incexc'] ) )
 				$options[ $widget_id ]['incexc'] = array( 'condition' => $option['incexc'] );
 			
 			// Move notes from "general" group to "admin_notes"
