@@ -312,7 +312,7 @@ class widget_context {
 				'is_front_page' => is_front_page(),
 				'is_home' => is_home(),
 				'is_singular' => is_singular(),
-				'is_single' => is_single(),
+				'is_single' => is_singular( 'post' ),
 				'is_page' => is_page(),
 				'is_attachment' => is_attachment(),
 				'is_search' => is_search(),
@@ -326,6 +326,8 @@ class widget_context {
 				'is_tag' => is_tag(),
 				'is_author' => is_author()
 			);
+
+		print_r($status);
 
 		$matched = array_intersect_assoc( $settings, $status );
 
@@ -482,22 +484,22 @@ class widget_context {
 	function control_location( $control_args ) {
 
 		$options = array(
-				'is_front_page' => __( 'Front Page', 'widget-context' ),
-				'is_home' => __( 'Blog Page', 'widget-context' ),
-				'is_singular' => __( 'All Posts and Pages', 'widget-context' ),
-				'is_single' => __( 'All Posts', 'widget-context' ),
-				'is_page' => __( 'All Pages', 'widget-context' ),
-				'is_attachment' => __( 'All Attachments', 'widget-context' ),
-				'is_search' => __( 'Search Results', 'widget-context' ),
-				'is_404' => __( '404 Error Page', 'widget-context' ),
-				'is_archive' => __( 'All Archives', 'widget-context' ),
-				'is_date' => __( 'All Date Archives', 'widget-context' ),
-				'is_day' => __( 'Daily Archives', 'widget-context' ),
-				'is_month' => __( 'Monthly Archives', 'widget-context' ),
-				'is_year' => __( 'Yearly Archives', 'widget-context' ),
-				'is_category' => __( 'All Category Archives', 'widget-context' ),
-				'is_tag' => __( 'All Tag Archives', 'widget-context' ),
-				'is_author' => __( 'All Author Archives', 'widget-context' )
+				'is_front_page' => __( 'Front page', 'widget-context' ),
+				'is_home' => __( 'Blog page', 'widget-context' ),
+				'is_singular' => __( 'All posts, pages and custom post types', 'widget-context' ),
+				'is_single' => __( 'All posts', 'widget-context' ),
+				'is_page' => __( 'All pages', 'widget-context' ),
+				'is_attachment' => __( 'All attachments', 'widget-context' ),
+				'is_search' => __( 'Search results', 'widget-context' ),
+				'is_404' => __( '404 error page', 'widget-context' ),
+				'is_archive' => __( 'All archives', 'widget-context' ),
+				'is_date' => __( 'All date archives', 'widget-context' ),
+				'is_day' => __( 'Daily archives', 'widget-context' ),
+				'is_month' => __( 'Monthly archives', 'widget-context' ),
+				'is_year' => __( 'Yearly archives', 'widget-context' ),
+				'is_category' => __( 'All category archives', 'widget-context' ),
+				'is_tag' => __( 'All tag archives', 'widget-context' ),
+				'is_author' => __( 'All author archives', 'widget-context' )
 			);
 
 		foreach ( $options as $option => $label )
