@@ -31,7 +31,9 @@ class WidgetContextCustomCPTTax {
 
 		$this->wc = widget_context::instance();
 
-		add_action( 'init', array( $this, 'init' ) );
+		// This should run really late so that all post types get registered,
+		// so we use register_sidebar which fires almost right after init
+		add_action( 'register_sidebar', array( $this, 'init' ) );
 
 		add_filter( 'widget_contexts', array( $this, 'add_context' ) );
 
