@@ -2,27 +2,11 @@
 /*
 Plugin Name: Widget Context
 Plugin URI: http://wordpress.org/extend/plugins/widget-context/
-Description: Display widgets in context.
+Description: Show or hide widgets depending on the section of the site that is being viewed.
 Version: 1.0-alpha.6
 Author: Kaspars Dambis
 Author URI: http://kaspars.net
-
-For changelog see readme.txt
-----------------------------
-	
-    Copyright 2009  Kaspars Dambis  (email: kaspars@konstruktors.com)
-	
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+Text Domain: widget-context
 */
 
 // Go!
@@ -59,6 +43,9 @@ class widget_context {
 		// Load plugin settings and show/hide widgets by altering the 
 		// $sidebars_widgets global variable
 		add_action( 'init', array( $this, 'init_widget_context' ) );
+
+		// Enable localization
+		add_action( 'plugins_loaded', array( $this, 'init_l10n' ) );
 		
 		// Append Widget Context settings to widget controls
 		add_action( 'in_widget_form', array( $this, 'widget_context_controls' ), 10, 3 );
@@ -97,6 +84,13 @@ class widget_context {
 
 		// Hide/show widgets for is_active_sidebar() to work
 		add_filter( 'sidebars_widgets', array( $this, 'maybe_unset_widgets_by_context' ), 10 );
+
+	}
+
+
+	function init_l10n() {
+
+		load_plugin_textdomain( 'widget-context', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
 	}
 		
@@ -326,8 +320,6 @@ class widget_context {
 				'is_tag' => is_tag(),
 				'is_author' => is_author()
 			);
-
-		print_r($status);
 
 		$matched = array_intersect_assoc( $settings, $status );
 
