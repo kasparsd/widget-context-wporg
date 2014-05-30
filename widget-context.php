@@ -3,7 +3,7 @@
 Plugin Name: Widget Context
 Plugin URI: http://wordpress.org/extend/plugins/widget-context/
 Description: Display widgets in context.
-Version: 1.0-alpha.5
+Version: 1.0-alpha.6
 Author: Kaspars Dambis
 Author URI: http://kaspars.net
 
@@ -718,6 +718,10 @@ class widget_context {
 			return $options;
 		
 		foreach ( $options as $widget_id => $option ) {
+
+			// This doesn't have an include/exclude rule defined
+			if ( ! isset( $option['incexc'] ) )
+				unset( $options[ $widget_id ] );
 
 			// We moved from [incexc] = 1/0 to [incexc][condition] = 1/0
 			if ( isset( $option['incexc'] ) && ! is_array( $option['incexc'] ) )
