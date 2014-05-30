@@ -16,7 +16,7 @@ jQuery(document).ready(function($) {
 
 	});
 
-	$('#widgets-right').on( 'change', '.wc-field-select-condition select', function(){
+	$('#widgets-right, #widgets-left').on( 'change', '.wc-field-select-condition select', function(){
 		
 		show_hide_controls( $(this).parent().data('widget-id'), $(this).val() );
 
