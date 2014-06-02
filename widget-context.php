@@ -52,6 +52,9 @@ class widget_context {
 		
 		// Add admin menu for config
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
+
+		// Style things based on admin color scheme
+		add_action( 'admin_footer', array( $this, 'admin_styles_inline' ) );
 		
 		// Save widget context settings, when in admin area
 		add_action( 'sidebar_admin_setup', array( $this, 'save_widget_context_settings' ) );
@@ -108,6 +111,27 @@ class widget_context {
 			array( 'jquery' ) 
 		);
 	
+	}
+
+
+	function admin_styles_inline() {
+
+		global $_wp_admin_css_colors;
+
+		$color_scheme = get_user_option( 'admin_color' );
+
+		if ( isset( $_wp_admin_css_colors[ $color_scheme ] ) ) {
+
+			printf( 
+				'<style type="text/css">
+					.widget-context .widget-context-header h3:before { color:%1$s; }
+					.context-group-incexc select { border-color:%1$s; }
+				</style>',
+				$_wp_admin_css_colors[ $color_scheme ]->colors[3]
+			);
+
+		}
+
 	}
 
 
