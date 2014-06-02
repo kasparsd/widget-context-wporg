@@ -3,7 +3,7 @@
 Plugin Name: Widget Context
 Plugin URI: http://wordpress.org/extend/plugins/widget-context/
 Description: Show or hide widgets depending on the section of the site that is being viewed.
-Version: 1.0-alpha.6
+Version: 1.0-alpha.7
 Author: Kaspars Dambis
 Author URI: http://kaspars.net
 Text Domain: widget-context
@@ -120,7 +120,7 @@ class widget_context {
 	
 	function save_widget_context_settings() {
 
-		if ( ! current_user_can( 'edit_theme_options' ) || empty( $_POST ) || ! isset( $_POST['sidebar'] ) || empty( $_POST['sidebar'] ) )
+		if ( ! current_user_can( 'edit_theme_options' ) || empty( $_POST ) || ! isset( $_POST['wl'] ) )
 			return;
 		
 		// Delete a widget
