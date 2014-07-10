@@ -907,20 +907,16 @@ class widget_context {
 							do_settings_sections( $this->settings_name );
 						?>
 
-						<table class="form-table">
-							<?php
-								printf( 
-									'<tr class="settings-section settings-section-modules">
-										<th>%s</th>
-										<td>
-											<ul>%s</ul>
-										</td>
-									</div>',
-									esc_html__( 'Enabled Modules', 'widget-context' ),
-									implode( '', $context_controls )
-								);
-							?>
-						</table>
+						<?php
+							printf( 
+								'<div class="settings-section settings-section-modules">
+									<h3>%s</h3>
+									<ul>%s</ul>
+								</div>',
+								esc_html__( 'Enabled Context Modules', 'widget-context' ),
+								implode( '', $context_controls )
+							);
+						?>
 							
 						<?php
 							submit_button();
@@ -930,12 +926,14 @@ class widget_context {
 
 				<div class="widget-context-sidebar">
 					<div class="wc-sidebar-in">
+
 						<div class="wc-sidebar-section wc-sidebar-credits">
 							<p>
 								<img src="http://gravatar.com/avatar/661eb21385c25c01ad64ab9e13b37331/?s=60" alt="Kaspars Dambis" width="60" height="60" />
 								<?php printf( esc_html__( 'Widget Context is created and maintained by %s.' ), '<a href="http://kaspars.net">Kaspars Dambis</a>' ); ?>
 							</p>
 						</div>
+
 						<div class="wc-sidebar-section wc-sidebar-newsletter">
 							<h3><?php esc_html_e( 'News & Updates' ); ?></h3>
 							<p><?php esc_html_e( 'Subscribe to receive news &amp; updates about the plugin.' ); ?></p>
@@ -946,6 +944,7 @@ class widget_context {
 								<p><input class="button" name="subscribe" type="submit" value="<?php _e( 'Subscribe', 'widget-context' ); ?>" /></p>
 							</form>
 						</div>
+
 					</div>
 				</div>
 
