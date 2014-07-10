@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Widget Context 1.0-beta.3\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/git\n"
-"POT-Creation-Date: 2014-07-10 14:41:27+00:00\n"
+"POT-Creation-Date: 2014-07-10 14:48:47+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -224,7 +224,7 @@ msgid "News & Updates"
 msgstr ""
 
 #: widget-context.php:938
-msgid "Subscribe to receive news &amp; updates about the plugin."
+msgid "Subscribe to receive news & updates about the plugin."
 msgstr ""
 
 #: widget-context.php:941
