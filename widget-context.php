@@ -929,7 +929,24 @@ class widget_context {
 				</div>
 
 				<div class="widget-context-sidebar">
-					<p><strong>Widget Context</strong> is created and maintained by <a href="http://kaspars.net">Kaspars Dambis</a>.</p>
+					<div class="wc-sidebar-in">
+						<div class="wc-sidebar-section wc-sidebar-credits">
+							<p>
+								<img src="http://gravatar.com/avatar/661eb21385c25c01ad64ab9e13b37331/?s=60" alt="Kaspars Dambis" width="60" height="60" />
+								<?php printf( esc_html__( 'Widget Context is created and maintained by %s.' ), '<a href="http://kaspars.net">Kaspars Dambis</a>' ); ?>
+							</p>
+						</div>
+						<div class="wc-sidebar-section wc-sidebar-newsletter">
+							<h3><?php esc_html_e( 'News & Updates' ); ?></h3>
+							<p><?php esc_html_e( 'Subscribe to receive news &amp; updates about the plugin.' ); ?></p>
+							<form action="//osc.us2.list-manage.com/subscribe/post?u=e8d173fc54c0fc4286a2b52e8&amp;id=8afe96c5a3" method="post" target="_blank">
+								<?php $user = wp_get_current_user(); ?>
+								<p><label><?php _e( 'Your Name', 'widget-context' ); ?>: <input type="text" name="NAME" value="<?php echo esc_attr( sprintf( '%s %s', $user->first_name, $user->last_name ) ) ?>" /></label></p>
+								<p><label><?php _e( 'Your Email', 'widget-context' ); ?>: <input type="text" name="EMAIL" value="<?php echo esc_attr( $user->user_email ); ?>" /></label></p>
+								<p><input class="button" name="subscribe" type="submit" value="<?php _e( 'Subscribe', 'widget-context' ); ?>" /></p>
+							</form>
+						</div>
+					</div>
 				</div>
 
 			</div>
