@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the Widget Context package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Widget Context 1.0-beta\n"
+"Project-Id-Version: Widget Context 1.0-beta.3\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/git\n"
-"POT-Creation-Date: 2014-07-10 11:09:52+00:00\n"
+"POT-Creation-Date: 2014-07-10 14:41:27+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -64,155 +64,179 @@ msgstr ""
 msgid "words"
 msgstr ""
 
-#. #-#-#-#-#  widget-context.pot (Widget Context 1.0-beta)  #-#-#-#-#
+#. #-#-#-#-#  widget-context.pot (Widget Context 1.0-beta.3)  #-#-#-#-#
 #. Plugin Name of the plugin/theme
-#: widget-context.php:180 widget-context.php:519 widget-context.php:827
+#: widget-context.php:91 widget-context.php:530 widget-context.php:838
 msgid "Widget Context"
 msgstr ""
 
-#: widget-context.php:181
+#: widget-context.php:92
 msgid "Set the default logic to show or hide."
 msgstr ""
 
-#: widget-context.php:186
+#: widget-context.php:97
 msgid "Global Sections"
 msgstr ""
 
-#: widget-context.php:187
+#: widget-context.php:98
 msgid "Based on standard WordPress template tags."
 msgstr ""
 
-#: widget-context.php:191
+#: widget-context.php:102
 msgid "Target by URL"
 msgstr ""
 
-#: widget-context.php:192
+#: widget-context.php:103
 msgid "Based on URL patterns."
 msgstr ""
 
-#: widget-context.php:196
+#: widget-context.php:107
 msgid "Notes (invisible to public)"
 msgstr ""
 
-#: widget-context.php:197
+#: widget-context.php:108
 msgid "Enables private notes on widget context settings."
 msgstr ""
 
-#: widget-context.php:480
+#: widget-context.php:491
 msgid ""
 "No widget controls enabled. You can enable them in <a href=\"%s\">Widget "
 "Context settings</a>."
 msgstr ""
 
-#: widget-context.php:489
+#: widget-context.php:500
 msgid "No widget controls enabled."
 msgstr ""
 
-#: widget-context.php:501 widget-context.php:826 widget-context.php:887
+#: widget-context.php:512 widget-context.php:837 widget-context.php:898
 msgid "Widget Context Settings"
 msgstr ""
 
-#: widget-context.php:522
+#: widget-context.php:533
 msgid "Expand"
 msgstr ""
 
-#: widget-context.php:523
+#: widget-context.php:534
 msgid "Collapse"
 msgstr ""
 
-#: widget-context.php:537
+#: widget-context.php:548
 msgid "Show widget everywhere"
 msgstr ""
 
-#: widget-context.php:538
+#: widget-context.php:549
 msgid "Show widget on selected"
 msgstr ""
 
-#: widget-context.php:539
+#: widget-context.php:550
 msgid "Hide widget on selected"
 msgstr ""
 
-#: widget-context.php:540
+#: widget-context.php:551
 msgid "Hide widget everywhere"
 msgstr ""
 
-#: widget-context.php:551
+#: widget-context.php:562
 msgid "Front page"
 msgstr ""
 
-#: widget-context.php:552
+#: widget-context.php:563
 msgid "Blog page"
 msgstr ""
 
-#: widget-context.php:553
+#: widget-context.php:564
 msgid "All posts, pages and custom post types"
 msgstr ""
 
-#: widget-context.php:554
+#: widget-context.php:565
 msgid "All posts"
 msgstr ""
 
-#: widget-context.php:555
+#: widget-context.php:566
 msgid "All pages"
 msgstr ""
 
-#: widget-context.php:556
+#: widget-context.php:567
 msgid "All attachments"
 msgstr ""
 
-#: widget-context.php:557
+#: widget-context.php:568
 msgid "Search results"
 msgstr ""
 
-#: widget-context.php:558
+#: widget-context.php:569
 msgid "404 error page"
 msgstr ""
 
-#: widget-context.php:559
+#: widget-context.php:570
 msgid "All archives"
 msgstr ""
 
-#: widget-context.php:560
+#: widget-context.php:571
 msgid "All date archives"
 msgstr ""
 
-#: widget-context.php:561
+#: widget-context.php:572
 msgid "Daily archives"
 msgstr ""
 
-#: widget-context.php:562
+#: widget-context.php:573
 msgid "Monthly archives"
 msgstr ""
 
-#: widget-context.php:563
+#: widget-context.php:574
 msgid "Yearly archives"
 msgstr ""
 
-#: widget-context.php:564
+#: widget-context.php:575
 msgid "All category archives"
 msgstr ""
 
-#: widget-context.php:565
+#: widget-context.php:576
 msgid "All tag archives"
 msgstr ""
 
-#: widget-context.php:566
+#: widget-context.php:577
 msgid "All author archives"
 msgstr ""
 
-#: widget-context.php:583
+#: widget-context.php:594
 msgid ""
 "Enter one location fragment per line. Use <strong>*</strong> character as a "
 "wildcard. Example: <code>category/peace/*</code> to target all posts in "
 "category <em>peace</em>."
 msgstr ""
 
-#: widget-context.php:698
+#: widget-context.php:709
 msgid "No options available"
 msgstr ""
 
-#: widget-context.php:907
-msgid "Enabled Modules"
+#: widget-context.php:915
+msgid "Enabled Context Modules"
+msgstr ""
+
+#: widget-context.php:932
+msgid "Widget Context is created and maintained by %s."
+msgstr ""
+
+#: widget-context.php:937
+msgid "News & Updates"
+msgstr ""
+
+#: widget-context.php:938
+msgid "Subscribe to receive news &amp; updates about the plugin."
+msgstr ""
+
+#: widget-context.php:941
+msgid "Your Name"
+msgstr ""
+
+#: widget-context.php:942
+msgid "Your Email"
+msgstr ""
+
+#: widget-context.php:943
+msgid "Subscribe"
 msgstr ""
 
 #. Plugin URI of the plugin/theme
