@@ -19,6 +19,11 @@ class widget_context {
 	private $options_name = 'widget_logic_options'; // Context settings for widgets (visibility, etc)
 	private $settings_name = 'widget_context_settings'; // Widget Context global settings
 
+	private $core_modules = array(
+			'word-count/word-count.php',
+			'custom-post-types-taxonomies/custom-cpt-tax.php'
+		);
+
 	var $context_options = array(); // Store visibility settings
 	var $context_settings = array(); // Store admin settings
 	var $contexts = array();
@@ -67,6 +72,17 @@ class widget_context {
 
 		// Register admin settings
 		add_action( 'admin_init', array( $this, 'widget_context_settings_init' ) );
+
+	}
+
+
+	private function init_core_modules() {
+
+		$include_path = plugin_dir_path( __FILE__ ) . '/modules';
+
+		foreach ( $this->core_modules as $module ) {
+			include sprintf( '%s/%s', $include_path, $module );
+		}
 
 	}
 
@@ -173,6 +189,9 @@ class widget_context {
 
 
 	function define_widget_contexts() {
+
+		// Initialize core modules
+		$this->init_core_modules();
 
 		// Default context
 		$default_contexts = array(
@@ -928,16 +947,5 @@ class widget_context {
 
 
 }
-
-
-/**
- * Load core modules
- */
-
-// Word Count
-include plugin_dir_path( __FILE__ ) . '/modules/word-count/word-count.php';
-
-// Custom Post Types and Taxonomies
-include plugin_dir_path( __FILE__ ) . '/modules/custom-post-types-taxonomies/custom-cpt-tax.php';
 
 
