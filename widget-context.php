@@ -194,7 +194,6 @@ class widget_context {
 			printf( 
 				'<style type="text/css">
 					.widget-context .widget-context-header h3:before { color:%1$s; }
-					.context-group-incexc select { border-color:%1$s; }
 				</style>',
 				$_wp_admin_css_colors[ $color_scheme ]->colors[3]
 			);
