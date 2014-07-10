@@ -30,6 +30,9 @@ Widget Context allows you to show or hide widgets on certain sections of your si
 
 ## Changelog
 
+### 1.0-beta
+* Improved settings page.
+
 ### 1.0-alpha
 * Refactor code to allow custom widget context modules.
 
@@ -87,6 +90,10 @@ Widget Context allows you to show or hide widgets on certain sections of your si
 
 
 ## Upgrade Notice
+
+### 1.0
+
+New modular architecture and a settings page to disable unused widget context modules.
 
 ### 0.8.1
 
