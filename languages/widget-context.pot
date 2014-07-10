@@ -1,0 +1,234 @@
+# Copyright (C) 2014 Widget Context
+# This file is distributed under the same license as the Widget Context package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Widget Context 1.0-beta\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/git\n"
+"POT-Creation-Date: 2014-07-10 11:09:52+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2014-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: modules/custom-post-types-taxonomies/custom-cpt-tax.php:71
+msgid "Custom Post Types and Taxonomies"
+msgstr ""
+
+#: modules/custom-post-types-taxonomies/custom-cpt-tax.php:72
+msgid "Context based custom post types and taxonomies"
+msgstr ""
+
+#: modules/custom-post-types-taxonomies/custom-cpt-tax.php:123
+msgid "All \"%s\" posts"
+msgstr ""
+
+#: modules/custom-post-types-taxonomies/custom-cpt-tax.php:129
+msgid "Archive of \"%s\" posts"
+msgstr ""
+
+#: modules/custom-post-types-taxonomies/custom-cpt-tax.php:138
+msgid "All \"%s\" taxonomy archives"
+msgstr ""
+
+#: modules/custom-post-types-taxonomies/custom-cpt-tax.php:150
+msgid "None."
+msgstr ""
+
+#: modules/word-count/word-count.php:49
+msgid "Word Count"
+msgstr ""
+
+#: modules/word-count/word-count.php:50
+msgid "Context based on word count on the page."
+msgstr ""
+
+#: modules/word-count/word-count.php:104
+msgid "Has"
+msgstr ""
+
+#: modules/word-count/word-count.php:105
+msgid "less"
+msgstr ""
+
+#: modules/word-count/word-count.php:105
+msgid "more"
+msgstr ""
+
+#: modules/word-count/word-count.php:105
+msgid "than"
+msgstr ""
+
+#: modules/word-count/word-count.php:106
+msgid "words"
+msgstr ""
+
+#. #-#-#-#-#  widget-context.pot (Widget Context 1.0-beta)  #-#-#-#-#
+#. Plugin Name of the plugin/theme
+#: widget-context.php:180 widget-context.php:519 widget-context.php:827
+msgid "Widget Context"
+msgstr ""
+
+#: widget-context.php:181
+msgid "Set the default logic to show or hide."
+msgstr ""
+
+#: widget-context.php:186
+msgid "Global Sections"
+msgstr ""
+
+#: widget-context.php:187
+msgid "Based on standard WordPress template tags."
+msgstr ""
+
+#: widget-context.php:191
+msgid "Target by URL"
+msgstr ""
+
+#: widget-context.php:192
+msgid "Based on URL patterns."
+msgstr ""
+
+#: widget-context.php:196
+msgid "Notes (invisible to public)"
+msgstr ""
+
+#: widget-context.php:197
+msgid "Enables private notes on widget context settings."
+msgstr ""
+
+#: widget-context.php:480
+msgid ""
+"No widget controls enabled. You can enable them in <a href=\"%s\">Widget "
+"Context settings</a>."
+msgstr ""
+
+#: widget-context.php:489
+msgid "No widget controls enabled."
+msgstr ""
+
+#: widget-context.php:501 widget-context.php:826 widget-context.php:887
+msgid "Widget Context Settings"
+msgstr ""
+
+#: widget-context.php:522
+msgid "Expand"
+msgstr ""
+
+#: widget-context.php:523
+msgid "Collapse"
+msgstr ""
+
+#: widget-context.php:537
+msgid "Show widget everywhere"
+msgstr ""
+
+#: widget-context.php:538
+msgid "Show widget on selected"
+msgstr ""
+
+#: widget-context.php:539
+msgid "Hide widget on selected"
+msgstr ""
+
+#: widget-context.php:540
+msgid "Hide widget everywhere"
+msgstr ""
+
+#: widget-context.php:551
+msgid "Front page"
+msgstr ""
+
+#: widget-context.php:552
+msgid "Blog page"
+msgstr ""
+
+#: widget-context.php:553
+msgid "All posts, pages and custom post types"
+msgstr ""
+
+#: widget-context.php:554
+msgid "All posts"
+msgstr ""
+
+#: widget-context.php:555
+msgid "All pages"
+msgstr ""
+
+#: widget-context.php:556
+msgid "All attachments"
+msgstr ""
+
+#: widget-context.php:557
+msgid "Search results"
+msgstr ""
+
+#: widget-context.php:558
+msgid "404 error page"
+msgstr ""
+
+#: widget-context.php:559
+msgid "All archives"
+msgstr ""
+
+#: widget-context.php:560
+msgid "All date archives"
+msgstr ""
+
+#: widget-context.php:561
+msgid "Daily archives"
+msgstr ""
+
+#: widget-context.php:562
+msgid "Monthly archives"
+msgstr ""
+
+#: widget-context.php:563
+msgid "Yearly archives"
+msgstr ""
+
+#: widget-context.php:564
+msgid "All category archives"
+msgstr ""
+
+#: widget-context.php:565
+msgid "All tag archives"
+msgstr ""
+
+#: widget-context.php:566
+msgid "All author archives"
+msgstr ""
+
+#: widget-context.php:583
+msgid ""
+"Enter one location fragment per line. Use <strong>*</strong> character as a "
+"wildcard. Example: <code>category/peace/*</code> to target all posts in "
+"category <em>peace</em>."
+msgstr ""
+
+#: widget-context.php:698
+msgid "No options available"
+msgstr ""
+
+#: widget-context.php:907
+msgid "Enabled Modules"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://wordpress.org/extend/plugins/widget-context/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"Show or hide widgets depending on the section of the site that is being "
+"viewed."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Kaspars Dambis"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://kaspars.net"
+msgstr ""
