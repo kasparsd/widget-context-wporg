@@ -462,6 +462,8 @@ class widget_context {
 
 		}
 
+
+
 		// Non-core controls that should be visible if enabled
 		$controls_not_core = array_diff( array_keys( $controls ), $controls_core );
 
@@ -489,6 +491,16 @@ class widget_context {
 				
 			}
 			
+		}
+
+		if ( current_user_can( 'edit_theme_options' ) ) {
+
+			$controls[] = sprintf( 
+					'<p class="widget-context-settings-link"><a href="%s">%s</a></p>',
+					 admin_url( 'options-general.php?page=widget_context_settings' ),
+					__( 'Widget Context Settings', 'widget-context' ) 
+				);
+
 		}
 
 		return sprintf( 
