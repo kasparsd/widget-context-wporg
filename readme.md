@@ -4,7 +4,7 @@ Contributors: kasparsd, jamescollins
 Tags: widget, widget context, context, logic, widget logic, cms   
 Requires at least: 3.0   
 Tested up to: 3.9.1   
-Stable tag: 0.8.3   
+Stable tag: 1.0   
 License: GPLv2 or later   
 
 Show or hide widgets on specific posts, pages or sections of your site.
@@ -29,6 +29,9 @@ Widget Context allows you to show or hide widgets on certain sections of your si
 
 
 ## Changelog
+
+### 1.0
+* Public release of the 1.0 refactoring.
 
 ### 1.0-beta
 * Improved settings page.
@@ -93,7 +96,7 @@ Widget Context allows you to show or hide widgets on certain sections of your si
 
 ### 1.0
 
-New modular architecture and a settings page to disable unused widget context modules.
+New modular architecture and settings page. Please make sure you test this version before deploying to a production website.
 
 ### 0.8.1
 
