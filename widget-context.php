@@ -342,7 +342,7 @@ class widget_context {
 				'is_home' => is_home(),
 				'is_singular' => is_singular(),
 				'is_single' => is_singular( 'post' ),
-				'is_page' => is_page(),
+				'is_page' => ( is_page() && ! is_front_page() ),
 				'is_attachment' => is_attachment(),
 				'is_search' => is_search(),
 				'is_404' => is_404(),
