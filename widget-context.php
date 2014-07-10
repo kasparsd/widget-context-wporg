@@ -76,13 +76,66 @@ class widget_context {
 	}
 
 
-	private function init_core_modules() {
+	function define_widget_contexts() {
 
+		// Initialize core modules
 		$include_path = plugin_dir_path( __FILE__ ) . '/modules';
 
 		foreach ( $this->core_modules as $module ) {
 			include sprintf( '%s/%s', $include_path, $module );
 		}
+
+		// Default context
+		$default_contexts = array(
+			'incexc' => array(
+				'label' => __( 'Widget Context', 'widget-context' ),
+				'description' => __( 'Set the default logic to show or hide.', 'widget-context' ),
+				'weight' => -100,
+				'type' => 'core',
+			),
+			'location' => array(
+				'label' => __( 'Global Sections', 'widget-context' ),
+				'description' => __( 'Based on standard WordPress template tags.', 'widget-context' ),
+				'weight' => 10
+			),
+			'url' => array(
+				'label' => __( 'Target by URL', 'widget-context' ),
+				'description' => __( 'Based on URL patterns.', 'widget-context' ),
+				'weight' => 20
+			),
+			'admin_notes' => array(
+				'label' => __( 'Notes (invisible to public)', 'widget-context' ),
+				'description' => __( 'Enables private notes on widget context settings.'),
+				'weight' => 90
+			)
+		);
+
+		// Add default context controls and checks
+		foreach ( $default_contexts as $context_name => $context_desc ) {
+
+			add_filter( 'widget_context_control-' . $context_name, array( $this, 'control_' . $context_name ), 10, 2 );
+			add_filter( 'widget_context_check-' . $context_name, array( $this, 'context_check_' . $context_name ), 10, 2 );
+
+		}
+
+		// Enable other plugins and themes to specify their own contexts
+		$this->contexts = apply_filters( 'widget_contexts', $default_contexts );
+
+		// Sort contexts by their weight
+		uasort( $this->contexts, array( $this, 'sort_context_by_weight' ) );
+
+	}
+
+
+	function sort_context_by_weight( $a, $b ) {
+
+		if ( ! isset( $a['weight'] ) )
+			$a['weight'] = 10;
+
+		if ( ! isset( $b['weight'] ) )
+			$b['weight'] = 10;
+
+		return ( $a['weight'] < $b['weight'] ) ? -1 : 1;
 
 	}
 
@@ -184,66 +237,6 @@ class widget_context {
 				unset( $this->context_options[ $widget_id ] );
 
 		update_option( $this->options_name, $this->context_options );
-
-	}
-
-
-	function define_widget_contexts() {
-
-		// Initialize core modules
-		$this->init_core_modules();
-
-		// Default context
-		$default_contexts = array(
-			'incexc' => array(
-				'label' => __( 'Widget Context', 'widget-context' ),
-				'description' => __( 'Set the default logic to show or hide.', 'widget-context' ),
-				'weight' => -100,
-				'type' => 'core',
-			),
-			'location' => array(
-				'label' => __( 'Global Sections', 'widget-context' ),
-				'description' => __( 'Based on standard WordPress template tags.', 'widget-context' ),
-				'weight' => 10
-			),
-			'url' => array(
-				'label' => __( 'Target by URL', 'widget-context' ),
-				'description' => __( 'Based on URL patterns.', 'widget-context' ),
-				'weight' => 20
-			),
-			'admin_notes' => array(
-				'label' => __( 'Notes (invisible to public)', 'widget-context' ),
-				'description' => __( 'Enables private notes on widget context settings.'),
-				'weight' => 90
-			)
-		);
-
-		// Add default context controls and checks
-		foreach ( $default_contexts as $context_name => $context_desc ) {
-
-			add_filter( 'widget_context_control-' . $context_name, array( $this, 'control_' . $context_name ), 10, 2 );
-			add_filter( 'widget_context_check-' . $context_name, array( $this, 'context_check_' . $context_name ), 10, 2 );
-
-		}
-
-		// Enable other plugins and themes to specify their own contexts
-		$this->contexts = apply_filters( 'widget_contexts', $default_contexts );
-
-		// Sort contexts by their weight
-		uasort( $this->contexts, array( $this, 'sort_context_by_weight' ) );
-
-	}
-
-
-	function sort_context_by_weight( $a, $b ) {
-
-		if ( ! isset( $a['weight'] ) )
-			$a['weight'] = 10;
-
-		if ( ! isset( $b['weight'] ) )
-			$b['weight'] = 10;
-
-		return ( $a['weight'] < $b['weight'] ) ? -1 : 1;
 
 	}
 
