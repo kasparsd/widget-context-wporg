@@ -3,7 +3,7 @@
 Plugin Name: Widget Context
 Plugin URI: http://wordpress.org/extend/plugins/widget-context/
 Description: Show or hide widgets depending on the section of the site that is being viewed.
-Version: 1.0-alpha.7
+Version: 1.0-beta
 Author: Kaspars Dambis
 Author URI: http://kaspars.net
 Text Domain: widget-context
@@ -412,17 +412,27 @@ class widget_context {
 	function display_widget_context( $widget_id = null ) {
 
 		$controls = array();
+		$controls_disabled = array();
+		$controls_core = array();
 
 		foreach ( $this->contexts as $context_name => $context_settings ) {
 
 			$context_classes = array(
-				'context-group',
-				sprintf( 'context-group-%s', esc_attr( $context_name ) )
-			);
+					'context-group',
+					sprintf( 'context-group-%s', esc_attr( $context_name ) )
+				);
 
-			// Hide this context from the admin UX
-			if ( isset( $this->context_settings['contexts'][ $context_name ] ) && ! $this->context_settings['contexts'][ $context_name ] )
+			// Hide this context from the admin UX. We can't remove them 
+			// because settings will get lost if this page is submitted.
+			if ( isset( $this->context_settings['contexts'][ $context_name ] ) && ! $this->context_settings['contexts'][ $context_name ] ) {
 				$context_classes[] = 'context-inactive';
+				$controls_disabled[] = $context_name;
+			}
+
+			// Store core controls
+			if ( isset( $context_settings['type'] ) && 'core' == $context_settings['type'] ) {
+				$controls_core[] = $context_name;
+			}
 
 			$control_args = array(
 					'name' => $context_name,
@@ -452,8 +462,34 @@ class widget_context {
 
 		}
 
-		if ( empty( $controls ) )
-			$controls[] = sprintf( '<p class="error">%s</p>', __( 'No settings defined.', 'widget-context' ) );
+		// Non-core controls that should be visible if enabled
+		$controls_not_core = array_diff( array_keys( $controls ), $controls_core );
+
+		// Check if any non-core context controls have been enabled
+		$has_controls = array_diff( $controls_not_core, $controls_disabled );
+
+		if ( empty( $controls ) || empty( $has_controls ) ) {
+
+			if ( current_user_can( 'edit_theme_options' ) ) {
+
+				$controls = array( sprintf( 
+						'<p class="error">%s</p>', 
+						sprintf(
+							__( 'No widget controls enabled. You can enable them in <a href="%s">Widget Context settings</a>.', 'widget-context' ),
+							admin_url( 'options-general.php?page=widget_context_settings' )
+						)
+					) );
+
+			} else {
+
+				$controls = array( sprintf( 
+						'<p class="error">%s</p>', 
+						__( 'No widget controls enabled.', 'widget-context' ) 
+					) );
+				
+			}
+			
+		}
 
 		return sprintf( 
 				'<div class="widget-context">
