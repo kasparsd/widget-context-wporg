@@ -4,21 +4,21 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Widget Context 1.0-alpha.6\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/git\n"
-"POT-Creation-Date: 2014-05-30 10:54:50+00:00\n"
+"POT-Creation-Date: 2014-07-10 11:09:52+00:00\n"
+"PO-Revision-Date: 2014-07-10 14:49+0200\n"
+"Last-Translator: Kaspars <kaspars@konstruktors.com>\n"
+"Language-Team: Kaspars Dambis <LL@li.org>\n"
+"Language: lv_LV\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2014-05-30 13:58+0200\n"
-"Last-Translator: Kaspars <kaspars@konstruktors.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"X-Generator: Poedit 1.6.5\n"
+"X-Generator: Poedit 1.6.6\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : "
 "2);\n"
-"Language: lv_LV\n"
 
 #: modules/custom-post-types-taxonomies/custom-cpt-tax.php:71
 msgid "Custom Post Types and Taxonomies"
-msgstr ""
+msgstr "Ierakstu tipi un taksanomijas"
 
 #: modules/custom-post-types-taxonomies/custom-cpt-tax.php:72
 msgid "Context based custom post types and taxonomies"
@@ -26,19 +26,19 @@ msgstr ""
 
 #: modules/custom-post-types-taxonomies/custom-cpt-tax.php:123
 msgid "All \"%s\" posts"
-msgstr ""
+msgstr "Visi \"%s\" ieraksti"
 
 #: modules/custom-post-types-taxonomies/custom-cpt-tax.php:129
 msgid "Archive of \"%s\" posts"
-msgstr ""
+msgstr "Arhīvs \"%s\" ierakstiem"
 
 #: modules/custom-post-types-taxonomies/custom-cpt-tax.php:138
 msgid "All \"%s\" taxonomy archives"
-msgstr ""
+msgstr "Visi \"%s\" taksonomijas arhīvi"
 
 #: modules/custom-post-types-taxonomies/custom-cpt-tax.php:150
 msgid "None."
-msgstr ""
+msgstr "Neviens."
 
 #: modules/word-count/word-count.php:49
 msgid "Word Count"
@@ -69,146 +69,152 @@ msgid "words"
 msgstr "vārdu"
 
 #. Plugin Name of the plugin/theme
-#: widget-context.php:156 widget-context.php:447 widget-context.php:755
+#: widget-context.php:180 widget-context.php:519 widget-context.php:827
 msgid "Widget Context"
 msgstr "Logrīku konteksts"
 
-#: widget-context.php:157
+#: widget-context.php:181
 msgid "Set the default logic to show or hide."
 msgstr ""
 
-#: widget-context.php:162
+#: widget-context.php:186
 msgid "Global Sections"
-msgstr ""
+msgstr "Globālās sadaļas"
 
-#: widget-context.php:163
+#: widget-context.php:187
 msgid "Based on standard WordPress template tags."
 msgstr ""
 
-#: widget-context.php:167
+#: widget-context.php:191
 msgid "Target by URL"
-msgstr ""
+msgstr "Pēc URL"
 
-#: widget-context.php:168
+#: widget-context.php:192
 msgid "Based on URL patterns."
-msgstr ""
+msgstr "Balstīts uz URL "
 
-#: widget-context.php:172
+#: widget-context.php:196
 msgid "Notes (invisible to public)"
-msgstr ""
+msgstr "Piezīmes (nav publiskas)"
 
-#: widget-context.php:173
+#: widget-context.php:197
 msgid "Enables private notes on widget context settings."
 msgstr ""
 
-#: widget-context.php:432
-msgid "No settings defined."
-msgstr ""
-
-#: widget-context.php:450
-msgid "Expand"
-msgstr ""
-
-#: widget-context.php:451
-msgid "Collapse"
-msgstr ""
-
-#: widget-context.php:465
-msgid "Show widget everywhere"
-msgstr ""
-
-#: widget-context.php:466
-msgid "Show widget on selected"
-msgstr ""
-
-#: widget-context.php:467
-msgid "Hide widget on selected"
-msgstr ""
-
-#: widget-context.php:468
-msgid "Hide widget everywhere"
-msgstr ""
-
-#: widget-context.php:479
-msgid "Front page"
-msgstr ""
-
 #: widget-context.php:480
-msgid "Blog page"
-msgstr ""
-
-#: widget-context.php:481
-msgid "All posts, pages and custom post types"
-msgstr ""
-
-#: widget-context.php:482
-msgid "All posts"
-msgstr ""
-
-#: widget-context.php:483
-msgid "All pages"
-msgstr ""
-
-#: widget-context.php:484
-msgid "All attachments"
-msgstr ""
-
-#: widget-context.php:485
-msgid "Search results"
-msgstr ""
-
-#: widget-context.php:486
-msgid "404 error page"
-msgstr ""
-
-#: widget-context.php:487
-msgid "All archives"
-msgstr ""
-
-#: widget-context.php:488
-msgid "All date archives"
+msgid ""
+"No widget controls enabled. You can enable them in <a href=\"%s\">Widget "
+"Context settings</a>."
 msgstr ""
 
 #: widget-context.php:489
+msgid "No widget controls enabled."
+msgstr "Nav iespējots neviens logrīku kontekts."
+
+#: widget-context.php:501 widget-context.php:826 widget-context.php:887
+msgid "Widget Context Settings"
+msgstr "Logrīku konteksta uzstādījumi"
+
+#: widget-context.php:522
+msgid "Expand"
+msgstr "Izvērst"
+
+#: widget-context.php:523
+msgid "Collapse"
+msgstr "Samazināt"
+
+#: widget-context.php:537
+msgid "Show widget everywhere"
+msgstr "Radīt logrīku visur"
+
+#: widget-context.php:538
+msgid "Show widget on selected"
+msgstr "Rādīt logrīku pēc izvēles"
+
+#: widget-context.php:539
+msgid "Hide widget on selected"
+msgstr "Slēpt logrīku pēc izvēles"
+
+#: widget-context.php:540
+msgid "Hide widget everywhere"
+msgstr "Slēpt logrīku pavisam"
+
+#: widget-context.php:551
+msgid "Front page"
+msgstr "Sākuma lapa"
+
+#: widget-context.php:552
+msgid "Blog page"
+msgstr "Bloga lapa"
+
+#: widget-context.php:553
+msgid "All posts, pages and custom post types"
+msgstr "Visi ierakstu, lapas un custom post types"
+
+#: widget-context.php:554
+msgid "All posts"
+msgstr "Visi ieraksti"
+
+#: widget-context.php:555
+msgid "All pages"
+msgstr "Visas lapas"
+
+#: widget-context.php:556
+msgid "All attachments"
+msgstr "Visi pielikumi"
+
+#: widget-context.php:557
+msgid "Search results"
+msgstr "Meklēšanas rezultāti"
+
+#: widget-context.php:558
+msgid "404 error page"
+msgstr "404 kļūdas lapa"
+
+#: widget-context.php:559
+msgid "All archives"
+msgstr "Visi arhīvi"
+
+#: widget-context.php:560
+msgid "All date archives"
+msgstr "Visi datuma arhīvi"
+
+#: widget-context.php:561
 msgid "Daily archives"
-msgstr ""
+msgstr "Dienu arhīvi"
 
-#: widget-context.php:490
+#: widget-context.php:562
 msgid "Monthly archives"
-msgstr ""
+msgstr "Mēneša arhīvi"
 
-#: widget-context.php:491
+#: widget-context.php:563
 msgid "Yearly archives"
-msgstr ""
+msgstr "Gada arhīvi"
 
-#: widget-context.php:492
+#: widget-context.php:564
 msgid "All category archives"
-msgstr ""
+msgstr "Visi kategoriju arhīvi"
 
-#: widget-context.php:493
+#: widget-context.php:565
 msgid "All tag archives"
-msgstr ""
+msgstr "Visi tagu arhīvi"
 
-#: widget-context.php:494
+#: widget-context.php:566
 msgid "All author archives"
-msgstr ""
+msgstr "Visi autoru arhīvi"
 
-#: widget-context.php:511
+#: widget-context.php:583
 msgid ""
 "Enter one location fragment per line. Use <strong>*</strong> character as a "
 "wildcard. Example: <code>category/peace/*</code> to target all posts in "
 "category <em>peace</em>."
 msgstr ""
 
-#: widget-context.php:626
+#: widget-context.php:698
 msgid "No options available"
 msgstr ""
 
-#: widget-context.php:754 widget-context.php:815
-msgid "Widget Context Settings"
-msgstr "Logrīku konteksta uzstādījumi"
-
-#: widget-context.php:835
+#: widget-context.php:907
 msgid "Enabled Modules"
 msgstr "Ieslēgt moduļus"
 
