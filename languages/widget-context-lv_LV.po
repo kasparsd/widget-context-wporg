@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Widget Context 1.0-alpha.6\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/git\n"
-"POT-Creation-Date: 2014-07-10 11:09:52+00:00\n"
-"PO-Revision-Date: 2014-07-10 14:49+0200\n"
+"POT-Creation-Date: 2014-07-10 14:41:27+00:00\n"
+"PO-Revision-Date: 2014-07-10 17:48+0200\n"
 "Last-Translator: Kaspars <kaspars@konstruktors.com>\n"
 "Language-Team: Kaspars Dambis <LL@li.org>\n"
 "Language: lv_LV\n"
@@ -18,11 +18,11 @@ msgstr ""
 
 #: modules/custom-post-types-taxonomies/custom-cpt-tax.php:71
 msgid "Custom Post Types and Taxonomies"
-msgstr "Ierakstu tipi un taksanomijas"
+msgstr "Ierakstu tipi un taksonomijas"
 
 #: modules/custom-post-types-taxonomies/custom-cpt-tax.php:72
 msgid "Context based custom post types and taxonomies"
-msgstr ""
+msgstr "Konteksts atkarīgs no ierakstu tipa un taksanomijas"
 
 #: modules/custom-post-types-taxonomies/custom-cpt-tax.php:123
 msgid "All \"%s\" posts"
@@ -46,7 +46,7 @@ msgstr "Vārdu skaits"
 
 #: modules/word-count/word-count.php:50
 msgid "Context based on word count on the page."
-msgstr ""
+msgstr "Konteksts izmanto vārdu skaitu konkrētā lapā."
 
 #: modules/word-count/word-count.php:104
 msgid "Has"
@@ -69,154 +69,182 @@ msgid "words"
 msgstr "vārdu"
 
 #. Plugin Name of the plugin/theme
-#: widget-context.php:180 widget-context.php:519 widget-context.php:827
+#: widget-context.php:91 widget-context.php:530 widget-context.php:838
 msgid "Widget Context"
 msgstr "Logrīku konteksts"
 
-#: widget-context.php:181
+#: widget-context.php:92
 msgid "Set the default logic to show or hide."
-msgstr ""
+msgstr "Iestatīt noklusēto loģiku slēpšanai vai rādīšanai."
 
-#: widget-context.php:186
+#: widget-context.php:97
 msgid "Global Sections"
 msgstr "Globālās sadaļas"
 
-#: widget-context.php:187
+#: widget-context.php:98
 msgid "Based on standard WordPress template tags."
-msgstr ""
+msgstr "Izmanto standarta WordPress \"template tags\"."
 
-#: widget-context.php:191
+#: widget-context.php:102
 msgid "Target by URL"
 msgstr "Pēc URL"
 
-#: widget-context.php:192
+#: widget-context.php:103
 msgid "Based on URL patterns."
 msgstr "Balstīts uz URL "
 
-#: widget-context.php:196
+#: widget-context.php:107
 msgid "Notes (invisible to public)"
 msgstr "Piezīmes (nav publiskas)"
 
-#: widget-context.php:197
+#: widget-context.php:108
 msgid "Enables private notes on widget context settings."
-msgstr ""
+msgstr "Iespējo privātas piezīmes logrīku konteksta uzstādījumos."
 
-#: widget-context.php:480
+#: widget-context.php:491
 msgid ""
 "No widget controls enabled. You can enable them in <a href=\"%s\">Widget "
 "Context settings</a>."
 msgstr ""
+"Nav iespējots neviens konteksta modulis. Tu vari tos iespējot <a href=\"%s"
+"\">Logrīku konteksta uzstādījumos</a>."
 
-#: widget-context.php:489
+#: widget-context.php:500
 msgid "No widget controls enabled."
 msgstr "Nav iespējots neviens logrīku kontekts."
 
-#: widget-context.php:501 widget-context.php:826 widget-context.php:887
+#: widget-context.php:512 widget-context.php:837 widget-context.php:898
 msgid "Widget Context Settings"
 msgstr "Logrīku konteksta uzstādījumi"
 
-#: widget-context.php:522
+#: widget-context.php:533
 msgid "Expand"
 msgstr "Izvērst"
 
-#: widget-context.php:523
+#: widget-context.php:534
 msgid "Collapse"
 msgstr "Samazināt"
 
-#: widget-context.php:537
+#: widget-context.php:548
 msgid "Show widget everywhere"
 msgstr "Radīt logrīku visur"
 
-#: widget-context.php:538
+#: widget-context.php:549
 msgid "Show widget on selected"
 msgstr "Rādīt logrīku pēc izvēles"
 
-#: widget-context.php:539
+#: widget-context.php:550
 msgid "Hide widget on selected"
 msgstr "Slēpt logrīku pēc izvēles"
 
-#: widget-context.php:540
+#: widget-context.php:551
 msgid "Hide widget everywhere"
 msgstr "Slēpt logrīku pavisam"
 
-#: widget-context.php:551
+#: widget-context.php:562
 msgid "Front page"
 msgstr "Sākuma lapa"
 
-#: widget-context.php:552
+#: widget-context.php:563
 msgid "Blog page"
 msgstr "Bloga lapa"
 
-#: widget-context.php:553
+#: widget-context.php:564
 msgid "All posts, pages and custom post types"
 msgstr "Visi ierakstu, lapas un custom post types"
 
-#: widget-context.php:554
+#: widget-context.php:565
 msgid "All posts"
 msgstr "Visi ieraksti"
 
-#: widget-context.php:555
+#: widget-context.php:566
 msgid "All pages"
 msgstr "Visas lapas"
 
-#: widget-context.php:556
+#: widget-context.php:567
 msgid "All attachments"
 msgstr "Visi pielikumi"
 
-#: widget-context.php:557
+#: widget-context.php:568
 msgid "Search results"
 msgstr "Meklēšanas rezultāti"
 
-#: widget-context.php:558
+#: widget-context.php:569
 msgid "404 error page"
 msgstr "404 kļūdas lapa"
 
-#: widget-context.php:559
+#: widget-context.php:570
 msgid "All archives"
 msgstr "Visi arhīvi"
 
-#: widget-context.php:560
+#: widget-context.php:571
 msgid "All date archives"
 msgstr "Visi datuma arhīvi"
 
-#: widget-context.php:561
+#: widget-context.php:572
 msgid "Daily archives"
 msgstr "Dienu arhīvi"
 
-#: widget-context.php:562
+#: widget-context.php:573
 msgid "Monthly archives"
 msgstr "Mēneša arhīvi"
 
-#: widget-context.php:563
+#: widget-context.php:574
 msgid "Yearly archives"
 msgstr "Gada arhīvi"
 
-#: widget-context.php:564
+#: widget-context.php:575
 msgid "All category archives"
 msgstr "Visi kategoriju arhīvi"
 
-#: widget-context.php:565
+#: widget-context.php:576
 msgid "All tag archives"
 msgstr "Visi tagu arhīvi"
 
-#: widget-context.php:566
+#: widget-context.php:577
 msgid "All author archives"
 msgstr "Visi autoru arhīvi"
 
-#: widget-context.php:583
+#: widget-context.php:594
 msgid ""
 "Enter one location fragment per line. Use <strong>*</strong> character as a "
 "wildcard. Example: <code>category/peace/*</code> to target all posts in "
 "category <em>peace</em>."
 msgstr ""
 
-#: widget-context.php:698
+#: widget-context.php:709
 msgid "No options available"
-msgstr ""
+msgstr "Nav pieejama neviena iespēja."
 
-#: widget-context.php:907
-msgid "Enabled Modules"
-msgstr "Ieslēgt moduļus"
+#: widget-context.php:915
+msgid "Enabled Context Modules"
+msgstr "Iespējot konteksta moduļus"
+
+#: widget-context.php:932
+msgid "Widget Context is created and maintained by %s."
+msgstr "\"Logrīku konteksts\" spraudni veido un uztur %s."
+
+#: widget-context.php:937
+msgid "News & Updates"
+msgstr "Jaunumi un atjauninājumi"
+
+#: widget-context.php:938
+msgid "Subscribe to receive news &amp; updates about the plugin."
+msgstr ""
+"Pieraksties lai saņemtu jaunumus un informāciju par šī spraudņa "
+"atjauninājumiem."
+
+#: widget-context.php:941
+msgid "Your Name"
+msgstr "Tavs vārds"
+
+#: widget-context.php:942
+msgid "Your Email"
+msgstr "Tavs e-pasts"
+
+#: widget-context.php:943
+msgid "Subscribe"
+msgstr "Pierakstīties"
 
 #. Plugin URI of the plugin/theme
 msgid "http://wordpress.org/extend/plugins/widget-context/"
