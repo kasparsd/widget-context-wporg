@@ -32,7 +32,7 @@ class WidgetContextCustomCPTTax {
 		$this->wc = widget_context::instance();
 
 		// This should run really late so that all post types get registered
-		add_action( 'init', array( $this, 'init' ), 987 );
+		add_action( 'wp_loaded', array( $this, 'init' ) );
 
 		add_filter( 'widget_contexts', array( $this, 'add_context' ) );
 
