@@ -170,7 +170,7 @@ class widget_context {
 	function admin_scripts( $page ) {
 
 		// Enqueue only on widgets and customizer view
-		if ( ! in_array( $page, array( 'widgets.php' ) ) )
+		if ( ! in_array( $page, array( 'widgets.php', 'settings_page_widget_context_settings' ) ) )
 			return;
 
 		wp_enqueue_style( 
