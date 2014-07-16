@@ -31,9 +31,6 @@ class WidgetContextCustomCPTTax {
 
 		$this->wc = widget_context::instance();
 
-		// This should run really late so that all post types get registered
-		add_action( 'wp_loaded', array( $this, 'init' ) );
-
 		add_filter( 'widget_contexts', array( $this, 'add_context' ) );
 
 		add_filter( 'widget_context_control-custom_post_types_taxonomies', array( $this, 'context_controls' ), 10, 2 );
@@ -43,7 +40,10 @@ class WidgetContextCustomCPTTax {
 	}
 
 
-	function init() {
+	function set_objects() {
+
+		if ( is_array( $this->post_types ) )
+			return;
 
 		$this->post_types = get_post_types( 
 				array( 
@@ -85,6 +85,9 @@ class WidgetContextCustomCPTTax {
 
 		$status = array();
 
+		if ( ! is_array( $this->post_types ) )
+			$this->set_objects();
+
 		foreach ( $this->post_types as $post_type => $post_type_settings ) {
 
 			if ( isset( $settings[ 'is_singular-' . $post_type ] ) && $settings[ 'is_singular-' . $post_type ] )
@@ -116,6 +119,9 @@ class WidgetContextCustomCPTTax {
 
 		$options = array();
 		$out = array();
+
+		if ( ! is_array( $this->post_types ) )
+			$this->set_objects();
 
 		foreach ( $this->post_types as $post_type => $post_type_settings ) {
 		
