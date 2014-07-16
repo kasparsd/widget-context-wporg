@@ -242,8 +242,9 @@ class widget_context {
 
 	function maybe_unset_widgets_by_context( $sidebars_widgets ) {
 
-		// Don't run this on the backend
-		if ( is_admin() )
+		// Don't run this at the backend or before
+		// post query has been run
+		if ( is_admin() || ! did_action( 'pre_get_posts' ) )
 			return $sidebars_widgets;
 
 		// Return from cache if we have done the context checks already
