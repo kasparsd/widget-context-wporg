@@ -54,7 +54,7 @@ class widget_context {
 		
 		// Append Widget Context settings to widget controls
 		add_action( 'in_widget_form', array( $this, 'widget_context_controls' ), 10, 3 );
-		
+
 		// Add admin menu for config
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
 
@@ -167,8 +167,12 @@ class widget_context {
 	}
 		
 	
-	function admin_scripts() {
-		
+	function admin_scripts( $page ) {
+
+		// Enqueue only on widgets and customizer view
+		if ( ! in_array( $page, array( 'widgets.php' ) ) )
+			return;
+
 		wp_enqueue_style( 
 			'widget-context-css', 
 			plugins_url( 'css/admin.css', plugin_basename( __FILE__ ) ) 
