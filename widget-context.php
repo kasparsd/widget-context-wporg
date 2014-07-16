@@ -248,7 +248,7 @@ class widget_context {
 
 		// Don't run this at the backend or before
 		// post query has been run
-		if ( is_admin() || ! did_action( 'pre_get_posts' ) )
+		if ( is_admin() || ! did_action( 'parse_query' ) )
 			return $sidebars_widgets;
 
 		// Return from cache if we have done the context checks already
