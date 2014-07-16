@@ -4,7 +4,7 @@ Contributors: kasparsd, jamescollins
 Tags: widget, widget context, context, logic, widget logic, cms   
 Requires at least: 3.0   
 Tested up to: 3.9.1   
-Stable tag: 1.0.1   
+Stable tag: 1.0.2  
 License: GPLv2 or later   
 
 Show or hide widgets on specific posts, pages or sections of your site.
@@ -29,6 +29,11 @@ Widget Context allows you to show or hide widgets on certain sections of your si
 
 
 ## Changelog
+
+### 1.0.2
+* Load available custom post types and taxonomies right before visibility checks to avoid PHP warnings.
+* Run visibility checks only after the main post query has run. Fixes issues with WooCommerce.
+* Load our CSS and Javascript files only on widget and customizer admin pages.
 
 ### 1.0.1
 * Fix PHP warning in custom post type and taxonomy module.
@@ -96,6 +101,9 @@ Widget Context allows you to show or hide widgets on certain sections of your si
 
 
 ## Upgrade Notice
+
+### 1.0.2
+Load available custom post types and taxonomies right before visibility checks to avoid PHP warnings. Run visibility checks only after the main post query has run. Fixes issues with WooCommerce.
 
 ### 1.0.1
 
