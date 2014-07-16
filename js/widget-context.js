@@ -24,35 +24,10 @@ jQuery(document).ready(function($) {
 
 	});
 
-	$(document).ajaxSuccess(function(e, xhr, settings) {
-
-		if ( 'POST' !== settings.type )
-			return;
+	$(document).bind( 'widget-updated', function( e, widget_id ) {
 		
-		var widget_id = get_query_arg_val( settings.data, 'widget-id' );
-
-		if ( widget_id ) {
-			show_hide_controls( widget_id );
-		}
+		show_hide_controls( widget_id );
 
 	});
-
-	var get_query_arg_val = function( query, key ) {
-
-		if ( ! query )
-			return false;
-
-		var vars = query.split('&');
-
-		for ( var i=0; i<vars.length; i++ ) {
-			pair = vars[i].split('=');
-			if ( pair[0] == key ) {
-				return pair[1];
-			}
-		}
-		
-		return false;
-
-	};
 
 });
