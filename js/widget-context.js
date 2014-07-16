@@ -25,13 +25,20 @@ jQuery(document).ready(function($) {
 	});
 
 	$(document).ajaxSuccess(function(e, xhr, settings) {
+		
 		var widget_id = get_query_arg_val( settings.data, 'widget-id' );
+
 		if ( widget_id ) {
 			show_hide_controls( widget_id );
 		}
+
 	});
 
 	var get_query_arg_val = function( query, key ) {
+
+		if ( ! query )
+			return false;
+
 		var vars = query.split('&');
 
 		for ( var i=0; i<vars.length; i++ ) {
@@ -42,6 +49,7 @@ jQuery(document).ready(function($) {
 		}
 		
 		return false;
+		
 	};
 
 });
