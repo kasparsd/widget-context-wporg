@@ -25,6 +25,9 @@ jQuery(document).ready(function($) {
 	});
 
 	$(document).ajaxSuccess(function(e, xhr, settings) {
+
+		if ( 'POST' !== settings.type )
+			return;
 		
 		var widget_id = get_query_arg_val( settings.data, 'widget-id' );
 
@@ -49,7 +52,7 @@ jQuery(document).ready(function($) {
 		}
 		
 		return false;
-		
+
 	};
 
 });
