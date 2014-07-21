@@ -3,7 +3,7 @@
 Plugin Name: Widget Context
 Plugin URI: http://wordpress.org/extend/plugins/widget-context/
 Description: Show or hide widgets depending on the section of the site that is being viewed.
-Version: 1.0.2
+Version: 1.0.2-dev
 Author: Kaspars Dambis
 Author URI: http://kaspars.net
 Text Domain: widget-context
@@ -386,7 +386,6 @@ class widget_context {
 	}
 
 	
-	// Thanks to Drupal: http://api.drupal.org/api/function/drupal_match_path/6
 	function match_path( $patterns ) {
 
 		global $wp;
@@ -400,13 +399,28 @@ class widget_context {
 		if ( ! empty( $_SERVER['QUERY_STRING'] ) )
 			$url_request .= '?' . $_SERVER['QUERY_STRING'];
 
-		foreach ( explode( "\n", $patterns ) as $pattern )
-			$patterns_safe[] = trim( trim( $pattern ), '/' ); // Trim trailing and leading slashes
+		foreach ( explode( "\n", $patterns ) as $pattern ) {
 
-		// Remove empty URL patterns
+			// Trim trailing, leading slashes and whitespace
+			$pattern = trim( trim( $pattern ), '/' );
+
+			// Escape regex chars
+			$pattern = preg_quote( $pattern, '/' );
+
+			// Enable wildcard checks
+			$pattern = str_replace( '\*', '.*', $pattern );
+
+			$patterns_safe[] = $pattern;
+
+		}
+
+		// Remove empty patterns
 		$patterns_safe = array_filter( $patterns_safe );
 
-		$regexps = '/^('. preg_replace( array( '/(\r\n|\n| )+/', '/\\\\\*/' ), array( '|', '.*' ), preg_quote( implode( "\n", array_filter( $patterns_safe, 'trim' ) ), '/' ) ) .')$/';
+		$regexps = sprintf( 
+				'/^(%s)$/i',
+				implode( '|', $patterns_safe )
+			);
 
 		return preg_match( $regexps, $url_request );
 
