@@ -1,0 +1,271 @@
+# Copyright (C) 2014 Widget Context
+# This file is distributed under the same license as the Widget Context package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Widget Context ru_RU\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/git\n"
+"POT-Creation-Date: 2014-07-21 12:34:59+00:00\n"
+"PO-Revision-Date: 2014-07-21 15:36+0200\n"
+"Last-Translator: Kaspars <kaspars@konstruktors.com>\n"
+"Language-Team: WordPressPlugins.ru <rlector@gmail.com>\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.6\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;esc_html_e;esc_html__;__\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-1: ..\n"
+
+#: modules/custom-post-types-taxonomies/custom-cpt-tax.php:71
+msgid "Custom Post Types and Taxonomies"
+msgstr "Произвольные типы записей и таксономии"
+
+#: modules/custom-post-types-taxonomies/custom-cpt-tax.php:72
+msgid "Context based custom post types and taxonomies"
+msgstr "Контекст, основанный на произвольных записях и таксономиях."
+
+#: modules/custom-post-types-taxonomies/custom-cpt-tax.php:129
+msgid "All \"%s\" posts"
+msgstr "Все \"%s\" записи"
+
+#: modules/custom-post-types-taxonomies/custom-cpt-tax.php:135
+msgid "Archive of \"%s\" posts"
+msgstr "Архив записей \"%s\""
+
+#: modules/custom-post-types-taxonomies/custom-cpt-tax.php:144
+msgid "All \"%s\" taxonomy archives"
+msgstr "Все архивы таксономии \"%s\""
+
+#: modules/custom-post-types-taxonomies/custom-cpt-tax.php:156
+msgid "None."
+msgstr "Отсутствуют."
+
+#: modules/word-count/word-count.php:49
+msgid "Word Count"
+msgstr "Число слов"
+
+#: modules/word-count/word-count.php:50
+msgid "Context based on word count on the page."
+msgstr "Контекст, основанный на числе слов на странице."
+
+#: modules/word-count/word-count.php:104
+msgid "Has"
+msgstr "имеет"
+
+#: modules/word-count/word-count.php:105
+msgid "less"
+msgstr "меньше"
+
+#: modules/word-count/word-count.php:105
+msgid "more"
+msgstr "больше"
+
+#: modules/word-count/word-count.php:105
+msgid "than"
+msgstr "чем"
+
+#: modules/word-count/word-count.php:106
+msgid "words"
+msgstr "слов"
+
+#. Plugin Name of the plugin/theme
+#: widget-context.php:91 widget-context.php:535 widget-context.php:843
+msgid "Widget Context"
+msgstr "Widget Context"
+
+#: widget-context.php:92
+msgid "Set the default logic to show or hide."
+msgstr "Установка настроек по умолчанию для показа или скрытия."
+
+#: widget-context.php:97
+msgid "Global Sections"
+msgstr "Глобальные секции"
+
+#: widget-context.php:98
+msgid "Based on standard WordPress template tags."
+msgstr "Контекст, основанный на стандартных тегах шаблонов."
+
+#: widget-context.php:102
+msgid "Target by URL"
+msgstr "URL"
+
+#: widget-context.php:103
+msgid "Based on URL patterns."
+msgstr "Контекст, основанный на указанном URL."
+
+#: widget-context.php:107
+msgid "Notes (invisible to public)"
+msgstr "Заметки (только для админов)"
+
+#: widget-context.php:108
+msgid "Enables private notes on widget context settings."
+msgstr "Опция включает приватные заметки в настройках виджетов."
+
+#: widget-context.php:496
+msgid ""
+"No widget controls enabled. You can enable them in <a href=\"%s\">Widget "
+"Context settings</a>."
+msgstr ""
+"Все модули плагина отключены. Вы должны их включить на <a href=\"%s"
+"\">странице настроек</a>."
+
+#: widget-context.php:505
+msgid "No widget controls enabled."
+msgstr "Все модули плагина отключены."
+
+#: widget-context.php:517 widget-context.php:842 widget-context.php:903
+msgid "Widget Context Settings"
+msgstr "Настройки Widget Context"
+
+#: widget-context.php:538
+msgid "Expand"
+msgstr "Раскрыть"
+
+#: widget-context.php:539
+msgid "Collapse"
+msgstr "Свернуть"
+
+#: widget-context.php:553
+msgid "Show widget everywhere"
+msgstr "Показывать виджет везде"
+
+#: widget-context.php:554
+msgid "Show widget on selected"
+msgstr "Показывать виджет на:"
+
+#: widget-context.php:555
+msgid "Hide widget on selected"
+msgstr "Спрятать виджет на:"
+
+#: widget-context.php:556
+msgid "Hide widget everywhere"
+msgstr "Спрятать виджет везде"
+
+#: widget-context.php:567
+msgid "Front page"
+msgstr "Главная страница"
+
+#: widget-context.php:568
+msgid "Blog page"
+msgstr "Страница блога"
+
+#: widget-context.php:569
+msgid "All posts, pages and custom post types"
+msgstr "Все записи, страницы и произвольные типы записей"
+
+#: widget-context.php:570
+msgid "All posts"
+msgstr "Все записи"
+
+#: widget-context.php:571
+msgid "All pages"
+msgstr "Все страницы"
+
+#: widget-context.php:572
+msgid "All attachments"
+msgstr "Все вложения"
+
+#: widget-context.php:573
+msgid "Search results"
+msgstr "Страница с результатами поиска"
+
+#: widget-context.php:574
+msgid "404 error page"
+msgstr "Страница ошибки 404"
+
+#: widget-context.php:575
+msgid "All archives"
+msgstr "Все архивы"
+
+#: widget-context.php:576
+msgid "All date archives"
+msgstr "Все архивы по дате"
+
+#: widget-context.php:577
+msgid "Daily archives"
+msgstr "Архивы по дням"
+
+#: widget-context.php:578
+msgid "Monthly archives"
+msgstr "Архивы по месяцам"
+
+#: widget-context.php:579
+msgid "Yearly archives"
+msgstr "Архивы по годам"
+
+#: widget-context.php:580
+msgid "All category archives"
+msgstr "Все рубрики"
+
+#: widget-context.php:581
+msgid "All tag archives"
+msgstr "Все рубрики меток"
+
+#: widget-context.php:582
+msgid "All author archives"
+msgstr "Все архивы по автору"
+
+#: widget-context.php:599
+msgid ""
+"Enter one location fragment per line. Use <strong>*</strong> character as a "
+"wildcard. Example: <code>category/peace/*</code> to target all posts in "
+"category <em>peace</em>."
+msgstr ""
+"Вводите каждый фрагмент URL на отдельной строчке. Используйте символ "
+"<strong>*</strong> в качестве маски. Например,  <code>category/peace/*</"
+"code> будет указывать на все записи в рубрике <em>peace</em>."
+
+#: widget-context.php:714
+msgid "No options available"
+msgstr "Нет доступных настроек"
+
+#: widget-context.php:920
+msgid "Enabled Context Modules"
+msgstr "Включенные модули контекста"
+
+#: widget-context.php:937
+msgid "Widget Context is created and maintained by %s."
+msgstr "Плагин Widget Context создал и поддерживает %s."
+
+#: widget-context.php:942
+msgid "News & Updates"
+msgstr "Новости и обновления"
+
+#: widget-context.php:943
+msgid "Subscribe to receive news & updates about the plugin."
+msgstr "Подпишитесь на рассылку новостей и обновлений этого плагина."
+
+#: widget-context.php:946
+msgid "Your Name"
+msgstr "Ваше имя"
+
+#: widget-context.php:947
+msgid "Your Email"
+msgstr "Ваш e-mail"
+
+#: widget-context.php:948
+msgid "Subscribe"
+msgstr "Подписаться"
+
+#. Plugin URI of the plugin/theme
+msgid "http://wordpress.org/extend/plugins/widget-context/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"Show or hide widgets depending on the section of the site that is being "
+"viewed."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Kaspars Dambis"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://kaspars.net"
+msgstr ""
