@@ -101,9 +101,9 @@ class WidgetContextWordCount {
 
 		return sprintf( 
 				'<p>%s %s %s</p>',
-				$this->wc->make_simple_checkbox( $control_args, 'check_wordcount', __('Has') ),
-				$this->wc->make_simple_dropdown( $control_args, 'check_wordcount_type', array( 'less' => __('less'), 'more' => __('more') ), null, __('than') ),
-				$this->wc->make_simple_textfield( $control_args, 'word_count', null, __('words') )
+				$this->wc->make_simple_checkbox( $control_args, 'check_wordcount', __('Has', 'widget-context') ),
+				$this->wc->make_simple_dropdown( $control_args, 'check_wordcount_type', array( 'less' => __('less', 'widget-context'), 'more' => __('more', 'widget-context') ), null, __('than', 'widget-context') ),
+				$this->wc->make_simple_textfield( $control_args, 'word_count', null, __('words', 'widget-context') )
 			);
 
 	}
