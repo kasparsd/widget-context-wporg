@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: Widget Context 1.0-alpha.6\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/git\n"
 "POT-Creation-Date: 2014-11-01 11:35:28+00:00\n"
-"PO-Revision-Date: 2014-11-01 13:39+0200\n"
+"PO-Revision-Date: 2014-11-01 13:44+0200\n"
 "Last-Translator: Kaspars <hi@kaspars.net>\n"
 "Language-Team: Kaspars Dambis <LL@li.org>\n"
 "Language: lv_LV\n"
@@ -20,7 +20,7 @@ msgstr ""
 #: debug/debug-bar.php:8 widget-context.php:109 widget-context.php:600
 #: widget-context.php:908
 msgid "Widget Context"
-msgstr "Logrīku konteksts"
+msgstr ""
 
 #: debug/debug-bar.php:25 widget-context.php:618
 msgid "Show widget everywhere"
@@ -176,7 +176,7 @@ msgstr "Bloga lapa"
 
 #: widget-context.php:634
 msgid "All posts, pages and custom post types"
-msgstr "Visi ierakstu, lapas un custom post types"
+msgstr "Visi ierakstu, lapas un ierakstu tipi"
 
 #: widget-context.php:635
 msgid "All posts"
@@ -247,7 +247,7 @@ msgstr "Iespējot konteksta moduļus"
 
 #: widget-context.php:1002
 msgid "Widget Context is created and maintained by %s."
-msgstr "\"Logrīku konteksts\" spraudni veido un uztur %s."
+msgstr "\"Widget Context\" spraudni veido un uztur %s."
 
 #: widget-context.php:1007
 msgid "News & Updates"
