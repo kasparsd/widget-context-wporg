@@ -3,7 +3,7 @@
 Plugin Name: Widget Context
 Plugin URI: http://wordpress.org/extend/plugins/widget-context/
 Description: Show or hide widgets depending on the section of the site that is being viewed.
-Version: 1.0.3a-dev
+Version: 1.0.3-dev
 Author: Kaspars Dambis
 Author URI: http://kaspars.net
 Text Domain: widget-context
