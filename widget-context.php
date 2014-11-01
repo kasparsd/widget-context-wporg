@@ -3,7 +3,7 @@
 Plugin Name: Widget Context
 Plugin URI: http://wordpress.org/extend/plugins/widget-context/
 Description: Show or hide widgets depending on the section of the site that is being viewed.
-Version: 1.0.2-dev
+Version: 1.0.3a-dev
 Author: Kaspars Dambis
 Author URI: http://kaspars.net
 Text Domain: widget-context
@@ -14,10 +14,11 @@ widget_context::instance();
 
 class widget_context {
 	
-	private static $instance;
 	private $sidebars_widgets;
 	private $options_name = 'widget_logic_options'; // Context settings for widgets (visibility, etc)
 	private $settings_name = 'widget_context_settings'; // Widget Context global settings
+	private $debug_contexts;
+	private $sidebars_widgets_copy;
 
 	private $core_modules = array(
 			'word-count/word-count.php',
@@ -32,10 +33,12 @@ class widget_context {
 	
 	static function instance() {
 
-		if ( ! self::$instance )
-			self::$instance = new self();
+		static $instance;
 
-		return self::$instance;
+		if ( ! $instance )
+			$instance = new self();
+
+		return $instance;
 
 	}
 
@@ -47,7 +50,7 @@ class widget_context {
 
 		// Load plugin settings and show/hide widgets by altering the 
 		// $sidebars_widgets global variable
-		add_action( 'init', array( $this, 'init_widget_context' ) );
+		add_action( 'wp', array( $this, 'init_widget_context' ) );
 
 		// Enable localization
 		add_action( 'plugins_loaded', array( $this, 'init_l10n' ) );
@@ -72,6 +75,9 @@ class widget_context {
 
 		// Register admin settings
 		add_action( 'admin_init', array( $this, 'widget_context_settings_init' ) );
+
+		// Register our own debug bar panel
+		add_filter( 'debug_bar_panels', array( $this, 'widget_context_debug_bar_init' ) );
 
 	}
 
@@ -248,12 +254,15 @@ class widget_context {
 
 		// Don't run this at the backend or before
 		// post query has been run
-		if ( is_admin() || ! did_action( 'parse_query' ) )
+		if ( is_admin() )
 			return $sidebars_widgets;
 
 		// Return from cache if we have done the context checks already
 		if ( ! empty( $this->sidebars_widgets ) )
 			return $this->sidebars_widgets;
+
+		// Store a local copy of the original widget location
+		$this->sidebars_widgets_copy = $sidebars_widgets;
 
 		foreach( $sidebars_widgets as $widget_area => $widget_list ) {
 
@@ -969,6 +978,25 @@ class widget_context {
 			</div>
 		</div>
 		<?php
+
+	}
+
+
+	public function get_sidebars_widgets_copy() {
+		
+		return $this->sidebars_widgets_copy;
+
+	}
+
+
+	function widget_context_debug_bar_init( $panels ) {
+
+		include plugin_dir_path( __FILE__ ) . '/inc/debug-bar-widget-context.php';
+
+		if ( class_exists( 'Debug_Widget_Context' ) )
+			$panels[] = new Debug_Widget_Context();
+
+		return $panels;
 
 	}
 
