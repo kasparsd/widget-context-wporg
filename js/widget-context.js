@@ -24,4 +24,11 @@ jQuery(document).ready(function($) {
 
 	});
 
+	$(document).bind( 'widget-updated', function( e, widget ) {
+		
+		show_hide_controls( widget.find('input[name="widget-id"]').val() );
+
+	});
+
+
 });
