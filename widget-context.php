@@ -17,18 +17,17 @@ class widget_context {
 	private $sidebars_widgets;
 	private $options_name = 'widget_logic_options'; // Context settings for widgets (visibility, etc)
 	private $settings_name = 'widget_context_settings'; // Widget Context global settings
-	private $debug_contexts;
 	private $sidebars_widgets_copy;
 
 	private $core_modules = array(
-			'word-count/word-count.php',
-			'custom-post-types-taxonomies/custom-cpt-tax.php'
+			'word-count',
+			'custom-post-types-taxonomies'
 		);
 
-	var $context_options = array(); // Store visibility settings
-	var $context_settings = array(); // Store admin settings
-	var $contexts = array();
-	var $plugin_path;
+	private $context_options = array(); // Store visibility settings
+	private $context_settings = array(); // Store admin settings
+	private $contexts = array();
+	private $plugin_path;
 
 	
 	static function instance() {
@@ -50,7 +49,7 @@ class widget_context {
 
 		// Load plugin settings and show/hide widgets by altering the 
 		// $sidebars_widgets global variable
-		add_action( 'wp', array( $this, 'init_widget_context' ) );
+		add_action( 'wp', array( $this, 'set_widget_contexts_frontend' ) );
 
 		// Enable localization
 		add_action( 'plugins_loaded', array( $this, 'init_l10n' ) );
@@ -78,17 +77,30 @@ class widget_context {
 
 		// Register our own debug bar panel
 		add_filter( 'debug_bar_panels', array( $this, 'widget_context_debug_bar_init' ) );
+		add_action( 'debug_bar_enqueue_scripts', array( $this, 'widget_context_debug_bar_scripts' ) );
 
 	}
 
 
 	function define_widget_contexts() {
 
+		$this->context_options = apply_filters( 
+				'widget_context_options', 
+				(array) get_option( $this->options_name, array() ) 
+			);
+
+		$this->context_settings = wp_parse_args( 
+				(array) get_option( $this->settings_name, array() ), 
+				array(
+					'contexts' => array()
+				)
+			);
+
 		// Initialize core modules
 		$include_path = plugin_dir_path( __FILE__ ) . '/modules';
 
 		foreach ( $this->core_modules as $module ) {
-			include sprintf( '%s/%s', $include_path, $module );
+			include sprintf( '%s/%s/module.php', $include_path, $module );
 		}
 
 		// Default context
@@ -133,6 +145,39 @@ class widget_context {
 	}
 
 
+	public function get_context_options( $widget_id = null ) {
+
+		if ( ! $widget_id )
+			return $this->context_options;
+
+		if ( isset( $this->context_options[ $widget_id ] ) )
+			return $this->context_options[ $widget_id ];
+		else
+			return null;
+
+	}
+
+
+	public function get_context_settings( $widget_id = null ) {
+
+		if ( ! $widget_id )
+			return $this->context_settings;
+
+		if ( isset( $this->context_settings[ $widget_id ] ) )
+			return $this->context_settings[ $widget_id ];
+		else
+			return null;
+
+	}
+
+
+	public function get_contexts() {
+
+		return $this->contexts;
+
+	} 
+
+
 	function sort_context_by_weight( $a, $b ) {
 
 		if ( ! isset( $a['weight'] ) )
@@ -146,19 +191,7 @@ class widget_context {
 	}
 
 
-	function init_widget_context() {
-
-		$this->context_options = apply_filters( 
-				'widget_context_options', 
-				(array) get_option( $this->options_name, array() ) 
-			);
-
-		$this->context_settings = wp_parse_args( 
-				(array) get_option( $this->settings_name, array() ), 
-				array(
-					'contexts' => array()
-				) 
-			);
+	function set_widget_contexts_frontend() {
 
 		// Hide/show widgets for is_active_sidebar() to work
 		add_filter( 'sidebars_widgets', array( $this, 'maybe_unset_widgets_by_context' ), 10 );
@@ -294,7 +327,7 @@ class widget_context {
 
 		$matches = array();
 
-		foreach ( $this->contexts as $context_id => $context_settings ) {
+		foreach ( $this->get_contexts() as $context_id => $context_settings ) {
 
 			// This context check has been disabled in the plugin settings
 			if ( isset( $this->context_settings['contexts'][ $context_id ] ) && ! $this->context_settings['contexts'][ $context_id ] )
@@ -382,6 +415,13 @@ class widget_context {
 
 	function context_check_url( $check, $settings ) {
 
+		$settings = wp_parse_args(
+				$settings,
+				array(
+					'urls' => null
+				)
+			);
+
 		$urls = trim( $settings['urls'] );
 
 		if ( empty( $urls ) )
@@ -408,7 +448,9 @@ class widget_context {
 		if ( ! empty( $_SERVER['QUERY_STRING'] ) )
 			$url_request .= '?' . $_SERVER['QUERY_STRING'];
 
-		foreach ( explode( "\n", $patterns ) as $pattern ) {
+		$rows = explode( "\n", $patterns );
+
+		foreach ( $rows as $pattern ) {
 
 			// Trim trailing, leading slashes and whitespace
 			$pattern = trim( trim( $pattern ), '/' );
@@ -883,7 +925,7 @@ class widget_context {
 
 		$context_controls = array();
 
-		foreach ( $this->contexts as $context_id => $context_args ) {
+		foreach ( $this->get_contexts() as $context_id => $context_args ) {
 			
 			// Hide core modules from being disabled
 			if ( isset( $context_args['type'] ) && $context_args['type'] == 'core' )
@@ -991,12 +1033,23 @@ class widget_context {
 
 	function widget_context_debug_bar_init( $panels ) {
 
-		include plugin_dir_path( __FILE__ ) . '/inc/debug-bar-widget-context.php';
+		include plugin_dir_path( __FILE__ ) . '/debug/debug-bar.php';
 
 		if ( class_exists( 'Debug_Widget_Context' ) )
 			$panels[] = new Debug_Widget_Context();
 
 		return $panels;
+
+	}
+
+
+	function widget_context_debug_bar_scripts() {
+
+		wp_enqueue_script( 
+			'widget-context-debug-js', 
+			plugins_url( 'debug/debug.js', plugin_basename( __FILE__ ) ), 
+			array( 'jquery' ) 
+		);
 
 	}
 
