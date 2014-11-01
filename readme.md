@@ -33,6 +33,7 @@ Widget Context allows you to show or hide widgets on certain sections of your si
 ### 1.0.3
 * Include Russian translation (Thanks Flector!).
 * Add textdomain to the remaining strings.
+* Enable debugging if [Debug Bar](https://wordpress.org/plugins/debug-bar/) is available.
 
 ### 1.0.2
 * Load available custom post types and taxonomies right before visibility checks to avoid PHP warnings.
