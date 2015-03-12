@@ -13,7 +13,7 @@ Text Domain: widget-context
 widget_context::instance();
 
 class widget_context {
-	
+
 	private $sidebars_widgets;
 	private $options_name = 'widget_logic_options'; // Context settings for widgets (visibility, etc)
 	private $settings_name = 'widget_context_settings'; // Widget Context global settings
@@ -29,7 +29,7 @@ class widget_context {
 	private $contexts = array();
 	private $plugin_path;
 
-	
+
 	static function instance() {
 
 		static $instance;
@@ -41,19 +41,19 @@ class widget_context {
 
 	}
 
-	
+
 	private function widget_context() {
 
 		// Define available widget contexts
 		add_action( 'init', array( $this, 'define_widget_contexts' ), 5 );
 
-		// Load plugin settings and show/hide widgets by altering the 
+		// Load plugin settings and show/hide widgets by altering the
 		// $sidebars_widgets global variable
 		add_action( 'wp', array( $this, 'set_widget_contexts_frontend' ) );
 
 		// Enable localization
 		add_action( 'plugins_loaded', array( $this, 'init_l10n' ) );
-		
+
 		// Append Widget Context settings to widget controls
 		add_action( 'in_widget_form', array( $this, 'widget_context_controls' ), 10, 3 );
 
@@ -62,7 +62,7 @@ class widget_context {
 
 		// Style things based on admin color scheme
 		add_action( 'admin_footer', array( $this, 'admin_styles_inline' ) );
-		
+
 		// Save widget context settings, when in admin area
 		add_action( 'sidebar_admin_setup', array( $this, 'save_widget_context_settings' ) );
 
@@ -84,13 +84,13 @@ class widget_context {
 
 	function define_widget_contexts() {
 
-		$this->context_options = apply_filters( 
-				'widget_context_options', 
-				(array) get_option( $this->options_name, array() ) 
+		$this->context_options = apply_filters(
+				'widget_context_options',
+				(array) get_option( $this->options_name, array() )
 			);
 
-		$this->context_settings = wp_parse_args( 
-				(array) get_option( $this->settings_name, array() ), 
+		$this->context_settings = wp_parse_args(
+				(array) get_option( $this->settings_name, array() ),
 				array(
 					'contexts' => array()
 				)
@@ -118,6 +118,11 @@ class widget_context {
 			),
 			'url' => array(
 				'label' => __( 'Target by URL', 'widget-context' ),
+				'description' => __( 'Based on URL patterns.', 'widget-context' ),
+				'weight' => 20
+			),
+			'excepturl' => array(
+				'label' => __( 'Except on URL', 'widget-context' ),
 				'description' => __( 'Based on URL patterns.', 'widget-context' ),
 				'weight' => 20
 			),
@@ -175,7 +180,7 @@ class widget_context {
 
 		return $this->contexts;
 
-	} 
+	}
 
 
 	function sort_context_by_weight( $a, $b ) {
@@ -204,25 +209,25 @@ class widget_context {
 		load_plugin_textdomain( 'widget-context', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
 	}
-		
-	
+
+
 	function admin_scripts( $page ) {
 
 		// Enqueue only on widgets and customizer view
 		if ( ! in_array( $page, array( 'widgets.php', 'settings_page_widget_context_settings' ) ) )
 			return;
 
-		wp_enqueue_style( 
-			'widget-context-css', 
-			plugins_url( 'css/admin.css', plugin_basename( __FILE__ ) ) 
+		wp_enqueue_style(
+			'widget-context-css',
+			plugins_url( 'css/admin.css', plugin_basename( __FILE__ ) )
 		);
 
-		wp_enqueue_script( 
-			'widget-context-js', 
-			plugins_url( 'js/widget-context.js', plugin_basename( __FILE__ ) ), 
-			array( 'jquery' ) 
+		wp_enqueue_script(
+			'widget-context-js',
+			plugins_url( 'js/widget-context.js', plugin_basename( __FILE__ ) ),
+			array( 'jquery' )
 		);
-	
+
 	}
 
 
@@ -234,7 +239,7 @@ class widget_context {
 
 		if ( isset( $_wp_admin_css_colors[ $color_scheme ] ) ) {
 
-			printf( 
+			printf(
 				'<style type="text/css">
 					.widget-context .widget-context-header h3:before { color:%1$s; }
 				</style>',
@@ -252,16 +257,16 @@ class widget_context {
 
 	}
 
-	
+
 	function save_widget_context_settings() {
 
 		if ( ! current_user_can( 'edit_theme_options' ) || empty( $_POST ) || ! isset( $_POST['wl'] ) )
 			return;
-		
+
 		// Delete a widget
 		if ( isset( $_POST['delete_widget'] ) && isset( $_POST['the-widget-id'] ) )
 			unset( $this->context_options[ $_POST['the-widget-id'] ] );
-		
+
 		// Add / Update
 		$this->context_options = array_merge( $this->context_options, $_POST['wl'] );
 
@@ -299,7 +304,7 @@ class widget_context {
 
 		foreach( $sidebars_widgets as $widget_area => $widget_list ) {
 
-			if ( $widget_area == 'wp_inactive_widgets' || empty( $widget_list ) ) 
+			if ( $widget_area == 'wp_inactive_widgets' || empty( $widget_list ) )
 				continue;
 
 			foreach( $widget_list as $pos => $widget_id ) {
@@ -318,7 +323,7 @@ class widget_context {
 
 	}
 
-	
+
 	function check_widget_visibility( $widget_id ) {
 
 		// Check if this widget even has context set
@@ -339,34 +344,55 @@ class widget_context {
 			else
 				$widget_context_args = $this->context_options[ $widget_id ][ $context_id ];
 
-			$matches[ $context_id ] = apply_filters( 
-					'widget_context_check-' . $context_id, 
-					null, 
+			$matches[ $context_id ] = apply_filters(
+					'widget_context_check-' . $context_id,
+					null,
 					$widget_context_args
 				);
 
 		}
-
 		// Get the match rule for this widget (show/hide/selected/notselected)
 		$match_rule = $this->context_options[ $widget_id ][ 'incexc' ][ 'condition' ];
 
+
+
+		$skip_current_page = !! $matches["excepturl"];
+		unset ( $matches["excepturl"] );
+
+
 		// Force show or hide the widget!
 		if ( $match_rule == 'show' )
-			return true;
+			return  $skip_current_page  ? false : true;
 		elseif ( $match_rule == 'hide' )
-			return false;
+			return $skip_current_page  ? true : false;
 
 		if ( $match_rule == 'selected' )
 			$inc = true;
 		else
 			$inc = false;
 
-		if ( $inc && in_array( true, $matches ) )
-			return true;
-		elseif ( ! $inc && ! in_array( true, $matches ) )
-			return true;
-		else
-			return false;
+
+		$has_selection_match = in_array( true, $matches );
+
+		if ( $inc ) { // show on selected
+
+				if ( $has_selection_match ) {
+					return $skip_current_page  ? false : true;
+				} else {
+					return $skip_current_page  ? true : false;
+				}
+
+		} else { // hide on selected
+
+				if ( $has_selection_match ) {
+					return $skip_current_page  ? true : false;
+				} else {
+					return $skip_current_page  ? false: true;
+				}
+
+		}
+
+		return false;
 
 	}
 
@@ -427,18 +453,39 @@ class widget_context {
 		if ( empty( $urls ) )
 			return $check;
 
-		if ( $this->match_path( $urls ) ) 
+		if ( $this->match_path( $urls ) )
 			return true;
 
 		return $check;
 
 	}
 
-	
+	function context_check_excepturl( $check, $settings ) {
+
+		$settings = wp_parse_args(
+				$settings,
+				array(
+					'excepturls' => null
+				)
+			);
+
+		$urls = trim( $settings['excepturls'] );
+
+		if ( empty( $urls ) )
+			return $check;
+
+		if ( $this->match_path( $urls ) )
+			return true;
+
+		return $check;
+
+	}
+
+
 	function match_path( $patterns ) {
 
 		global $wp;
-		
+
 		$patterns_safe = array();
 
 		// Get the request URI from WP
@@ -468,7 +515,7 @@ class widget_context {
 		// Remove empty patterns
 		$patterns_safe = array_filter( $patterns_safe );
 
-		$regexps = sprintf( 
+		$regexps = sprintf(
 				'/^(%s)$/i',
 				implode( '|', $patterns_safe )
 			);
@@ -503,7 +550,7 @@ class widget_context {
 					sprintf( 'context-group-%s', esc_attr( $context_name ) )
 				);
 
-			// Hide this context from the admin UX. We can't remove them 
+			// Hide this context from the admin UX. We can't remove them
 			// because settings will get lost if this page is submitted.
 			if ( isset( $this->context_settings['contexts'][ $context_name ] ) && ! $this->context_settings['contexts'][ $context_name ] ) {
 				$context_classes[] = 'context-inactive';
@@ -526,15 +573,15 @@ class widget_context {
 			$context_classes = apply_filters( 'widget_context_classes-' . $context_name, $context_classes, $control_args );
 
 			if ( ! empty( $context_controls ) && is_string( $context_controls ) ) {
-				
-				$controls[ $context_name ] = sprintf( 
+
+				$controls[ $context_name ] = sprintf(
 						'<div class="%s">
 							<h4 class="context-toggle">%s</h4>
 							<div class="context-group-wrap">
 								%s
 							</div>
 						</div>',
-						esc_attr( implode( ' ', $context_classes ) ), 
+						esc_attr( implode( ' ', $context_classes ) ),
 						esc_html( $context_settings['label'] ),
 						$context_controls
 					);
@@ -555,8 +602,8 @@ class widget_context {
 
 			if ( current_user_can( 'edit_theme_options' ) ) {
 
-				$controls = array( sprintf( 
-						'<p class="error">%s</p>', 
+				$controls = array( sprintf(
+						'<p class="error">%s</p>',
 						sprintf(
 							__( 'No widget controls enabled. You can enable them in <a href="%s">Widget Context settings</a>.', 'widget-context' ),
 							admin_url( 'options-general.php?page=widget_context_settings' )
@@ -565,26 +612,26 @@ class widget_context {
 
 			} else {
 
-				$controls = array( sprintf( 
-						'<p class="error">%s</p>', 
-						__( 'No widget controls enabled.', 'widget-context' ) 
+				$controls = array( sprintf(
+						'<p class="error">%s</p>',
+						__( 'No widget controls enabled.', 'widget-context' )
 					) );
-				
+
 			}
-			
+
 		}
 
 		if ( current_user_can( 'edit_theme_options' ) ) {
 
-			$controls[] = sprintf( 
+			$controls[] = sprintf(
 					'<p class="widget-context-settings-link"><a href="%s">%s</a></p>',
 					 admin_url( 'options-general.php?page=widget_context_settings' ),
-					__( 'Widget Context Settings', 'widget-context' ) 
+					__( 'Widget Context Settings', 'widget-context' )
 				);
 
 		}
 
-		return sprintf( 
+		return sprintf(
 				'<div class="widget-context">
 					<div class="widget-context-header">
 						<h3>%s</h3>
@@ -615,9 +662,9 @@ class widget_context {
 	function control_incexc( $control_args ) {
 
 		$options = array(
-				'show' => __( 'Show widget everywhere', 'widget-context' ), 
-				'selected' => __( 'Show widget on selected', 'widget-context' ), 
-				'notselected' => __( 'Hide widget on selected', 'widget-context' ), 
+				'show' => __( 'Show widget everywhere', 'widget-context' ),
+				'selected' => __( 'Show widget on selected', 'widget-context' ),
+				'notselected' => __( 'Hide widget on selected', 'widget-context' ),
 				'hide' => __( 'Hide widget everywhere', 'widget-context' )
 			);
 
@@ -625,7 +672,7 @@ class widget_context {
 
 	}
 
-	
+
 	function control_location( $control_args ) {
 
 		$options = array(
@@ -657,7 +704,7 @@ class widget_context {
 
 	function control_url( $control_args ) {
 
-		return sprintf( 
+		return sprintf(
 				'<div>%s</div>
 				<p class="help">%s</p>',
 				$this->make_simple_textarea( $control_args, 'urls' ),
@@ -666,23 +713,33 @@ class widget_context {
 
 	}
 
+	function control_excepturl( $control_args ) {
+
+		return sprintf(
+				'<div>%s</div>
+				<p class="help">%s</p>',
+				$this->make_simple_textarea( $control_args, 'excepturls' ),
+				__( 'Enter one location fragment per line. Use <strong>*</strong> character as a wildcard. Example: <code>category/peace/*</code> to target all posts in category <em>peace</em>.', 'widget-context' )
+			);
+
+	}
 
 	function control_admin_notes( $control_args ) {
 
-		return sprintf( 
+		return sprintf(
 				'<div>%s</div>',
 				$this->make_simple_textarea( $control_args, 'notes' )
 			);
 
 	}
 
-	
+
 
 	/**
 	 * Widget control helpers
 	 */
 
-	
+
 	function make_simple_checkbox( $control_args, $option, $label ) {
 
 		if ( isset( $control_args['settings'][ $option ] ) && $control_args['settings'][ $option ] )
@@ -710,15 +767,15 @@ class widget_context {
 
 	}
 
-	
+
 	function make_simple_textarea( $control_args, $option, $label = null ) {
 
 		if ( isset( $control_args['settings'][ $option ] ) )
 			$value = esc_textarea( $control_args['settings'][ $option ] );
 		else
 			$value = '';
-		
-		return sprintf(  
+
+		return sprintf(
 				'<label class="wc-field-textarea-%s" data-widget-id="%s">
 					<strong>%s</strong>
 					<textarea name="%s[%s]">%s</textarea>
@@ -743,10 +800,10 @@ class widget_context {
 		else
 			$value = false;
 
-		return sprintf( 
+		return sprintf(
 				'<label class="wc-field-text-%s" data-widget-id="%s">
-					%s 
-					<input type="text" name="%s[%s]" value="%s" /> 
+					%s
+					<input type="text" name="%s[%s]" value="%s" />
 					%s
 				</label>',
 				$this->get_field_classname( $option ),
@@ -774,33 +831,33 @@ class widget_context {
 			$value = false;
 
 		if ( empty( $selection ) )
-			$options[] = sprintf( 
-					'<option value="">%s</option>', 
-					esc_html__( 'No options available', 'widget-context' ) 
+			$options[] = sprintf(
+					'<option value="">%s</option>',
+					esc_html__( 'No options available', 'widget-context' )
 				);
 
 		foreach ( $selection as $sid => $svalue )
-			$options[] = sprintf( 
-					'<option value="%s" %s>%s</option>', 
-					esc_attr( $sid ), 
-					selected( $value, $sid, false ), 
-					esc_html( $svalue ) 
+			$options[] = sprintf(
+					'<option value="%s" %s>%s</option>',
+					esc_attr( $sid ),
+					selected( $value, $sid, false ),
+					esc_html( $svalue )
 				);
 
-		return sprintf( 
+		return sprintf(
 				'<label class="wc-field-select-%s" data-widget-id="%s">
-					%s 
+					%s
 					<select name="%s[%s]">
 						%s
-					</select> 
+					</select>
 					%s
 				</label>',
 				$this->get_field_classname( $option ),
 				esc_attr( $control_args['widget_id'] ),
 				// Before
-				$label_before, 
+				$label_before,
 				// Input
-				$control_args['input_prefix'], 
+				$control_args['input_prefix'],
 				$option,
 				implode( '', $options ),
 				// After
@@ -848,7 +905,7 @@ class widget_context {
 			return false;
 
 		$part = array_shift( $parts );
-		
+
 		if ( ! empty( $parts ) && isset( $options[ $part ] ) && is_array( $options[ $part ] ) )
 			$value = $this->get_field_value( $parts, $options[ $part ] );
 		elseif ( isset( $options[ $part ] ) )
@@ -863,7 +920,7 @@ class widget_context {
 
 		if ( empty( $options ) || ! is_array( $options ) )
 			return $options;
-		
+
 		foreach ( $options as $widget_id => $option ) {
 
 			// This doesn't have an include/exclude rule defined
@@ -873,7 +930,7 @@ class widget_context {
 			// We moved from [incexc] = 1/0 to [incexc][condition] = 1/0
 			if ( isset( $option['incexc'] ) && ! is_array( $option['incexc'] ) )
 				$options[ $widget_id ]['incexc'] = array( 'condition' => $option['incexc'] );
-			
+
 			// Move notes from "general" group to "admin_notes"
 			if ( isset( $option['general']['notes'] ) ) {
 				$options[ $widget_id ]['admin_notes']['notes'] = $option['general']['notes'];
@@ -887,7 +944,7 @@ class widget_context {
 						'check_wordcount_type' => $option['location']['check_wordcount_type'],
 						'word_count' => $option['location']['word_count']
 					);
-		
+
 		}
 
 		return $options;
@@ -903,11 +960,11 @@ class widget_context {
 
 	function widget_context_settings_menu() {
 
-		add_options_page( 
-			__( 'Widget Context Settings', 'widget-context' ), 
-			__( 'Widget Context', 'widget-context' ), 
-			'manage_options', 
-			$this->settings_name, 
+		add_options_page(
+			__( 'Widget Context Settings', 'widget-context' ),
+			__( 'Widget Context', 'widget-context' ),
+			'manage_options',
+			$this->settings_name,
 			array( $this, 'widget_context_admin_view' )
 		);
 
@@ -926,15 +983,15 @@ class widget_context {
 		$context_controls = array();
 
 		foreach ( $this->get_contexts() as $context_id => $context_args ) {
-			
+
 			// Hide core modules from being disabled
 			if ( isset( $context_args['type'] ) && $context_args['type'] == 'core' )
 				continue;
 
 			if ( ! empty( $context_args['description'] ) )
-				$context_description = sprintf( 
-					'<p class="context-desc">%s</p>', 
-					esc_html( $context_args['description'] ) 
+				$context_description = sprintf(
+					'<p class="context-desc">%s</p>',
+					esc_html( $context_args['description'] )
 				);
 			else
 				$context_description = null;
@@ -977,7 +1034,7 @@ class widget_context {
 						?>
 
 						<?php
-							printf( 
+							printf(
 								'<div class="settings-section settings-section-modules">
 									<h3>%s</h3>
 									<ul>%s</ul>
@@ -986,7 +1043,7 @@ class widget_context {
 								implode( '', $context_controls )
 							);
 						?>
-							
+
 						<?php
 							submit_button();
 						?>
@@ -1025,7 +1082,7 @@ class widget_context {
 
 
 	public function get_sidebars_widgets_copy() {
-		
+
 		return $this->sidebars_widgets_copy;
 
 	}
@@ -1045,10 +1102,10 @@ class widget_context {
 
 	function widget_context_debug_bar_scripts() {
 
-		wp_enqueue_script( 
-			'widget-context-debug-js', 
-			plugins_url( 'debug/debug.js', plugin_basename( __FILE__ ) ), 
-			array( 'jquery' ) 
+		wp_enqueue_script(
+			'widget-context-debug-js',
+			plugins_url( 'debug/debug.js', plugin_basename( __FILE__ ) ),
+			array( 'jquery' )
 		);
 
 	}

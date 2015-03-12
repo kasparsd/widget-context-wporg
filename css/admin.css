@@ -15,7 +15,9 @@
 .widget-context .context-inactive { display:none; }
 
 .widget-context .context-global .context-group { display:none; }
-.widget-context .context-global .context-group-incexc { display:block; }
+
+.widget-context .context-global .context-group-incexc,
+.widget-context .context-global .context-group-excepturl { display:block; }
 
 /** Modules **/
 
