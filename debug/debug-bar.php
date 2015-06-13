@@ -1,4 +1,3 @@
-
 <?php
 
 class Debug_Widget_Context extends Debug_Bar_Panel {
