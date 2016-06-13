@@ -31,6 +31,8 @@ Widget Context allows you to show or hide widgets on certain sections of your si
 
 ### 1.0.4 (May 6, 2016)
 * Confirm the plugin works with the latest version of WordPress.
+* Fix the PHP class constructor warning.
+* Move the widget context settings link.
 
 ### 1.0.3
 * Include Russian translation (Thanks Flector!).
