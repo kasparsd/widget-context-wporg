@@ -42,7 +42,7 @@ class widget_context {
 	}
 
 
-	private function widget_context() {
+	private function __construct() {
 
 		// Define available widget contexts
 		add_action( 'init', array( $this, 'define_widget_contexts' ), 5 );
