@@ -274,12 +274,12 @@ class widget_context {
 		// Store a local copy of the original widget location
 		$this->sidebars_widgets_copy = $sidebars_widgets;
 
-		foreach( $sidebars_widgets as $widget_area => $widget_list ) {
+		foreach ( $sidebars_widgets as $widget_area => $widget_list ) {
 
 			if ( $widget_area == 'wp_inactive_widgets' || empty( $widget_list ) )
 				continue;
 
-			foreach( $widget_list as $pos => $widget_id ) {
+			foreach ( $widget_list as $pos => $widget_id ) {
 
 				if ( ! $this->check_widget_visibility( $widget_id ) )
 					unset( $sidebars_widgets[ $widget_area ][ $pos ] );
