@@ -982,14 +982,37 @@ class widget_context {
 						</div>
 
 						<div class="wc-sidebar-section wc-sidebar-newsletter">
-							<h3><?php esc_html_e( 'News & Updates' , 'widget-context'); ?></h3>
-							<p><?php esc_html_e( 'Subscribe to receive news & updates about the plugin.' , 'widget-context'); ?></p>
+							<h3>
+								<?php esc_html_e( 'News & Updates' , 'widget-context' ); ?>
+							</h3>
+							<p>
+								<?php esc_html_e( 'Subscribe to receive news & updates about the plugin.' , 'widget-context' ); ?>
+							</p>
+
 							<form action="//osc.us2.list-manage.com/subscribe/post?u=e8d173fc54c0fc4286a2b52e8&amp;id=8afe96c5a3" method="post" target="_blank">
 								<?php $user = wp_get_current_user(); ?>
 								<p><label><?php _e( 'Your Name', 'widget-context' ); ?>: <input type="text" name="NAME" value="<?php echo esc_attr( sprintf( '%s %s', $user->first_name, $user->last_name ) ) ?>" /></label></p>
 								<p><label><?php _e( 'Your Email', 'widget-context' ); ?>: <input type="text" name="EMAIL" value="<?php echo esc_attr( $user->user_email ); ?>" /></label></p>
-								<p><input class="button" name="subscribe" type="submit" value="<?php _e( 'Subscribe', 'widget-context' ); ?>" /></p>
+								<p><input class="button" name="subscribe" type="submit" value="<?php esc_attr_e( 'Subscribe', 'widget-context' ); ?>" /></p>
 							</form>
+
+							<h3>
+								<?php esc_html_e( 'Suggested Plugins', 'widget-context' ); ?>
+							</h3>
+							<p>
+								<?php esc_html_e( 'Here are some of my other plugins:' , 'widget-context' ); ?>
+							</p>
+							<ul>
+								<li>
+									<a href="https://codecanyon.net/item/storage-for-contact-form-7-/7806229?ref=Preseto&amp;utm_source=wc">Storage for Contact Form 7</a> saves all Contact Form 7 submissions (including attachments) in your WordPress database.
+								</li>
+								<li>
+									<a href="https://wordpress.org/plugins/contact-form-7-extras/">Contact Form 7 Controls</a> creates a simple UI for managing some of the advanced Contact Form 7 form settings.
+								</li>
+								<li>
+									<a href="http://codecanyon.net/item/export-wordpress-urls-titles/16421918?ref=Preseto&amp;utm_source=wc">Export WordPress URLs &amp; Titles</a> generates a CSV file with a complete list of all WordPress URLs (links), titles, IDs and Yoast SEO meta data.
+								</li>
+							</ul>
 						</div>
 
 					</div>
