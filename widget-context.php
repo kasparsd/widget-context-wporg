@@ -211,7 +211,9 @@ class widget_context {
 
 		wp_enqueue_style(
 			'widget-context-css',
-			plugins_url( 'css/admin.css', plugin_basename( __FILE__ ) )
+			plugins_url( 'css/admin.css', plugin_basename( __FILE__ ) ),
+			null,
+			'1.0.4'
 		);
 
 		wp_enqueue_script(
