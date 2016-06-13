@@ -6,8 +6,8 @@
 .widget-context .help { line-height:1.2; color:#666; }
 
 .widget-context .widget-context-header { float:left; width:100%; clear:both; }
-.widget-context .widget-context-header h3 { font-size:1.1em; margin:0 0.5em 0.5em 0; padding:0; }
-.widget-context .widget-context-header h3:before { font-family: 'dashicons'; content: "\f489"; vertical-align:bottom; margin-right:0.2em; }
+.widget-context .widget-context-header h3 { font-size:1.1em; margin:0 0.5em 0.5em 0; padding:0; float:left; }
+.widget-context .widget-context-header a { float:right; }
 
 .widget-context .context-group { float:left; width:100%; clear:both; margin-bottom:0.5em; }
 .widget-context .context-toggle { margin:0 0 0.3em 0; display:block; text-decoration:none; color:inherit; font-weight:bold; }
@@ -19,10 +19,10 @@
 
 /** Modules **/
 
-.context-group-incexc select { width:100%; border-width:2px; }
-.context-group-incexc .context-toggle { display:none; } 
+.context-group-incexc select { width:100%; }
+.context-group-incexc .context-toggle { display:none; }
 
-.context-group-location .context-group-wrap { max-height:10em; overflow:auto; padding:0.5em; margin-bottom:0.5em; background:#fff; border:1px solid #ddd; } 
+.context-group-location .context-group-wrap { max-height:10em; overflow:auto; padding:0.5em; margin-bottom:0.5em; background:#fff; border:1px solid #ddd; }
 .context-group-location label { display:block; padding:0.25em 0; }
 
 .context-group-custom_post_types_taxonomies .context-group-wrap { max-height:10em; overflow:auto; padding:0.5em; margin-bottom:0.5em; background:#fff; border:1px solid #ddd; }
@@ -31,6 +31,8 @@
 .context-group-wrap .wc-field-text-word-count input { width:3em; }
 
 .context-group-admin_notes textarea { height:4em; }
+
+.context-group-word_count select { max-width:4em; min-width:2em; }
 
 /** Settings UI **/
 
