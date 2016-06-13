@@ -14,6 +14,7 @@ widget_context::instance();
 
 class widget_context {
 
+	private $asset_version = '1.0.4';
 	private $sidebars_widgets;
 	private $options_name = 'widget_logic_options'; // Context settings for widgets (visibility, etc)
 	private $settings_name = 'widget_context_settings'; // Widget Context global settings
@@ -213,13 +214,14 @@ class widget_context {
 			'widget-context-css',
 			plugins_url( 'css/admin.css', plugin_basename( __FILE__ ) ),
 			null,
-			'1.0.4'
+			$this->asset_version
 		);
 
 		wp_enqueue_script(
 			'widget-context-js',
 			plugins_url( 'js/widget-context.js', plugin_basename( __FILE__ ) ),
-			array( 'jquery' )
+			array( 'jquery' ),
+			$this->asset_version
 		);
 
 	}
