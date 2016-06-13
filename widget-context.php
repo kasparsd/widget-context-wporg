@@ -574,12 +574,15 @@ class widget_context {
 
 		}
 
+		$settings_link = '';
+
 		if ( current_user_can( 'edit_theme_options' ) ) {
 
-			$controls[] = sprintf(
-					'<p class="widget-context-settings-link"><a href="%s">%s</a></p>',
-					 admin_url( 'options-general.php?page=widget_context_settings' ),
-					__( 'Widget Context Settings', 'widget-context' )
+			$settings_link = sprintf(
+					'<a href="%s" class="widget-context-settings-link" title="%s">%s</a>',
+					admin_url( 'options-general.php?page=widget_context_settings' ),
+					esc_attr__( 'Widget Context Settings', 'widget-context' ),
+					esc_html__( 'Settings', 'widget-context' )
 				);
 
 		}
@@ -588,20 +591,14 @@ class widget_context {
 				'<div class="widget-context">
 					<div class="widget-context-header">
 						<h3>%s</h3>
-						<!-- <a href="#widget-context-%s" class="toggle-contexts hide-if-no-js">
-							<span class="expand">%s</span>
-							<span class="collapse">%s</span>
-						</a> -->
+						%s
 					</div>
 					<div class="widget-context-inside" id="widget-context-%s" data-widget-id="%s">
-					%s
+						%s
 					</div>
 				</div>',
 				__( 'Widget Context', 'widget-context' ),
-				esc_attr( $widget_id ),
-				// Toggle buttons
-				__( 'Expand', 'widget-context' ),
-				__( 'Collapse', 'widget-context' ),
+				$settings_link,
 				// Inslide classes
 				esc_attr( $widget_id ),
 				esc_attr( $widget_id ),
