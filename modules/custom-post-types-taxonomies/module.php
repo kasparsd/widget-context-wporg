@@ -34,7 +34,7 @@ class WidgetContextCustomCPTTax {
 		add_filter( 'widget_contexts', array( $this, 'add_context' ) );
 
 		add_filter( 'widget_context_control-custom_post_types_taxonomies', array( $this, 'context_controls' ), 10, 2 );
-		
+
 		add_filter( 'widget_context_check-custom_post_types_taxonomies', array( $this, 'context_check' ), 10, 2 );
 
 	}
@@ -45,19 +45,19 @@ class WidgetContextCustomCPTTax {
 		if ( is_array( $this->post_types ) )
 			return;
 
-		$this->post_types = get_post_types( 
-				array( 
-					'public' => true, 
-					'_builtin' => false, 
-					'publicly_queryable' => true 
+		$this->post_types = get_post_types(
+				array(
+					'public' => true,
+					'_builtin' => false,
+					'publicly_queryable' => true
 				),
 				'objects'
 			);
 
 		$this->taxonomies = get_taxonomies(
-				array( 
-					'public' => true, 
-					'_builtin' => false 
+				array(
+					'public' => true,
+					'_builtin' => false
 				),
 				'objects'
 			);
@@ -124,25 +124,25 @@ class WidgetContextCustomCPTTax {
 			$this->set_objects();
 
 		foreach ( $this->post_types as $post_type => $post_type_settings ) {
-		
-			$options[ 'is_singular-' . $post_type ] = sprintf( 
-					__( 'All "%s" posts', 'widget-context' ), 
-					$post_type_settings->label 
+
+			$options[ 'is_singular-' . $post_type ] = sprintf(
+					__( 'All "%s" posts', 'widget-context' ),
+					$post_type_settings->label
 				);
 
 			if ( $post_type_settings->has_archive )
-				$options[ 'is_archive-' . $post_type ] = sprintf( 
-					__( 'Archive of "%s" posts', 'widget-context' ), 
-					$post_type_settings->label 
+				$options[ 'is_archive-' . $post_type ] = sprintf(
+					__( 'Archive of "%s" posts', 'widget-context' ),
+					$post_type_settings->label
 				);
 
 		}
 
 		foreach ( $this->taxonomies as $taxonomy => $tax_settings ) {
 
-			$options[ 'is_tax-' . $taxonomy ] = sprintf( 
-					__( 'All "%s" taxonomy archives', 'widget-context' ), 
-					$tax_settings->label 
+			$options[ 'is_tax-' . $taxonomy ] = sprintf(
+					__( 'All "%s" taxonomy archives', 'widget-context' ),
+					$tax_settings->label
 				);
 
 		}

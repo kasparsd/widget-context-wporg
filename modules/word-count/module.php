@@ -59,7 +59,7 @@ class WidgetContextWordCount {
 	function count_words_on_page() {
 
 		global $wp_query;
-		
+
 		if ( empty( $wp_query->posts ) || is_admin() )
 			return;
 
@@ -70,7 +70,7 @@ class WidgetContextWordCount {
 
 
 	function context_check_word_count( $check, $settings ) {
-		
+
 		$settings = wp_parse_args( $settings, array(
 				'check_wordcount' => false,
 				'word_count' => null,
@@ -99,7 +99,7 @@ class WidgetContextWordCount {
 
 	function control_word_count( $control_args ) {
 
-		return sprintf( 
+		return sprintf(
 				'<p>%s %s %s</p>',
 				$this->wc->make_simple_checkbox( $control_args, 'check_wordcount', __('Has', 'widget-context') ),
 				$this->wc->make_simple_dropdown( $control_args, 'check_wordcount_type', array( 'less' => __('less', 'widget-context'), 'more' => __('more', 'widget-context') ), null, __('than', 'widget-context') ),

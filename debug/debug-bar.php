@@ -3,7 +3,7 @@
 class Debug_Widget_Context extends Debug_Bar_Panel {
 
 	function init() {
-		
+
 		$this->title( __( 'Widget Context', 'widget-context' ) );
 
 	}
@@ -15,15 +15,15 @@ class Debug_Widget_Context extends Debug_Bar_Panel {
 	}
 
 	function render() {
-		
+
 		$wc = widget_context::instance();
 
 		$sidebars_widgets = $wc->get_sidebars_widgets_copy();
 
 		$map = array(
-				'show' => __( 'Show widget everywhere', 'widget-context' ), 
-				'selected' => __( 'Show widget on selected', 'widget-context' ), 
-				'notselected' => __( 'Hide widget on selected', 'widget-context' ), 
+				'show' => __( 'Show widget everywhere', 'widget-context' ),
+				'selected' => __( 'Show widget on selected', 'widget-context' ),
+				'notselected' => __( 'Hide widget on selected', 'widget-context' ),
 				'hide' => __( 'Hide widget everywhere', 'widget-context' )
 			);
 
@@ -50,20 +50,20 @@ class Debug_Widget_Context extends Debug_Bar_Panel {
 						else
 							$set = __( 'Default', 'widget-context' );
 					}
-					
-					$check = apply_filters( 
-							'widget_context_check-' . $context_id, 
-							null, 
+
+					$check = apply_filters(
+							'widget_context_check-' . $context_id,
+							null,
 							$widget_context_args
 						);
 
-					$a[] = sprintf( 
+					$a[] = sprintf(
 							'<tr>
 								<th><strong>%s</strong></th>
 								<td>%s</td>
 								<td><pre>%s</pre></td>
-							</tr>', 
-							$context_id, 
+							</tr>',
+							$context_id,
 							$check ? __( 'Yes', 'widget-context' ) : __( 'No', 'widget-context' ),
 							esc_html( print_r( $widget_context_args, true ) )
 						);
@@ -75,7 +75,7 @@ class Debug_Widget_Context extends Debug_Bar_Panel {
 				else
 					$status = sprintf( __( 'Hiding <strong>%s</strong> in "%s"' ), esc_html( $widget_id ), esc_html( $widget_area ) );
 
-				$out[] = sprintf( 
+				$out[] = sprintf(
 						'<h3><a href="#widget-%d" class="toggle">%s</a> <strong>%s</strong> &mdash; %s</h3>
 						<table width="100%%" id="widget-%d" style="display:none;">
 							<tr>
@@ -96,7 +96,7 @@ class Debug_Widget_Context extends Debug_Bar_Panel {
 			}
 		}
 
-		printf( 
+		printf(
 			'%s
 			<h3>Registered Contexts:</h3>
 			<pre>%s</pre>',
@@ -107,4 +107,3 @@ class Debug_Widget_Context extends Debug_Bar_Panel {
 	}
 
 }
-
