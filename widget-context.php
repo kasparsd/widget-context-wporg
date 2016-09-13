@@ -422,12 +422,8 @@ class widget_context {
 
 		$patterns_safe = array();
 
-		// Get the request URI from WP
-		$url_request = $wp->request;
-
-		// Append the query string
-		if ( ! empty( $_SERVER['QUERY_STRING'] ) )
-			$url_request .= '?' . $_SERVER['QUERY_STRING'];
+		// Get the request URI
+		$url_request = trim( $_SERVER['REQUEST_URI'], '/' );
 
 		$rows = explode( "\n", $patterns );
 
