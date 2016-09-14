@@ -29,6 +29,9 @@ Widget Context allows you to show or hide widgets on certain sections of your si
 
 ## Changelog
 
+### 1.0.5 (September 14, 2016)
+* Fix URL targeting of custom permalinks and query strings.
+
 ### 1.0.4 (May 6, 2016)
 * Confirm the plugin works with the latest version of WordPress.
 * Fix the PHP class constructor warning.

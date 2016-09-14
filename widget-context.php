@@ -3,7 +3,7 @@
 Plugin Name: Widget Context
 Plugin URI: https://wordpress.org/plugins/widget-context/
 Description: Show or hide widgets depending on the section of the site that is being viewed.
-Version: 1.0.4
+Version: 1.0.5
 Author: Kaspars Dambis
 Author URI: https://kaspars.net
 Text Domain: widget-context
@@ -14,7 +14,7 @@ widget_context::instance();
 
 class widget_context {
 
-	private $asset_version = '1.0.4';
+	private $asset_version = '1.0.5';
 	private $sidebars_widgets;
 	private $options_name = 'widget_logic_options'; // Context settings for widgets (visibility, etc)
 	private $settings_name = 'widget_context_settings'; // Widget Context global settings
@@ -418,16 +418,10 @@ class widget_context {
 
 	function match_path( $patterns ) {
 
-		global $wp;
-
 		$patterns_safe = array();
 
-		// Get the request URI from WP
-		$url_request = $wp->request;
-
-		// Append the query string
-		if ( ! empty( $_SERVER['QUERY_STRING'] ) )
-			$url_request .= '?' . $_SERVER['QUERY_STRING'];
+		// Get the request URI
+		$url_request = trim( $_SERVER['REQUEST_URI'], '/' );
 
 		$rows = explode( "\n", $patterns );
 
