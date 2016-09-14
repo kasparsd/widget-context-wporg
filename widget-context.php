@@ -418,8 +418,6 @@ class widget_context {
 
 	function match_path( $patterns ) {
 
-		global $wp;
-
 		$patterns_safe = array();
 
 		// Get the request URI
