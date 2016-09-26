@@ -34,6 +34,9 @@
 
 .context-group-word_count select { max-width:4em; min-width:2em; }
 
+.context-group-user_roles .context-group-wrap { max-height:10em; overflow:auto; padding:0.5em; margin-bottom:0.5em; background:#fff; border:1px solid #ddd; }
+.context-group-user_roles label { display:block; padding:0.25em 0; }
+
 /** Settings UI **/
 
 .widget-context-form th { width:auto; }
