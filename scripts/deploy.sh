@@ -23,12 +23,10 @@ done
 # Delete all hidden files and directories
 find "$BUILD_PATH" -maxdepth 1 -name ".*" -exec rm -rf "{}" \;
 
-echo "SED version: $(sed --version)"
-
 # Create WP.org readme.txt
 if [[ -f "$BUILD_PATH/readme.md" ]]; then
 	mv "$BUILD_PATH/readme.md" "$BUILD_PATH/readme.txt"
-	sed -i '' \
+	sed -i.bak \
 		-e 's/^# \(.*\)$/=== \1 ===/' \
 		-e 's/ #* ===$/ ===/' \
 		-e 's/^## \(.*\)$/== \1 ==/' \
