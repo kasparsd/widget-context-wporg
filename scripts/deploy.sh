@@ -7,6 +7,7 @@ if [[ -z "$WP_ORG_USERNAME" || -z "$WP_ORG_PASSWORD" || -z "$WP_ORG_SLUG" ]]; th
 	exit 1
 fi
 
+SVN_TAG=$1
 BUILD_PATH="/tmp/plugin-build"
 SVN_PATH="/tmp/plugin-svn"
 GIT_PATH="$( cd "$(dirname "$0")/.." && pwd )"
@@ -40,11 +41,12 @@ fi
 
 # Fetch a fresh copy the SVN repo
 rm -rf "$SVN_PATH"
-svn co "http://plugins.svn.wordpress.org/$WP_ORG_SLUG/" "$SVN_PATH"
+svn checkout "http://plugins.svn.wordpress.org/$WP_ORG_SLUG/" "$SVN_PATH"
 cd "$SVN_PATH"
 
 # Update trunk only
 if [[ "trunk" == $1 ]]; then
+	echo "Copying files to SVN trunk"
 	# Remove files but keep the SVN state
 	find "$SVN_PATH/trunk" \
 		-maxdepth 1 \
@@ -52,23 +54,27 @@ if [[ "trunk" == $1 ]]; then
 		-exec rm -rf "{}" \;
 	cp -r "$BUILD_PATH"/* "$SVN_PATH/trunk"
 elif [[ ! -d "$SVN_PATH/tags/$1" ]]; then
+	echo "Copying files to SVN tag $SVN_TAG"
 	cp -r "$BUILD_PATH" "$SVN_PATH/tags/$1"
 else
-	echo "Tag $1 already exists."
+	echo "Error: tag $SVN_TAG already exists"
 	exit 1
 fi
 
+echo "SVN changeset:"
+svn status
+
 # Check if we have any changes to push to SVN
 if [[ -z "$( svn status )" ]]; then
-	echo "No changes found in SVN."
+	echo "No changes found in SVN"
 	exit 1
+else
+	echo "Committing SVN changes"
 fi
 
 # Commit changes to SVN
 svn status | awk '/^\?/ {print $2}' | xargs svn add > /dev/null 2>&1
 svn status | awk '/^\!/ {print $2}' | xargs svn rm --force
-
-svn status
 
 # Push changes to SVN
 svn commit -m "Deploy $1" \
