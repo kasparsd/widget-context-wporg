@@ -45,14 +45,13 @@ cd "$SVN_PATH"
 
 # Update trunk only
 if [[ "trunk" == $1 ]]; then
-	echo "Updating trunk"
-	rm -rf trunk
-	mkdir trunk
-	cp -r "$BUILD_PATH/" trunk
+	# Remove files but keep the SVN state
+	find "$SVN_PATH/trunk" \
+		! -name ".svn" ! -path "$SVN_PATH/trunk" \
+		-maxdepth 1 \
+		-exec rm -rf "{}" \;
+	cp -r "$BUILD_PATH/" "$SVN_PATH/trunk"
 fi
-
-svn status
-echo "Check the status above"
 
 # Check if we have any changes to push to SVN
 if [[ -z "$( svn status -q )" ]]; then
