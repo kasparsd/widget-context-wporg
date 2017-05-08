@@ -43,16 +43,16 @@ rm -rf "$SVN_PATH"
 svn co "http://plugins.svn.wordpress.org/$WP_ORG_SLUG/" "$SVN_PATH"
 cd "$SVN_PATH"
 
-echo "Vars 0:$0, 1:$1"
-echo "SVN path $SVN_PATH:"
-ls -lah $SVN_PATH
-
 # Update trunk only
 if [[ "trunk" == $1 ]]; then
+	echo "Updating trunk"
 	rm -rf trunk
 	mkdir trunk
 	cp -r "$BUILD_PATH/" trunk
 fi
+
+svn status
+echo "Check the status above"
 
 # Check if we have any changes to push to SVN
 if [[ -z "$( svn status -q )" ]]; then
