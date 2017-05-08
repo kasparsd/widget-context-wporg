@@ -11,6 +11,7 @@ SVN_TAG=${1-"trunk"}
 BUILD_PATH="/tmp/plugin-build"
 SVN_PATH="/tmp/plugin-svn"
 GIT_PATH="$( cd "$(dirname "$0")/.." && pwd )"
+DEPLOY_MESSAGE="Deploy $SVN_TAG"
 
 # Copy project repo to the build
 rm -rf "$BUILD_PATH"
@@ -70,5 +71,5 @@ svn status | awk '/^\?/ {print $2}' | xargs svn add --force
 svn status | awk '/^\!/ {print $2}' | xargs svn rm --force
 
 # Push changes to SVN
-svn commit -m "Deploy $1" \
+svn commit -m "$DEPLOY_MESSAGE" \
 	--no-auth-cache --non-interactive --username "$WP_ORG_USERNAME" --password "$WP_ORG_PASSWORD"
