@@ -40,7 +40,7 @@ fi
 
 # Fetch a fresh copy the SVN repo
 rm -rf "$SVN_PATH"
-svn co "https://plugins.svn.wordpress.org/$WP_ORG_SLUG/" "$SVN_PATH"
+svn co "http://plugins.svn.wordpress.org/$WP_ORG_SLUG/" "$SVN_PATH"
 cd "$SVN_PATH"
 
 echo "Vars 0:$0, 1:$1"
