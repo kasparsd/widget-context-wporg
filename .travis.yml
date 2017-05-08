@@ -24,8 +24,10 @@ deploy:
   - provider: script
     script: scripts/deploy.sh $TRAVIS_TAG
     on:
+      php: 7.0
       tags: true
   - provider: script
     script: scripts/deploy.sh trunk
     on:
+      php: 7.0
       branch: master
