@@ -36,6 +36,8 @@ if [[ -f "$BUILD_PATH/readme.md" ]]; then
 		"$BUILD_PATH/readme.txt"
 fi
 
+echo "Checking out SVN to $SVN_PATH"
+
 # Fetch a fresh copy the SVN repo
 rm -rf "$SVN_PATH"
 svn co "https://plugins.svn.wordpress.org/$WP_ORG_SLUG/" "$SVN_PATH"
