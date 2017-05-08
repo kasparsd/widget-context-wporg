@@ -27,6 +27,3 @@ deploy:
       tags: true
   - provider: script
     script: scripts/deploy.sh trunk
-    on:
-      branch: master
-      all_branches: true
