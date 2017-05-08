@@ -22,10 +22,10 @@ after_script:
 
 deploy:
     - provider: script
-        script: scripts/deploy.sh $TRAVIS_TAG
-        on:
-            tags: true
+      script: scripts/deploy.sh $TRAVIS_TAG
+      on:
+          tags: true
     - provider: script
-        script: scripts/deploy.sh trunk
-        on:
-            branch: master
+      script: scripts/deploy.sh trunk
+      on:
+          branch: master
