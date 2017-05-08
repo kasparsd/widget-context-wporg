@@ -29,3 +29,4 @@ deploy:
     script: scripts/deploy.sh trunk
     on:
       branch: master
+      all_branches: true
