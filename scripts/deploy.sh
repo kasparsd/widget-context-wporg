@@ -34,7 +34,8 @@ if [[ -f "$BUILD_PATH/readme.md" ]]; then
 		-e 's/^### \(.*\)$/= \1 =/' \
 		-e 's/ #* =$/ =/' \
 		"$BUILD_PATH/readme.txt"
-	rm $BUILD_PATH/readme.txt.bak
+	# Remove the sed backup file
+	rm "$BUILD_PATH/readme.txt.bak"
 fi
 
 echo "Checking out SVN to $SVN_PATH"
