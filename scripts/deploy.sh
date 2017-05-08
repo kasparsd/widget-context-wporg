@@ -7,7 +7,7 @@ if [[ -z "$WP_ORG_USERNAME" || -z "$WP_ORG_PASSWORD" || -z "$WP_ORG_SLUG" ]]; th
 	exit 1
 fi
 
-SVN_TAG=$1
+SVN_TAG=${1-"trunk"}
 BUILD_PATH="/tmp/plugin-build"
 SVN_PATH="/tmp/plugin-svn"
 GIT_PATH="$( cd "$(dirname "$0")/.." && pwd )"
