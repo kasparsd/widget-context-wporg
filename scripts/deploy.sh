@@ -51,10 +51,11 @@ if [[ "trunk" == $1 ]]; then
 		-not -name ".svn" -not -path "$SVN_PATH/trunk" \
 		-exec rm -rf "{}" \;
 	cp -r "$BUILD_PATH"/* "$SVN_PATH/trunk"
-elif [[ ! -d "$SVN_PATH/tags/$1" ]]
+elif [[ ! -d "$SVN_PATH/tags/$1" ]]; then
 	cp -r "$BUILD_PATH" "$SVN_PATH/tags/$1"
 else
 	echo "Tag $1 already exists."
+	exit 1
 fi
 
 # Check if we have any changes to push to SVN
