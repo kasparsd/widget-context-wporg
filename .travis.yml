@@ -7,7 +7,7 @@ php:
   - 5.2
 
 env:
-  - WP_VERSION=latest DEV_LIB_PATH=node_modules/wp-dev-lib
+  - WP_VERSION=latest DEV_LIB_PATH=node_modules/wp-dev-lib WP_ORG_SLUG=widget-context
 
 install:
   - nvm install node
