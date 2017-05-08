@@ -57,9 +57,6 @@ else
 	exit 1
 fi
 
-echo "SVN status:"
-svn status
-
 # Check if we have any changes to push to SVN
 if [[ -z "$( svn status )" ]]; then
 	echo "No changes found in SVN."
