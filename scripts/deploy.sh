@@ -53,6 +53,9 @@ if [[ "trunk" == $1 ]]; then
 	cp -r "$BUILD_PATH/" "$SVN_PATH/trunk/"
 fi
 
+ls -lah "$SVN_PATH/trunk/"
+svn status
+
 # Check if we have any changes to push to SVN
 if [[ -z "$( svn status -q )" ]]; then
 	echo "No changes found in SVN."
