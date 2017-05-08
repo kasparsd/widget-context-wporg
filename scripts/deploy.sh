@@ -50,7 +50,9 @@ if [[ "trunk" == $1 ]]; then
 		-maxdepth 1 \
 		-not -name ".svn" -not -path "$SVN_PATH/trunk" \
 		-exec rm -rf "{}" \;
-	cp -r "$BUILD_PATH/" "$SVN_PATH/trunk/"
+	cp -r "$BUILD_PATH/" "$SVN_PATH/trunk"
+else
+	cp -r "$BUILD_PATH" "$SVN_PATH/tags/$1"
 fi
 
 # Check if we have any changes to push to SVN
