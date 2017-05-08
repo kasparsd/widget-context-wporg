@@ -26,7 +26,7 @@ find "$BUILD_PATH" -maxdepth 1 -name ".*" -exec rm -rf "{}" \;
 # Create WP.org readme.txt
 if [[ -f "$BUILD_PATH/readme.md" ]]; then
 	mv "$BUILD_PATH/readme.md" "$BUILD_PATH/readme.txt"
-	sed -i.bak \
+	sed -i'' \
 		-e 's/^# \(.*\)$/=== \1 ===/' \
 		-e 's/ #* ===$/ ===/' \
 		-e 's/^## \(.*\)$/== \1 ==/' \
@@ -34,7 +34,6 @@ if [[ -f "$BUILD_PATH/readme.md" ]]; then
 		-e 's/^### \(.*\)$/= \1 =/' \
 		-e 's/ #* =$/ =/' \
 		"$BUILD_PATH/readme.txt"
-	rm -rf "$BUILD_PATH/readme.txt.bak"
 fi
 
 # Fetch a fresh copy the SVN repo
