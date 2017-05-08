@@ -3,8 +3,8 @@
 Contributors: kasparsd, jamescollins    
 Tags: widget, widget context, context, logic, widget logic, cms   
 Requires at least: 3.0   
-Tested up to: 4.5.2   
-Stable tag: 1.0.4  
+Tested up to: 4.7.4   
+Stable tag: 1.0.5  
 License: GPLv2 or later   
 
 Show or hide widgets on specific posts, pages or sections of your site.
@@ -28,6 +28,10 @@ Widget Context allows you to show or hide widgets on certain sections of your si
 
 
 ## Changelog
+
+### 1.0.5 (May 8, 2017)
+* Confirm the plugin works with the latest version of WordPress.
+* Add support for continuous testing via [wp-dev-lib](https://github.com/xwp/wp-dev-lib).
 
 ### 1.0.4 (May 6, 2016)
 * Confirm the plugin works with the latest version of WordPress.
