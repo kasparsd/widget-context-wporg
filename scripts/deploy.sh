@@ -69,7 +69,7 @@ else
 fi
 
 # Commit changes to SVN
-svn status | awk '/^\?/ {print $2}' | xargs svn add > /dev/null 2>&1
+svn status | awk '/^\?/ {print $2}' | xargs svn add --force
 svn status | awk '/^\!/ {print $2}' | xargs svn rm --force
 
 # Push changes to SVN
