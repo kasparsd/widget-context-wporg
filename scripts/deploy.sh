@@ -25,9 +25,8 @@ find "$BUILD_PATH" -maxdepth 1 -name ".*" -exec rm -rf "{}" \;
 
 # Create WP.org readme.txt
 if [[ -f "$BUILD_PATH/readme.md" ]]; then
-	echo "Creating the readme.txt from readme.md"
 	mv "$BUILD_PATH/readme.md" "$BUILD_PATH/readme.txt"
-	sed -i '' \
+	sed -i '.bak' \
 		-e 's/^# \(.*\)$/=== \1 ===/' \
 		-e 's/ #* ===$/ ===/' \
 		-e 's/^## \(.*\)$/== \1 ==/' \
@@ -35,16 +34,13 @@ if [[ -f "$BUILD_PATH/readme.md" ]]; then
 		-e 's/^### \(.*\)$/= \1 =/' \
 		-e 's/ #* =$/ =/' \
 		"$BUILD_PATH/readme.txt"
+	rm -rf "$BUILD_PATH/readme.txt.bak"
 fi
 
 # Fetch a fresh copy the SVN repo
 rm -rf "$SVN_PATH"
 svn co "https://plugins.svn.wordpress.org/$WP_ORG_SLUG/" "$SVN_PATH"
 cd "$SVN_PATH"
-
-echo "SVN fetched to $SVN_PATH"
-ls -lah "$SVN_PATH"
-echo "Params: 1-$1, 2-$2, 3-$3"
 
 # Update trunk only
 if [[ "trunk" == $1 ]]; then
