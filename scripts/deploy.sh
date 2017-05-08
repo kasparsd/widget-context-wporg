@@ -54,7 +54,7 @@ if [[ "trunk" == $1 ]]; then
 fi
 
 # Check if we have any changes to push to SVN
-if [[ -z "$( svn status -q )" ]]; then
+if [[ -z "$( svn status )" ]]; then
 	echo "No changes found in SVN."
 	exit 1
 fi
