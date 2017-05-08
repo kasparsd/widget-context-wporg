@@ -19,3 +19,13 @@ script:
 
 after_script:
     - source $DEV_LIB_PATH/travis.after_script.sh
+
+deploy:
+    - provider: script
+        script: scripts/deploy.sh $TRAVIS_TAG
+        on:
+            tags: true
+    - provider: script
+        script: scripts/deploy.sh trunk
+        on:
+            branch: master
