@@ -48,7 +48,7 @@ if [[ "trunk" == $1 ]]; then
 	# Remove files but keep the SVN state
 	find "$SVN_PATH/trunk" \
 		-maxdepth 1 \
-		! -name ".svn" ! -path "$SVN_PATH/trunk" \
+		-not -name ".svn" -not -path "$SVN_PATH/trunk" \
 		-exec rm -rf "{}" \;
 	cp -r "$BUILD_PATH/" "$SVN_PATH/trunk/"
 fi
