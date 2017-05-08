@@ -7,13 +7,13 @@ if [[ -z "$WP_ORG_USERNAME" || -z "$WP_ORG_PASSWORD" || -z "$WP_ORG_SLUG" ]]; th
 	exit 1
 fi
 
-echo "Working path $PWD"
-echo "Repo path: $GIT_PATH"
-exit 1
-
 BUILD_PATH="/tmp/plugin-build"
 SVN_PATH="/tmp/plugin-svn"
 GIT_PATH="$( cd "$(dirname "$0")/.." && pwd )"
+
+echo "Working path $PWD"
+echo "Repo path: $GIT_PATH"
+exit 1
 
 # Copy project repo to the build
 rm -rf "$BUILD_PATH"
