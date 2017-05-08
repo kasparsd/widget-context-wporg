@@ -4,7 +4,7 @@ language: php
 
 php:
   - 7.0
-  - 5.2
+  - 5.3
 
 env:
   - WP_VERSION=latest DEV_LIB_PATH=node_modules/wp-dev-lib WP_ORG_SLUG=widget-context
