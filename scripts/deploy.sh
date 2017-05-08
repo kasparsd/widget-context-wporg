@@ -49,14 +49,14 @@ if [[ "trunk" == $1 ]]; then
 fi
 
 # Check if we have any changes to push to SVN
-if [[ -z "$( svn stat -q )" ]]; then
+if [[ -z "$( svn status -q )" ]]; then
 	echo "No changes found in SVN."
 	exit 1
 fi
 
 # Commit changes to SVN
-svn stat | awk '/^\?/ {print $2}' | xargs svn add > /dev/null 2>&1
-svn stat | awk '/^\!/ {print $2}' | xargs svn rm --force
+svn status | awk '/^\?/ {print $2}' | xargs svn add > /dev/null 2>&1
+svn status | awk '/^\!/ {print $2}' | xargs svn rm --force
 
 svn status
 
