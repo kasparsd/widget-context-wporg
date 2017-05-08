@@ -54,22 +54,22 @@ if [[ "trunk" == $1 ]]; then
 		-exec rm -rf "{}" \;
 	cp -r "$BUILD_PATH"/* "$SVN_PATH/trunk"
 elif [[ ! -d "$SVN_PATH/tags/$1" ]]; then
-	echo "Copying files to SVN tag $SVN_TAG"
+	echo "Copying files to SVN tag $SVN_TAG."
 	cp -r "$BUILD_PATH" "$SVN_PATH/tags/$1"
 else
-	echo "Error: tag $SVN_TAG already exists"
+	echo "Error: tag $SVN_TAG already exists."
 	exit 1
 fi
 
-echo "SVN changeset:"
+echo "SVN status:"
 svn status
 
 # Check if we have any changes to push to SVN
 if [[ -z "$( svn status )" ]]; then
-	echo "No changes found in SVN"
+	echo "No changes found in SVN."
 	exit 1
 else
-	echo "Committing SVN changes"
+	echo "Committing SVN changes."
 fi
 
 # Commit changes to SVN
