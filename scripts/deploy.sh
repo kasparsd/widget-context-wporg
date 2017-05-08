@@ -44,6 +44,10 @@ rm -rf "$SVN_PATH"
 svn co "https://plugins.svn.wordpress.org/$WP_ORG_SLUG/" "$SVN_PATH"
 cd "$SVN_PATH"
 
+echo "Vars 0:$0, 1:$1"
+echo "SVN path $SVN_PATH:"
+ls -lah $SVN_PATH
+
 # Update trunk only
 if [[ "trunk" == $1 ]]; then
 	rm -rf trunk
