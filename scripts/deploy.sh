@@ -11,10 +11,6 @@ BUILD_PATH="/tmp/plugin-build"
 SVN_PATH="/tmp/plugin-svn"
 GIT_PATH="$( cd "$(dirname "$0")/.." && pwd )"
 
-echo "Working path $PWD"
-echo "Repo path: $GIT_PATH"
-exit 1
-
 # Copy project repo to the build
 rm -rf "$BUILD_PATH"
 cp -r "$GIT_PATH" "$BUILD_PATH"
@@ -45,6 +41,10 @@ fi
 rm -rf "$SVN_PATH"
 svn co "https://plugins.svn.wordpress.org/$WP_ORG_SLUG/" "$SVN_PATH"
 cd "$SVN_PATH"
+
+echo "SVN fetched to $SVN_PATH"
+ls -lah "$SVN_PATH"
+echo "Params: 1-$1, 2-$2, 3-$3"
 
 # Update trunk only
 if [[ "trunk" == $1 ]]; then
