@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
+# Fetch SVN authentication data from the environment variables
 if [[ -z "$WP_ORG_USERNAME" || -z "$WP_ORG_PASSWORD" || -z "$WP_ORG_SLUG" ]]; then
 	echo "Missing WP.org username, password or slug."
 	exit 1
