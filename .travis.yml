@@ -3,29 +3,29 @@ sudo: false
 language: php
 
 php:
-    - 7.0
-    - 5.2
+  - 7.0
+  - 5.2
 
 env:
-    - WP_VERSION=latest DEV_LIB_PATH=node_modules/wp-dev-lib
+  - WP_VERSION=latest DEV_LIB_PATH=node_modules/wp-dev-lib
 
 install:
-    - nvm install node
-    - npm install
-    - source $DEV_LIB_PATH/travis.install.sh
+  - nvm install node
+  - npm install
+  - source $DEV_LIB_PATH/travis.install.sh
 
 script:
-    - source $DEV_LIB_PATH/travis.script.sh
+  - source $DEV_LIB_PATH/travis.script.sh
 
 after_script:
-    - source $DEV_LIB_PATH/travis.after_script.sh
+  - source $DEV_LIB_PATH/travis.after_script.sh
 
 deploy:
-    - provider: script
-      script: scripts/deploy.sh $TRAVIS_TAG
-      on:
-          tags: true
-    - provider: script
-      script: scripts/deploy.sh trunk
-      on:
-          branch: master
+  - provider: script
+    script: scripts/deploy.sh $TRAVIS_TAG
+    on:
+      tags: true
+  - provider: script
+    script: scripts/deploy.sh trunk
+    on:
+      branch: master
