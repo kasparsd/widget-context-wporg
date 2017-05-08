@@ -46,13 +46,9 @@ cd "$SVN_PATH"
 
 # Update trunk only
 if [[ "trunk" == $1 ]]; then
-	echo "Copying files to SVN trunk"
-	# Remove files but keep the SVN state
-	find "$SVN_PATH/trunk" \
-		-maxdepth 1 \
-		-not -name ".svn" -not -path "$SVN_PATH/trunk" \
-		-exec rm -rf "{}" \;
-	cp -r "$BUILD_PATH"/* "$SVN_PATH/trunk"
+	echo "Copying files to SVN trunk."
+	rm -rf "$SVN_PATH/trunk"
+	cp -r "$BUILD_PATH" "$SVN_PATH/trunk"
 elif [[ ! -d "$SVN_PATH/tags/$1" ]]; then
 	echo "Copying files to SVN tag $SVN_TAG."
 	cp -r "$BUILD_PATH" "$SVN_PATH/tags/$1"
