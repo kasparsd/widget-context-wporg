@@ -47,10 +47,10 @@ cd "$SVN_PATH"
 if [[ "trunk" == $1 ]]; then
 	# Remove files but keep the SVN state
 	find "$SVN_PATH/trunk" \
-		! -name ".svn" ! -path "$SVN_PATH/trunk" \
 		-maxdepth 1 \
+		! -name ".svn" ! -path "$SVN_PATH/trunk" \
 		-exec rm -rf "{}" \;
-	cp -r "$BUILD_PATH/" "$SVN_PATH/trunk"
+	cp -r "$BUILD_PATH/" "$SVN_PATH/trunk/"
 fi
 
 # Check if we have any changes to push to SVN
