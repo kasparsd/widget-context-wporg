@@ -3,7 +3,8 @@
   "version": "1.0.5",
   "description": "WordPress plugin for showing or hiding widgets on specific posts, pages and sections of a site.",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "scripts/deploy.sh"
   },
   "repository": {
     "type": "git",
