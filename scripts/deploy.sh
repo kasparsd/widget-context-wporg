@@ -66,5 +66,5 @@ svn status | awk '/^\!/ {print $2}' | xargs svn rm --force
 svn status
 
 # Push changes to SVN
-svn ci -m "Deploy $1" \
+svn commit -m "Deploy $1" \
 	--no-auth-cache --non-interactive --username "$WP_ORG_USERNAME" --password "$WP_ORG_PASSWORD"
