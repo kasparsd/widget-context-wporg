@@ -1,3 +1,5 @@
+dist: trusty
+
 sudo: false
 
 language: php
@@ -8,8 +10,6 @@ php:
 
 env:
   - WP_VERSION=latest DEV_LIB_PATH=node_modules/wp-dev-lib WP_ORG_SLUG=widget-context
-
-dist: trusty
 
 install:
   - nvm install node
