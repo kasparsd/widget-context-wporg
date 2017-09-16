@@ -21,6 +21,7 @@ class widget_context {
 	private $sidebars_widgets_copy;
 
 	private $core_modules = array(
+			'user-roles',
 			'word-count',
 			'custom-post-types-taxonomies'
 		);
