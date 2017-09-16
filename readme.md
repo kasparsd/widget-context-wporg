@@ -155,3 +155,4 @@ Performance improvements - don't check if sidebar has any widgets on every widge
 ## Screenshots
 
 1. Widget Context settings at the bottom of every widget
+2. Widget Context plugin settings
