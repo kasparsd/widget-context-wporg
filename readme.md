@@ -4,7 +4,7 @@ Contributors: kasparsd, jamescollins
 Tags: widget, widget context, context, logic, widget logic, cms   
 Requires at least: 3.0   
 Tested up to: 4.8.1   
-Stable tag: 1.0.5   
+Stable tag: trunk   
 License: GPLv2 or later   
 
 Show or hide widgets on specific posts, pages or sections of your site.
