@@ -21,7 +21,7 @@
   "bugs": {
     "url": "https://github.com/kasparsd/widget-context-wporg/issues"
   },
-  "homepage": "https://github.com/kasparsd/widget-context-wporg#readme",
+  "homepage": "https://widgetcontext.com",
   "devDependencies": {
     "husky": "^0.14.3",
     "wp-dev-lib": "github:xwp/wp-dev-lib"
