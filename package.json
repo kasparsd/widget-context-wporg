@@ -3,8 +3,7 @@
   "version": "1.0.5",
   "description": "WordPress plugin for showing or hiding widgets on specific posts, pages and sections of a site.",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "scripts/deploy.sh"
+    "precommit": "./node_modules/wp-dev-lib/pre-commit"
   },
   "repository": {
     "type": "git",
@@ -24,6 +23,7 @@
   },
   "homepage": "https://github.com/kasparsd/widget-context-wporg#readme",
   "devDependencies": {
+    "husky": "^0.14.3",
     "wp-dev-lib": "github:xwp/wp-dev-lib"
   }
 }
