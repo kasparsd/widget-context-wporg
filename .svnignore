@@ -1,6 +1,6 @@
+# Dot files are excluded by default
 package.json
 node_modules
 tests
 phpunit.xml
 phpcs.xml
-.*
