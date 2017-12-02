@@ -1,17 +1,8 @@
 <?php
-/*
-Plugin Name: Widget Context
-Plugin URI: https://wordpress.org/plugins/widget-context/
-Description: Show or hide widgets depending on the section of the site that is being viewed.
-Version: 1.0.5
-Author: Kaspars Dambis
-Author URI: https://kaspars.net
-Text Domain: widget-context
-*/
 
-// Go!
-widget_context::instance();
-
+/**
+ * Widget Context plugin core.
+ */
 class widget_context {
 
 	private $asset_version = '1.0.4';
@@ -42,9 +33,17 @@ class widget_context {
 
 	}
 
-
+	/**
+	 * Use widget_context::instance() instead.
+	 */
 	private function __construct() {
+		// Not used.
+	}
 
+	/**
+	 * Hook into WP.
+	 */
+	public function init() {
 		// Define available widget contexts
 		add_action( 'init', array( $this, 'define_widget_contexts' ), 5 );
 
@@ -76,7 +75,6 @@ class widget_context {
 		// Register our own debug bar panel
 		add_filter( 'debug_bar_panels', array( $this, 'widget_context_debug_bar_init' ) );
 		add_action( 'debug_bar_enqueue_scripts', array( $this, 'widget_context_debug_bar_scripts' ) );
-
 	}
 
 
