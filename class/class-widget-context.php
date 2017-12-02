@@ -93,10 +93,14 @@ class widget_context {
 			);
 
 		// Initialize core modules
-		$include_path = plugin_dir_path( __FILE__ ) . '/modules';
+		$include_path = plugin_dir_path( __FILE__ );
 
 		foreach ( $this->core_modules as $module ) {
-			include sprintf( '%s/%s/module.php', $include_path, $module );
+			$module_file = sprintf( '%smodules/%s/module.php', $include_path, $module );
+
+			if ( file_exists( $module_file ) ) {
+				include $module_file;
+			}
 		}
 
 		// Default context
@@ -1009,7 +1013,7 @@ class widget_context {
 
 	function widget_context_debug_bar_init( $panels ) {
 
-		include plugin_dir_path( __FILE__ ) . '/debug/debug-bar.php';
+		include plugin_dir_path( __FILE__ ) . 'debug/debug-bar.php';
 
 		if ( class_exists( 'Debug_Widget_Context' ) )
 			$panels[] = new Debug_Widget_Context();
