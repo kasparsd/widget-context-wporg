@@ -1,4 +1,4 @@
-/* jshint esversion: 5 */
+/* jshint es3: false */
 
 var ignoreParse = require( 'parse-gitignore' );
 
