@@ -1,3 +1,5 @@
+/* jshint esversion: 5 */
+
 var ignoreParse = require( 'parse-gitignore' );
 
 module.exports = function( grunt ) {
