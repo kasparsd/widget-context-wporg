@@ -1,0 +1,7 @@
+tests
+node_modules
+Gruntfile.js
+package.json
+phpcs.xml
+phpunit.xml
+.*

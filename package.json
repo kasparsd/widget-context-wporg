@@ -3,6 +3,8 @@
   "version": "1.0.5",
   "description": "WordPress plugin for showing or hiding widgets on specific posts, pages and sections of a site.",
   "scripts": {
+    "build": "grunt build",
+    "deploy": "grunt deploy",
     "test": "DIFF_BASE=master ./node_modules/wp-dev-lib/pre-commit",
     "precommit": "DEV_LIB_SKIP=phpunit ./node_modules/wp-dev-lib/pre-commit"
   },
@@ -24,7 +26,12 @@
   },
   "homepage": "https://widgetcontext.com",
   "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-clean": "^1.1.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-wp-deploy": "^1.2.1",
     "husky": "^0.14.3",
+    "parse-gitignore": "^0.4.0",
     "wp-dev-lib": "github:xwp/wp-dev-lib"
   }
 }
