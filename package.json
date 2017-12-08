@@ -6,9 +6,6 @@
     "name": "Kaspars Dambis",
     "url": "https://kaspars.net"
   },
-  "pluginMeta": {
-    "tested": "4.9.1"
-  },
   "scripts": {
     "grunt": "grunt",
     "build": "grunt build",
