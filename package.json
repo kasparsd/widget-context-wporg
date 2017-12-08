@@ -2,6 +2,11 @@
   "name": "widget-context",
   "version": "1.0.5",
   "description": "WordPress plugin for showing or hiding widgets on specific posts, pages and sections of a site.",
+  "homepage": "https://widgetcontext.com",
+  "author": {
+    "name": "Kaspars Dambis",
+    "url": "https://kaspars.net"
+  },
   "scripts": {
     "build": "grunt build",
     "deploy": "grunt deploy",
@@ -12,19 +17,14 @@
     "type": "git",
     "url": "git+https://github.com/kasparsd/widget-context-wporg.git"
   },
+  "bugs": {
+    "url": "https://github.com/kasparsd/widget-context-wporg/issues"
+  },
   "keywords": [
     "wordpress",
     "wordpress plugin"
   ],
-  "author": {
-    "name": "Kaspars Dambis",
-    "url": "https://kaspars.net"
-  },
   "license": "GPL-2.0",
-  "bugs": {
-    "url": "https://github.com/kasparsd/widget-context-wporg/issues"
-  },
-  "homepage": "https://widgetcontext.com",
   "devDependencies": {
     "grunt": "^1.0.1",
     "grunt-contrib-clean": "^1.1.0",
