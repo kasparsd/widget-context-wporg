@@ -214,14 +214,14 @@ class widget_context {
 
 		wp_enqueue_style(
 			'widget-context-css',
-			plugins_url( 'css/admin.css', plugin_basename( __FILE__ ) ),
+			plugins_url( '../css/admin.css', plugin_basename( __FILE__ ) ),
 			null,
 			$this->asset_version
 		);
 
 		wp_enqueue_script(
 			'widget-context-js',
-			plugins_url( 'js/widget-context.js', plugin_basename( __FILE__ ) ),
+			plugins_url( '../js/widget-context.js', plugin_basename( __FILE__ ) ),
 			array( 'jquery' ),
 			$this->asset_version
 		);
