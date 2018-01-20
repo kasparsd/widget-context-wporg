@@ -37,7 +37,7 @@ class widget_context {
 	 * Use widget_context::instance() instead.
 	 */
 	private function __construct() {
-		// Not used.
+		$this->plugin_path = dirname( dirname( __FILE__ ) );
 	}
 
 	/**
@@ -92,11 +92,8 @@ class widget_context {
 				)
 			);
 
-		// Initialize core modules
-		$include_path = plugin_dir_path( __FILE__ );
-
 		foreach ( $this->core_modules as $module ) {
-			$module_file = sprintf( '%smodules/%s/module.php', $include_path, $module );
+			$module_file = sprintf( '%s/class/modules/%s/module.php', $this->plugin_path, $module );
 
 			if ( file_exists( $module_file ) ) {
 				include $module_file;
@@ -201,7 +198,7 @@ class widget_context {
 
 	function init_l10n() {
 
-		load_plugin_textdomain( 'widget-context', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+		load_plugin_textdomain( 'widget-context', false, basename( $this->plugin_path ) . '/languages' );
 
 	}
 
@@ -214,14 +211,14 @@ class widget_context {
 
 		wp_enqueue_style(
 			'widget-context-css',
-			plugins_url( '../css/admin.css', plugin_basename( __FILE__ ) ),
+			plugins_url( 'css/admin.css', $this->plugin_path ),
 			null,
 			$this->asset_version
 		);
 
 		wp_enqueue_script(
 			'widget-context-js',
-			plugins_url( '../js/widget-context.js', plugin_basename( __FILE__ ) ),
+			plugins_url( 'js/widget-context.js', $this->plugin_path ),
 			array( 'jquery' ),
 			$this->asset_version
 		);
@@ -1013,7 +1010,7 @@ class widget_context {
 
 	function widget_context_debug_bar_init( $panels ) {
 
-		include plugin_dir_path( __FILE__ ) . 'debug/debug-bar.php';
+		include $this->plugin_path . '/debug/debug-bar.php';
 
 		if ( class_exists( 'Debug_Widget_Context' ) )
 			$panels[] = new Debug_Widget_Context();
@@ -1027,7 +1024,7 @@ class widget_context {
 
 		wp_enqueue_script(
 			'widget-context-debug-js',
-			plugins_url( 'debug/debug.js', plugin_basename( __FILE__ ) ),
+			plugins_url( 'debug/debug.js', $this->plugin_path ),
 			array( 'jquery' )
 		);
 
