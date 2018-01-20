@@ -206,19 +206,22 @@ class widget_context {
 	function admin_scripts( $page ) {
 
 		// Enqueue only on widgets and customizer view
-		if ( ! in_array( $page, array( 'widgets.php', 'settings_page_widget_context_settings' ) ) )
+		if ( ! in_array( $page, array( 'widgets.php', 'settings_page_widget_context_settings' ), true ) ) {
 			return;
+		}
+
+		$plugin_basename = plugin_basename( $this->plugin_path );
 
 		wp_enqueue_style(
 			'widget-context-css',
-			plugins_url( 'css/admin.css', $this->plugin_path ),
+			plugins_url( $plugin_basename . '/css/admin.css' ),
 			null,
 			$this->asset_version
 		);
 
 		wp_enqueue_script(
 			'widget-context-js',
-			plugins_url( 'js/widget-context.js', $this->plugin_path ),
+			plugins_url( $plugin_basename . '/js/widget-context.js' ),
 			array( 'jquery' ),
 			$this->asset_version
 		);
