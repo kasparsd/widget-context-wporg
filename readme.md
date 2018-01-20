@@ -29,6 +29,10 @@ Widget Context allows you to show or hide widgets on certain sections of your si
 
 ## Changelog
 
+### 1.0.6 (January 20, 2018)
+* Fix path to admin scripts and styles, props [@tedgeving](https://github.com/kasparsd/widget-context-wporg/pull/32).
+* Mark as tested with WordPress 4.9.2.
+
 ### 1.0.5 (May 8, 2017)
 * Confirm the plugin works with the latest version of WordPress.
 * Add support for continuous testing via [wp-dev-lib](https://github.com/xwp/wp-dev-lib).
