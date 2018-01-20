@@ -1027,7 +1027,7 @@ class widget_context {
 
 		wp_enqueue_script(
 			'widget-context-debug-js',
-			plugins_url( 'debug/debug.js', $this->plugin_path ),
+			plugins_url( plugin_basename( $this->plugin_path ) . '/debug/debug.js' ),
 			array( 'jquery' )
 		);
 
