@@ -210,18 +210,16 @@ class widget_context {
 			return;
 		}
 
-		$plugin_basename = plugin_basename( $this->plugin_path );
-
 		wp_enqueue_style(
 			'widget-context-css',
-			plugins_url( $plugin_basename . '/css/admin.css' ),
+			$this->asset_url( '/css/admin.css' ),
 			null,
 			$this->asset_version
 		);
 
 		wp_enqueue_script(
 			'widget-context-js',
-			plugins_url( $plugin_basename . '/js/widget-context.js' ),
+			$this->asset_url( '/js/widget-context.js' ),
 			array( 'jquery' ),
 			$this->asset_version
 		);
@@ -1027,10 +1025,21 @@ class widget_context {
 
 		wp_enqueue_script(
 			'widget-context-debug-js',
-			plugins_url( plugin_basename( $this->plugin_path ) . '/debug/debug.js' ),
+			$this->asset_url( '/debug/debug.js' ),
 			array( 'jquery' )
 		);
 
+	}
+
+	/**
+	 * Return the public URL of a plugin asset file.
+	 *
+	 * @param string $asset_relative_path Relative path to the asset file.
+	 *
+	 * @return string
+	 */
+	function asset_url( $asset_relative_path ) {
+		return plugins_url( plugin_basename( $this->plugin_path ) . $asset_relative_path );
 	}
 
 
