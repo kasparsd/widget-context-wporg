@@ -13,4 +13,5 @@ include dirname( __FILE__ ) . '/class/class-widget-context.php';
 
 // Go!
 $plugin = widget_context::instance();
+$plugin->set_path( dirname( __FILE__ ) );
 $plugin->init();
