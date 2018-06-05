@@ -1,11 +1,11 @@
 # Widget Context
 
-Contributors: kasparsd, jamescollins   
-Tags: widget, widget context, context, logic, widget logic, cms   
-Requires at least: 3.0   
-Tested up to: 4.9.1   
-Stable tag: {{ version }}   
-License: GPLv2 or later   
+Contributors: kasparsd, jamescollins
+Tags: widget, widget context, context, logic, widget logic, cms
+Requires at least: 3.0
+Tested up to: 4.9.1
+Stable tag: {{ version }}
+License: GPLv2 or later
 
 Show or hide widgets on specific posts, pages or sections of your site.
 
@@ -17,101 +17,105 @@ Widget Context allows you to show or hide widgets on certain sections of your si
 
 ### Get Involved:
 
-* Development and pull requests [on GitHub](https://github.com/kasparsd/widget-context-wporg),
-* Bug reports and suggestions on [WordPress.org forums](http://wordpress.org/support/plugin/widget-context).
+- Development and pull requests [on GitHub](https://github.com/kasparsd/widget-context-wporg),
+- Bug reports and suggestions on [WordPress.org forums](http://wordpress.org/support/plugin/widget-context).
 
 
 ## Installation
 
-* Install the plugin through **Add New Plugin** feature in your WordPress dashboard -- search for Widget Context.
-* Widget Context settings will appear automatically under each widget under Design > Widgets.
+- Install the plugin through **Add New Plugin** feature in your WordPress dashboard -- search for Widget Context.
+- Widget Context settings will appear automatically under each widget under Design > Widgets.
 
 
 ## Changelog
 
+### 1.0.6 (January 20, 2018)
+- Fix path to admin scripts and styles, props @tedgeving.
+- Mark as tested with WordPress 4.9.2.
+
 ### 1.0.5 (May 8, 2017)
-* Confirm the plugin works with the latest version of WordPress.
-* Add support for continuous testing via [wp-dev-lib](https://github.com/xwp/wp-dev-lib).
+- Confirm the plugin works with the latest version of WordPress.
+- Add support for continuous testing via [wp-dev-lib](https://github.com/xwp/wp-dev-lib).
 
 ### 1.0.4 (May 6, 2016)
-* Confirm the plugin works with the latest version of WordPress.
-* Fix the PHP class constructor warning.
-* Move the widget context settings link.
-* Fix the initial context state in the customizer.
+- Confirm the plugin works with the latest version of WordPress.
+- Fix the PHP class constructor warning.
+- Move the widget context settings link.
+- Fix the initial context state in the customizer.
 
 ### 1.0.3
-* Include Russian translation (Thanks Flector!).
-* Add textdomain to the remaining strings.
-* Enable debugging if [Debug Bar](https://wordpress.org/plugins/debug-bar/) is available.
+- Include Russian translation (Thanks Flector!).
+- Add textdomain to the remaining strings.
+- Enable debugging if [Debug Bar](https://wordpress.org/plugins/debug-bar/) is available.
 
 ### 1.0.2
-* Load available custom post types and taxonomies right before visibility checks to avoid PHP warnings.
-* Run visibility checks only after the main post query has run. Fixes issues with WooCommerce.
-* Load our CSS and Javascript files only on widget and customizer admin pages.
+- Load available custom post types and taxonomies right before visibility checks to avoid PHP warnings.
+- Run visibility checks only after the main post query has run. Fixes issues with WooCommerce.
+- Load our CSS and Javascript files only on widget and customizer admin pages.
 
 ### 1.0.1
-* Fix PHP warning in custom post type and taxonomy module.
+- Fix PHP warning in custom post type and taxonomy module.
 
 ### 1.0
-* Public release of the 1.0 refactoring.
+- Public release of the 1.0 refactoring.
 
 ### 1.0-beta
-* Improved settings page.
+- Improved settings page.
 
 ### 1.0-alpha
-* Refactor code to allow custom widget context modules.
+- Refactor code to allow custom widget context modules.
 
 ### 0.8.3
 
-* Fix PHP warning that occurred on PHP 5.2.x.
+- Fix PHP warning that occurred on PHP 5.2.x.
 
 ### 0.8.2
 
-* Improved SSL/HTTPS detection.
-* Fix: Ensure that is_active_sidebar() & is_dynamic_sidebar() don't return true when there are no widgets displayed on a page.
-* Two new filters so that other plugins can override widget context display/visibility logic.
+- Improved SSL/HTTPS detection.
+- Fix: Ensure that is_active_sidebar() & is_dynamic_sidebar() don't return true when there are no widgets displayed on a page.
+- Two new filters so that other plugins can override widget context display/visibility logic.
 
 ### 0.8.1
 
-* Revert back to changing callback function in `$wp_registered_widgets` for attaching widget context setting controls.
-* Fix the word count logic.
+- Revert back to changing callback function in `$wp_registered_widgets` for attaching widget context setting controls.
+- Fix the word count logic.
 
 ### 0.8
 
-* Major code rewrite and refactoring to improve performance and usability.
-* Fix bugs with URL targeting and empty lines in the "Target by URL" textarea.
+- Major code rewrite and refactoring to improve performance and usability.
+- Fix bugs with URL targeting and empty lines in the "Target by URL" textarea.
 
 ### 0.7.2
 
-* Fix PHP warnings/notices. Props to [James Collins](http://om4.com.au/).
+- Fix PHP warnings/notices. Props to [James Collins](http://om4.com.au/).
 
 ### 0.7.1
 
-* Confirm that the plugin works with the latest version of WP.
+- Confirm that the plugin works with the latest version of WP.
 
 ### 0.7
 
-* Bug fix: check for active sidebars only after $paged has been set.
+- Bug fix: check for active sidebars only after $paged has been set.
 
 ### 0.6
 
-* Don't check for used sidebars on each widget load. Allow absolute URLs in the URL check.
+- Don't check for used sidebars on each widget load. Allow absolute URLs in the URL check.
 
 ### 0.5
 
-* Added distinction between is_front_page() and is_home(). Remove widgets from wp_get_sidebars_widgets() if they are not being displayed -- this way you can check if a particular sidebar is empty.
+- Added distinction between is_front_page() and is_home(). Remove widgets from wp_get_sidebars_widgets() if they are not being displayed -- this way you can check if a particular sidebar is empty.
 
 ### 0.4.5
 
-* Widget output callback couldn't determine the widget_id.
+- Widget output callback couldn't determine the widget_id.
 
 ### 0.4.4
 
-* Fixed widget control parameter transfer for widgets that don't use the new widget api.
+- Fixed widget control parameter transfer for widgets that don't use the new widget api.
 
 ### 0.4.2
 
-* Initial release on Plugin repository.
+- Initial release on Plugin repository.
 
 
 ## Upgrade Notice
