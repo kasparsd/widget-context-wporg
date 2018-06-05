@@ -51,9 +51,6 @@ class widget_context {
 		// $sidebars_widgets global variable
 		add_action( 'wp', array( $this, 'set_widget_contexts_frontend' ) );
 
-		// Enable localization
-		add_action( 'plugins_loaded', array( $this, 'init_l10n' ) );
-
 		// Append Widget Context settings to widget controls
 		add_action( 'in_widget_form', array( $this, 'widget_context_controls' ), 10, 3 );
 
@@ -192,13 +189,6 @@ class widget_context {
 
 		// Hide/show widgets for is_active_sidebar() to work
 		add_filter( 'sidebars_widgets', array( $this, 'maybe_unset_widgets_by_context' ), 10 );
-
-	}
-
-
-	function init_l10n() {
-
-		load_plugin_textdomain( 'widget-context', false, basename( $this->plugin_path ) . '/languages' );
 
 	}
 
