@@ -1,0 +1,10 @@
+tests
+node_modules
+Gruntfile.js
+package.json
+package-lock.json
+phpcs.xml
+phpunit.xml
+readme.md
+readme.txt.md
+.*
