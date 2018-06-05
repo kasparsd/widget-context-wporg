@@ -21,6 +21,12 @@
   },
   "scripts": {
     "test": "DIFF_BASE=master ./vendor/xwp/wp-dev-lib/pre-commit",
-    "lint": "DEV_LIB_SKIP=phpunit ./vendor/xwp/wp-dev-lib/pre-commit"
+    "lint": "DEV_LIB_SKIP=phpunit ./vendor/xwp/wp-dev-lib/pre-commit",
+    "post-install-cmd": [
+      "npm install"
+    ],
+    "post-update-cmd": [
+      "npm install"
+    ]
   }
 }
