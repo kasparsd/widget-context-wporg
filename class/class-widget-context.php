@@ -976,8 +976,14 @@ class widget_context {
 
 						<div class="wc-sidebar-section wc-sidebar-credits">
 							<p>
-								<img src="https://gravatar.com/avatar/661eb21385c25c01ad64ab9e13b37331/?s=60" alt="Kaspars Dambis" width="60" height="60" />
-								<?php printf( esc_html__( 'Widget Context is created and maintained by %s.' , 'widget-context'), '<a href="http://kaspars.net">Kaspars Dambis</a>' ); ?>
+								<img src="https://gravatar.com/avatar/661eb21385c25c01ad64ab9e13b37331?s=120" alt="Kaspars Dambis" width="60" height="60" />
+								<?php
+								printf(
+									// translators: %s: link with an anchor text.
+									esc_html__( 'Widget Context is created and maintained by %s.', 'widget-context' ),
+									'<a href="https://kaspars.net">Kaspars Dambis</a>'
+								);
+								?>
 							</p>
 						</div>
 
