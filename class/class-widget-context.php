@@ -988,8 +988,8 @@ class widget_context {
 						</div>
 
 						<div class="wc-sidebar-section wc-sidebar-newsletter">
-							<h3><?php esc_html_e( 'News & Updates' , 'widget-context'); ?></h3>
-							<p><?php esc_html_e( 'Subscribe to receive news & updates about the plugin.' , 'widget-context'); ?></p>
+							<h3><?php esc_html_e( 'News & Updates', 'widget-context' ); ?></h3>
+							<p><?php esc_html_e( 'Subscribe to receive news & updates about the plugin.', 'widget-context' ); ?></p>
 							<form action="//osc.us2.list-manage.com/subscribe/post?u=e8d173fc54c0fc4286a2b52e8&amp;id=8afe96c5a3" method="post" target="_blank">
 								<?php $user = wp_get_current_user(); ?>
 								<p><label><?php _e( 'Your Name', 'widget-context' ); ?>: <input type="text" name="NAME" value="<?php echo esc_attr( sprintf( '%s %s', $user->first_name, $user->last_name ) ) ?>" /></label></p>
