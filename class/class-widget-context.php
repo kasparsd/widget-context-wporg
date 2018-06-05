@@ -37,7 +37,7 @@ class widget_context {
 	 * Use widget_context::instance() instead.
 	 */
 	private function __construct() {
-		// Not used.
+		$this->plugin_path = dirname( dirname( __FILE__ ) );
 	}
 
 	/**
@@ -92,11 +92,8 @@ class widget_context {
 				)
 			);
 
-		// Initialize core modules
-		$include_path = plugin_dir_path( __FILE__ );
-
 		foreach ( $this->core_modules as $module ) {
-			$module_file = sprintf( '%smodules/%s/module.php', $include_path, $module );
+			$module_file = sprintf( '%s/class/modules/%s/module.php', $this->plugin_path, $module );
 
 			if ( file_exists( $module_file ) ) {
 				include $module_file;
@@ -201,7 +198,7 @@ class widget_context {
 
 	function init_l10n() {
 
-		load_plugin_textdomain( 'widget-context', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+		load_plugin_textdomain( 'widget-context', false, basename( $this->plugin_path ) . '/languages' );
 
 	}
 
@@ -209,19 +206,20 @@ class widget_context {
 	function admin_scripts( $page ) {
 
 		// Enqueue only on widgets and customizer view
-		if ( ! in_array( $page, array( 'widgets.php', 'settings_page_widget_context_settings' ) ) )
+		if ( ! in_array( $page, array( 'widgets.php', 'settings_page_widget_context_settings' ), true ) ) {
 			return;
+		}
 
 		wp_enqueue_style(
 			'widget-context-css',
-			plugins_url( 'css/admin.css', plugin_basename( __FILE__ ) ),
+			$this->asset_url( '/css/admin.css' ),
 			null,
 			$this->asset_version
 		);
 
 		wp_enqueue_script(
 			'widget-context-js',
-			plugins_url( 'js/widget-context.js', plugin_basename( __FILE__ ) ),
+			$this->asset_url( '/js/widget-context.js' ),
 			array( 'jquery' ),
 			$this->asset_version
 		);
@@ -1013,7 +1011,7 @@ class widget_context {
 
 	function widget_context_debug_bar_init( $panels ) {
 
-		include plugin_dir_path( __FILE__ ) . 'debug/debug-bar.php';
+		include $this->plugin_path . '/debug/debug-bar.php';
 
 		if ( class_exists( 'Debug_Widget_Context' ) )
 			$panels[] = new Debug_Widget_Context();
@@ -1027,10 +1025,21 @@ class widget_context {
 
 		wp_enqueue_script(
 			'widget-context-debug-js',
-			plugins_url( 'debug/debug.js', plugin_basename( __FILE__ ) ),
+			$this->asset_url( '/debug/debug.js' ),
 			array( 'jquery' )
 		);
 
+	}
+
+	/**
+	 * Return the public URL of a plugin asset file.
+	 *
+	 * @param string $asset_relative_path Relative path to the asset file.
+	 *
+	 * @return string
+	 */
+	function asset_url( $asset_relative_path ) {
+		return plugins_url( plugin_basename( $this->plugin_path ) . $asset_relative_path );
 	}
 
 
