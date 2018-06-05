@@ -1,0 +1,26 @@
+{
+  "name": "kasparsd/widget-context",
+  "description": "WordPress plugin for showing or hiding widgets on specific posts, pages and sections of a site.",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0",
+  "authors": [
+    {
+      "name": "Kaspars Dambis",
+      "homepage": "https://preseto.com"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/kasparsd/widget-context-wporg/issues",
+    "source": "https://github.com/kasparsd/widget-context-wporg"
+  },
+  "minimum-stability": "dev",
+  "require-dev": {
+    "squizlabs/php_codesniffer": "^3.2",
+    "wp-coding-standards/wpcs": "^0.14.1",
+    "xwp/wp-dev-lib": "dev-master"
+  },
+  "scripts": {
+    "test": "DIFF_BASE=master ./vendor/xwp/wp-dev-lib/pre-commit",
+    "lint": "DEV_LIB_SKIP=phpunit ./vendor/xwp/wp-dev-lib/pre-commit"
+  }
+}
