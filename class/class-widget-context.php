@@ -1059,7 +1059,7 @@ class widget_context {
 		$file_path = sprintf(
 			'%s/%s',
 			plugin_basename( $this->plugin_path ),
-			ltrim( '/', $asset_relative_path )
+			ltrim( $asset_relative_path, '/' )
 		);
 
 		return plugins_url( $file_path );
