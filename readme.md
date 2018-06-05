@@ -9,9 +9,9 @@ Source of the [Widget Context plugin](https://widgetcontext.com) for WordPress.
 
 1. Clone the plugin repository:
 
-		$ git clone https://github.com/kasparsd/widget-context-wporg.git
-		$ cd widget-context-wporg
+	   $ git clone https://github.com/kasparsd/widget-context-wporg.git
+	   $ cd widget-context-wporg
 
 2. Setup the development environment and tools:
 
-		$ npm install
+	   $ composer install
