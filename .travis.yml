@@ -22,3 +22,6 @@ script:
 
 after_script:
   - source $DEV_LIB_PATH/travis.after_script.sh
+
+notifications:
+  email: false
