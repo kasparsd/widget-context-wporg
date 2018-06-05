@@ -1,0 +1,40 @@
+{
+  "name": "widget-context",
+  "description": "WordPress plugin for showing or hiding widgets on specific posts, pages and sections of a site.",
+  "homepage": "https://widgetcontext.com",
+  "author": {
+    "name": "Kaspars Dambis",
+    "url": "https://kaspars.net"
+  },
+  "scripts": {
+    "grunt": "grunt",
+    "build": "grunt build",
+    "deploy": "grunt deploy",
+    "test": "DIFF_BASE=master ./node_modules/wp-dev-lib/pre-commit",
+    "precommit": "DEV_LIB_SKIP=phpunit ./node_modules/wp-dev-lib/pre-commit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kasparsd/widget-context-wporg.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kasparsd/widget-context-wporg/issues"
+  },
+  "keywords": [
+    "wordpress",
+    "wordpress plugin"
+  ],
+  "license": "GPL-2.0",
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-cli": "^1.2.0",
+    "grunt-contrib-clean": "^1.1.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-wp-deploy": "^1.2.1",
+    "handlebars": "^4.0.11",
+    "husky": "^0.14.3",
+    "load-grunt-tasks": "^3.5.2",
+    "parse-gitignore": "^0.4.0",
+    "wp-dev-lib": "github:xwp/wp-dev-lib"
+  }
+}
