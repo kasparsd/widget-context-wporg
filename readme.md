@@ -15,3 +15,10 @@ Source of the [Widget Context plugin](https://widgetcontext.com) for WordPress.
 2. Setup the development environment and tools:
 
 	   $ composer install
+
+
+## Screenshots
+
+![Widget Context settings](screenshot-1.png)
+
+![Widget Context configuration](screenshot-2.png)
