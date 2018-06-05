@@ -996,6 +996,20 @@ class widget_context {
 								<p><label><?php _e( 'Your Email', 'widget-context' ); ?>: <input type="text" name="EMAIL" value="<?php echo esc_attr( $user->user_email ); ?>" /></label></p>
 								<p><input class="button" name="subscribe" type="submit" value="<?php _e( 'Subscribe', 'widget-context' ); ?>" /></p>
 							</form>
+							<h3>
+								<?php esc_html_e( 'Suggested Plugins', 'widget-context' ); ?>
+							</h3>
+							<p>
+								<?php esc_html_e( 'Here are some of my other plugins:', 'widget-context' ); ?>
+							</p>
+							<ul>
+								<li>
+									<a href="https://preseto.com/go/cf7-storage?utm_source=wc">Storage for Contact Form 7</a> saves all Contact Form 7 submissions (including attachments) in your WordPress database.
+								</li>
+								<li>
+									<a href="https://wordpress.org/plugins/contact-form-7-extras/">Contact Form 7 Controls</a> adds a simple interface for managing Contact Form 7 form settings.
+								</li>
+							</ul>
 						</div>
 
 					</div>
