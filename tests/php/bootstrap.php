@@ -7,10 +7,6 @@
 
 require_once( __DIR__ . '/../../vendor/autoload.php' );
 
-function wp_parse_args( $args, $defaults ) {
-	return array_merge( $defaults, $args );
-}
-
-function wp_parse_url( $url, $components = -1 ) {
-	return parse_url( $url, $components );
+if ( ! function_exists( 'wp_parse_args' ) ) {
+	require __DIR__ . '/wp-mocks.php';
 }
