@@ -10,7 +10,7 @@
     "grunt": "grunt",
     "build": "grunt build",
     "deploy": "grunt deploy",
-    "precommit": "composer lint"
+    "precommit": "composer test"
   },
   "repository": {
     "type": "git",
