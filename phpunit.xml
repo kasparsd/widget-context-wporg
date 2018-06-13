@@ -1,6 +1,6 @@
 <phpunit
 	colors="true"
-	bootstrap="vendor/autoload.php"
+	bootstrap="tests/php/bootstrap.php"
 	>
 	<testsuites>
 		<testsuite name="Widget Context Tests">
