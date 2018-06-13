@@ -14,7 +14,15 @@ Show or hide widgets on specific posts, pages or sections of your site.
 
 Widget Context allows you to show or hide widgets on certain sections of your site — front page, posts, pages, archives, search, etc. It also features section targeting by URLs (with wildcard support) for maximum flexibility.
 
-### Target by URL
+### Contribute
+
+- Development and pull requests [on GitHub](https://github.com/kasparsd/widget-context-wporg),
+- Bug reports and suggestions on [WordPress.org forums](http://wordpress.org/support/plugin/widget-context).
+
+
+### Documentation
+
+#### Target by URL
 
 The “Target by URL” is a very powerful feature with a lot of flexibility for targeting sections of your website based on the request URLs. It was inspired by a similar feature in the [Drupal CMS](https://www.drupal.org).
 
@@ -22,19 +30,14 @@ The “Target by URL” is a very powerful feature with a lot of flexibility for
 
 - Relative are URLs more flexible and make the logic portable between different domains and server environments.
 
-#### Wildcards
+
+##### Wildcards
 
 Use the wildcard symbol `*` for matching dynamic parts of the URL. For example:
 
 - `topic/widgets/*` to match all posts in the widgets category, if your permalink structure is set to `/topic/%category%/%postname%`.
 
 - `page-slug/*` to match all child pages of the page-slug parent page.
-
-
-### Get Involved:
-
-- Development and pull requests [on GitHub](https://github.com/kasparsd/widget-context-wporg),
-- Bug reports and suggestions on [WordPress.org forums](http://wordpress.org/support/plugin/widget-context).
 
 
 ## Installation
