@@ -1,0 +1,10 @@
+<phpunit
+	colors="true"
+	bootstrap="vendor/autoload.php"
+	>
+	<testsuites>
+		<testsuite name="Widget Context Tests">
+			<directory>tests/php</directory>
+		</testsuite>
+	</testsuites>
+</phpunit>
