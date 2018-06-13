@@ -455,37 +455,56 @@ class widget_context {
 	/**
 	 * Check if the current request matches path rules.
 	 *
-	 * @param  string $path     Current request relative to the root of the hostname.
-	 * @param  string $patterns A list of path patterns seperated by new line.
+	 * @param  string $path  Current request relative to the root of the hostname.
+	 * @param  string $rules A list of path patterns seperated by new line.
 	 *
 	 * @return bool
 	 */
-	function match_path( $path, $patterns ) {
-		$patterns_safe = array();
-		$rows = explode( "\n", $patterns );
+	function match_path( $path, $rules ) {
+		$path_only = strtok( $path, '?' );
+		$patterns = explode( "\n", $rules );
 
-		foreach ( $rows as $pattern ) {
+		foreach ( $patterns as &$pattern ) {
 			// Use the same logic for parsing the visibility rules.
 			$pattern = $this->get_request_path( trim( $pattern ) );
 
 			// Escape regex chars since we only support wildcards.
-			$pattern = preg_quote( $pattern, '/' );
+			$pattern = preg_quote( trim( $pattern ), '/' );
 
-			// Enable wildcard checks
+			// Enable wildcard checks.
 			$pattern = str_replace( '\*', '.*', $pattern );
-
-			$patterns_safe[] = $pattern;
 		}
 
-		// Remove empty patterns
-		$patterns_safe = array_filter( $patterns_safe );
+		// Remove empty patterns.
+		$patterns = array_filter( $patterns );
 
-		$regexps = sprintf(
+		// Match against the path with and without the query string.
+		if ( $this->path_matches_patterns( $path, $patterns ) || $this->path_matches_patterns( $path_only, $patterns ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if a URI path matches a set of regex patterns.
+	 *
+	 * @param  string $path Request URI.
+	 * @param  array  $patterns A list of patterns.
+	 *
+	 * @return bool
+	 */
+	public function path_matches_patterns( $path, $patterns ) {
+		if ( empty( $patterns ) ) {
+			return false;
+		}
+
+		$regex = sprintf(
 			'/^(%s)$/i',
-			implode( '|', $patterns_safe )
+			implode( '|', $patterns )
 		);
 
-		return (bool) preg_match( $regexps, $path );
+		return (bool) preg_match( $regex, $path );
 	}
 
 
