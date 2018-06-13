@@ -400,6 +400,8 @@ class widget_context {
 	 * @return bool
 	 */
 	function context_check_url( $check, $settings ) {
+		static $path;
+
 		$settings = wp_parse_args(
 				$settings,
 				array(
@@ -413,7 +415,12 @@ class widget_context {
 			return $check;
 		}
 
-		if ( $this->match_path( $this->get_request_path(), $urls ) ) {
+		if ( ! isset( $path ) ) {
+			// Do the parsing only once.
+			$path = $this->get_request_path( $_SERVER['REQUEST_URI'] );
+		}
+
+		if ( $this->match_path( $path, $urls ) ) {
 			return true;
 		}
 
@@ -421,18 +428,24 @@ class widget_context {
 	}
 
 	/**
-	 * Return the current request path relative to the root of the hostname.
+	 * Return the path relative to the root of the hostname.
+	 *
+	 * @param  string $uri Current request URI.
 	 *
 	 * @return string
 	 */
-	public function get_request_path() {
-		global $wp;
+	public function get_request_path( $uri ) {
+		$parts = wp_parse_args(
+			wp_parse_url( $uri ),
+			array(
+				'path' => '',
+			)
+		);
 
-		// Get the request URI from WP.
-		$path = $wp->request;
+		$path = ltrim( $parts['path'], '/' );
 
-		if ( ! empty( $wp->query_string ) ) {
-			$path .= '?' . $wp->query_string;
+		if ( ! empty( $parts['query'] ) ) {
+			$path .= '?' . $parts['query'];
 		}
 
 		return $path;
