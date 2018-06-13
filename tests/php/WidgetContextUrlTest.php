@@ -19,6 +19,7 @@ class WidgetContextTest extends TestCase {
 		'' => '',
 		'/' => '',
 		'/page' => 'page',
+		'page/' => 'page/',
 		'/page/' => 'page/',
 		'/page/sub-page/' => 'page/sub-page/',
 		'/page?query=string' => 'page?query=string',
@@ -27,6 +28,11 @@ class WidgetContextTest extends TestCase {
 
 	public function __construct() {
 		$this->plugin = new widget_context();
+	}
+
+	public function testUrlMatch() {
+		$this->assertTrue( $this->plugin->match_path( 'page', 'page' ), 'Simple direct' );
+		$this->assertTrue( $this->plugin->match_path( 'page/', 'page/' ), 'Direct with trailing' );
 	}
 
 	public function testUrlWildcards() {
