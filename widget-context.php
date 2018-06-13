@@ -9,7 +9,7 @@
  * Text Domain: widget-context
  */
 
-include dirname( __FILE__ ) . '/class/class-widget-context.php';
+require_once dirname( __FILE__ ) . '/class/class-widget-context.php';
 
 // Go!
 $plugin = widget_context::instance();
