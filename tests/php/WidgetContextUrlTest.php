@@ -48,6 +48,16 @@ class WidgetContextTest extends TestCase {
 			'Wildcard for all sub-pages'
 		);
 
+		$this->assertTrue(
+			$this->plugin->match_path( 'page', 'page*' ),
+			'Wildcard for all slugs with a pattern'
+		);
+
+		$this->assertTrue(
+			$this->plugin->match_path( 'parent-page/page-slug', '*/page-slug' ),
+			'Wildcard for any parent'
+		);
+
 		$this->assertFalse(
 			$this->plugin->match_path( 'page', 'page/*' ),
 			'Wildcard for children only'
