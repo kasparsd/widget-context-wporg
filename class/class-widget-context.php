@@ -467,7 +467,7 @@ class widget_context {
 			// Trim trailing, leading slashes and whitespace
 			$pattern = trim( trim( $pattern ), '/' );
 
-			// Escape regex chars
+			// Escape regex chars since we only support wildcards.
 			$pattern = preg_quote( $pattern, '/' );
 
 			// Enable wildcard checks
