@@ -36,9 +36,10 @@ class WidgetContextTest extends TestCase {
 
 	public function testUrlQueryStrings() {
 		$this->assertTrue( $this->plugin->match_path( 'page/subpage?query=string', 'page/*' ) );
-		$this->assertFalse( $this->plugin->match_path( 'campaigns/?cc=automotive', 'campaigns/' ) );
 		$this->assertTrue( $this->plugin->match_path( 'campaigns/?cc=automotive', 'campaigns/*' ) );
 		$this->assertTrue( $this->plugin->match_path( 'campaigns/?cc=automotive', 'campaigns/?cc=*' ) );
+
+		$this->assertFalse( $this->plugin->match_path( 'campaigns/?cc=automotive', 'campaigns/' ) );
 	}
 
 	public function testPathResolverAbsolute() {
