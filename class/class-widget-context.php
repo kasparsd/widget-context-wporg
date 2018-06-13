@@ -464,8 +464,8 @@ class widget_context {
 		$rows = explode( "\n", $patterns );
 
 		foreach ( $rows as $pattern ) {
-			// Trim trailing, leading slashes and whitespace
-			$pattern = trim( trim( $pattern ), '/' );
+			// Trim leading slashes and whitespace.
+			$pattern = ltrim( trim( $pattern ), '/' );
 
 			// Escape regex chars since we only support wildcards.
 			$pattern = preg_quote( $pattern, '/' );
