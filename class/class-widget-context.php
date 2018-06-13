@@ -428,15 +428,14 @@ class widget_context {
 	public function get_request_path() {
 		global $wp;
 
-		// Get the request URI from WP
-		$url_request = $wp->request;
+		// Get the request URI from WP.
+		$path = $wp->request;
 
-		// Append the query string
-		if ( ! empty( $_SERVER['QUERY_STRING'] ) ) {
-			$url_request .= '?' . $_SERVER['QUERY_STRING'];
+		if ( ! empty( $wp->query_string ) ) {
+			$path .= '?' . $wp->query_string;
 		}
 
-		return $url_request;
+		return $path;
 	}
 
 	/**
