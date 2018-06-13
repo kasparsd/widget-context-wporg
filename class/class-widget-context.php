@@ -428,7 +428,8 @@ class widget_context {
 	}
 
 	/**
-	 * Return the path relative to the root of the hostname.
+	 * Return the path relative to the root of the hostname. We always remove
+	 * the leading and trailing slashes around the URI path.
 	 *
 	 * @param  string $uri Current request URI.
 	 *
@@ -442,7 +443,7 @@ class widget_context {
 			)
 		);
 
-		$path = ltrim( $parts['path'], '/' );
+		$path = trim( $parts['path'], '/' );
 
 		if ( ! empty( $parts['query'] ) ) {
 			$path .= '?' . $parts['query'];
@@ -464,8 +465,8 @@ class widget_context {
 		$rows = explode( "\n", $patterns );
 
 		foreach ( $rows as $pattern ) {
-			// Trim leading slashes and whitespace.
-			$pattern = ltrim( trim( $pattern ), '/' );
+			// Use the same logic for parsing the visibility rules.
+			$pattern = $this->get_request_path( trim( $pattern ) );
 
 			// Escape regex chars since we only support wildcards.
 			$pattern = preg_quote( $pattern, '/' );
