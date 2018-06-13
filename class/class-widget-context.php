@@ -391,8 +391,15 @@ class widget_context {
 	}
 
 
+	/**
+	 * Conditional logic for the URL check.
+	 *
+	 * @param  bool  $check Current visibility state.
+	 * @param  array $settings Visibility settings.
+	 *
+	 * @return bool
+	 */
 	function context_check_url( $check, $settings ) {
-
 		$settings = wp_parse_args(
 				$settings,
 				array(
@@ -402,34 +409,49 @@ class widget_context {
 
 		$urls = trim( $settings['urls'] );
 
-		if ( empty( $urls ) )
+		if ( empty( $urls ) ) {
 			return $check;
+		}
 
-		if ( $this->match_path( $urls ) )
+		if ( $this->match_path( $this->get_request_path(), $urls ) ) {
 			return true;
+		}
 
 		return $check;
-
 	}
 
-
-	function match_path( $patterns ) {
-
+	/**
+	 * Return the current request path relative to the root of the hostname.
+	 *
+	 * @return string
+	 */
+	public function get_request_path() {
 		global $wp;
-
-		$patterns_safe = array();
 
 		// Get the request URI from WP
 		$url_request = $wp->request;
 
 		// Append the query string
-		if ( ! empty( $_SERVER['QUERY_STRING'] ) )
+		if ( ! empty( $_SERVER['QUERY_STRING'] ) ) {
 			$url_request .= '?' . $_SERVER['QUERY_STRING'];
+		}
 
+		return $url_request;
+	}
+
+	/**
+	 * Check if the current request matches path rules.
+	 *
+	 * @param  string $path     Current request relative to the root of the hostname.
+	 * @param  string $patterns A list of path patterns seperated by new line.
+	 *
+	 * @return bool
+	 */
+	function match_path( $path, $patterns ) {
+		$patterns_safe = array();
 		$rows = explode( "\n", $patterns );
 
 		foreach ( $rows as $pattern ) {
-
 			// Trim trailing, leading slashes and whitespace
 			$pattern = trim( trim( $pattern ), '/' );
 
@@ -440,19 +462,17 @@ class widget_context {
 			$pattern = str_replace( '\*', '.*', $pattern );
 
 			$patterns_safe[] = $pattern;
-
 		}
 
 		// Remove empty patterns
 		$patterns_safe = array_filter( $patterns_safe );
 
 		$regexps = sprintf(
-				'/^(%s)$/i',
-				implode( '|', $patterns_safe )
-			);
+			'/^(%s)$/i',
+			implode( '|', $patterns_safe )
+		);
 
-		return preg_match( $regexps, $url_request );
-
+		return preg_match( $regexps, $path );
 	}
 
 
