@@ -2,7 +2,9 @@
 <ruleset name="WordPress Coding Standards for Plugins">
 	<config name="installed_paths" value="vendor/wp-coding-standards/wpcs" />
 
-	<rule ref="WordPress-Core" />
+	<rule ref="WordPress-Core">
+		<exclude name="Generic.Formatting.MultipleStatementAlignment" />
+	</rule>
 
 	<rule ref="WordPress-Docs">
 		<exclude name="Squiz.Commenting.FileComment" />
