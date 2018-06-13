@@ -31,6 +31,7 @@ Widget Context allows you to show or hide widgets on certain sections of your si
 
 ### 1.1.0 (June 13, 2018)
 - Fix URL matching for URLs with query strings.
+- Introduce unit tests for the URL context.
 
 ### 1.0.7 (June 5, 2018)
 - Mark as tested with WordPress 4.9.6.
