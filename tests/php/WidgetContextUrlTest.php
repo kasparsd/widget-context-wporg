@@ -6,6 +6,25 @@ class WidgetContextTest extends TestCase {
 
 	protected $plugin;
 
+	protected $map_absolute = array(
+		'http://example.com' => '',
+		'http://example.com/' => '',
+		'http://example.com/page' => 'page',
+		'http://example.com/page/' => 'page/',
+		'http://example.com/?query=param' => '?query=param',
+		'http://example.com:9000/page/subpage/?query=param' => 'page/subpage/?query=param',
+	);
+
+	protected $map_relative = array(
+		'' => '',
+		'/' => '',
+		'/page' => 'page',
+		'/page/' => 'page/',
+		'/page/sub-page/' => 'page/sub-page/',
+		'/page?query=string' => 'page?query=string',
+		'/page/?query=string' => 'page/?query=string',
+	);
+
 	public function __construct() {
 		$this->plugin = new widget_context();
 	}
@@ -23,22 +42,15 @@ class WidgetContextTest extends TestCase {
 	}
 
 	public function testPathResolverAbsolute() {
-		$this->assertEquals( $this->plugin->get_request_path( 'http://example.com' ), '' );
-		$this->assertEquals( $this->plugin->get_request_path( 'http://example.com/' ), '' );
-		$this->assertEquals( $this->plugin->get_request_path( 'http://example.com/page' ), 'page' );
-		$this->assertEquals( $this->plugin->get_request_path( 'http://example.com/page/' ), 'page/' );
-		$this->assertEquals( $this->plugin->get_request_path( 'http://example.com/?query=param' ), '?query=param' );
-		$this->assertEquals( $this->plugin->get_request_path( 'http://example.com:9000/page/subpage/?query=param' ), 'page/subpage/?query=param' );
+		foreach ( $this->map_absolute as $request => $path ) {
+			$this->assertEquals( $this->plugin->get_request_path( $request ), $path );
+		}
 	}
 
 	public function testPathResolverRelative() {
-		$this->assertEquals( $this->plugin->get_request_path( '' ), '' );
-		$this->assertEquals( $this->plugin->get_request_path( '/' ), '' );
-		$this->assertEquals( $this->plugin->get_request_path( '/page' ), 'page' );
-		$this->assertEquals( $this->plugin->get_request_path( '/page/' ), 'page/' );
-		$this->assertEquals( $this->plugin->get_request_path( '/page/sub-page/' ), 'page/sub-page/' );
-		$this->assertEquals( $this->plugin->get_request_path( '/page?query=string' ), 'page?query=string' );
-		$this->assertEquals( $this->plugin->get_request_path( '/page/?query=string' ), 'page/?query=string' );
+		foreach ( $this->map_relative as $request => $path ) {
+			$this->assertEquals( $this->plugin->get_request_path( $request ), $path );
+		}
 	}
 
 }
