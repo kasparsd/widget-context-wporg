@@ -1,11 +1,11 @@
 # Widget Context
 
-Contributors: kasparsd, jamescollins
-Tags: widget, widget context, context, logic, widget logic, cms
-Requires at least: 3.0
-Tested up to: 4.9.6
-Stable tag: {{ version }}
-License: GPLv2 or later
+Contributors: kasparsd, jamescollins  
+Tags: widget, widget context, context, logic, widget logic, cms  
+Requires at least: 3.0  
+Tested up to: 4.9.6  
+Stable tag: {{ version }}  
+License: GPLv2 or later  
 
 Show or hide widgets on specific posts, pages or sections of your site.
 
