@@ -32,13 +32,13 @@ class WidgetContextTest extends TestCase {
 
 	public function testUrlMatch() {
 		$this->assertTrue(
-			$this->plugin->match_path( 'page', 'page' ),
-			'Simple direct'
+			$this->plugin->match_path( 'page/subpage', 'page/subpage' ),
+			'Exact path'
 		);
 
 		$this->assertTrue(
 			$this->plugin->match_path( 'page', 'page/' ),
-			'Direct with trailing'
+			'Exact with trailing'
 		);
 	}
 
