@@ -467,12 +467,6 @@ class widget_context {
 		foreach ( $patterns as &$pattern ) {
 			// Use the same logic for parsing the visibility rules.
 			$pattern = $this->get_request_path( trim( $pattern ) );
-
-			// Escape regex chars since we only support wildcards.
-			$pattern = preg_quote( trim( $pattern ), '/' );
-
-			// Enable wildcard checks.
-			$pattern = str_replace( '\*', '.*', $pattern );
 		}
 
 		// Remove empty patterns.
@@ -497,6 +491,14 @@ class widget_context {
 	public function path_matches_patterns( $path, $patterns ) {
 		if ( empty( $patterns ) ) {
 			return false;
+		}
+
+		foreach ( $patterns as &$pattern ) {
+			// Escape regex chars since we only support wildcards.
+			$pattern = preg_quote( trim( $pattern ), '/' );
+
+			// Enable wildcard checks.
+			$pattern = str_replace( '\*', '.*', $pattern );
 		}
 
 		$regex = sprintf(
