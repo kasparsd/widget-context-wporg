@@ -471,7 +471,7 @@ class widget_context {
 			implode( '|', $patterns_safe )
 		);
 
-		return preg_match( $regexps, $path );
+		return (bool) preg_match( $regexps, $path );
 	}
 
 
