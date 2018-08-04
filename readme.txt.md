@@ -3,7 +3,7 @@
 Contributors: kasparsd, jamescollins  
 Tags: widget, widget context, context, logic, widget logic, cms  
 Requires at least: 3.0  
-Tested up to: 4.9.6  
+Tested up to: 4.9.8  
 Stable tag: {{ version }}  
 License: GPLv2 or later  
 
