@@ -1,6 +1,7 @@
 /tests
 /vendor
 /node_modules
+/assets/wporg
 Gruntfile.js
 composer.json
 composer.lock
