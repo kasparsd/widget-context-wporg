@@ -40,6 +40,8 @@ Use the wildcard symbol `*` for matching dynamic parts of the URL. For example:
 
 - `page-slug/*` to match all child pages of the page-slug parent page.
 
+- Use a trailing `?*` to capture URL with all query arguments such as `utm_source`, etc. For example, for every `blog/post-slug` also include `blog/post-slug?*`.
+
 
 ## Installation
 
