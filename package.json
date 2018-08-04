@@ -10,6 +10,7 @@
     "grunt": "grunt",
     "build": "grunt build",
     "deploy": "grunt deploy",
+    "deploy-trunk": "grunt deploy-trunk",
     "precommit": "composer test"
   },
   "repository": {
