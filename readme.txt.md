@@ -16,8 +16,9 @@ Show or hide widgets on specific posts, pages or sections of your site.
 
 ### Contribute
 
-- Development and pull requests [on GitHub](https://github.com/kasparsd/widget-context-wporg),
-- Bug reports and suggestions on [WordPress.org forums](http://wordpress.org/support/plugin/widget-context).
+- Suggest code improvements [on GitHub](https://github.com/kasparsd/widget-context-wporg).
+- Report bugs and suggestions on [WordPress.org forums](http://wordpress.org/support/plugin/widget-context).
+- [Help translate](https://translate.wordpress.org/projects/wp-plugins/widget-context) to your language.
 
 
 ### Documentation
