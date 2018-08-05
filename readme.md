@@ -7,9 +7,11 @@ Source of the [Widget Context plugin](https://widgetcontext.com) for WordPress.
 
 ## Install
 
-- Search for **Widget Context** under "Plugins → Add New" in your WordPress dashboard.
+- Search for "Widget Context" under "Plugins → Add New" in your WordPress dashboard.
 
-- Install via [Composer](https://packagist.org/packages/kasparsd/widget-context) `composer require kasparsd/widget-context`.
+- Install as a [Composer](https://packagist.org/packages/kasparsd/widget-context) dependency:
+
+	  composer require kasparsd/widget-context
 
 
 ## Development
