@@ -1,6 +1,7 @@
 {
   "name": "kasparsd/widget-context",
   "description": "WordPress plugin for showing or hiding widgets on specific posts, pages and sections of a site.",
+  "homepage": "https://widgetcontext.com",
   "type": "wordpress-plugin",
   "license": "GPL-2.0",
   "authors": [
