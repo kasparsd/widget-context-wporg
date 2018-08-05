@@ -5,7 +5,14 @@
 Source of the [Widget Context plugin](https://widgetcontext.com) for WordPress.
 
 
-## Start Contributing
+## Install
+
+- Search for **Widget Context** under "Plugins → Add New" in your WordPress dashboard.
+
+- Install via [Composer](https://packagist.org/packages/kasparsd/widget-context) `composer require kasparsd/widget-context`.
+
+
+## Development
 
 1. Clone the plugin repository:
 
