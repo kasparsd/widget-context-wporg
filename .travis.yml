@@ -12,5 +12,8 @@ script:
   - composer lint
   - composer test
 
+after_script:
+  - vendor/bin/php-coveralls
+
 notifications:
   email: false
