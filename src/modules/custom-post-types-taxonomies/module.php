@@ -103,7 +103,6 @@ class WidgetContextCustomCptTax {
 		}
 
 		foreach ( $this->post_types as $post_type => $post_type_settings ) {
-
 			$options[ 'is_singular-' . $post_type ] = sprintf(
 				__( 'All "%s" posts', 'widget-context' ),
 				$post_type_settings->label
@@ -118,12 +117,10 @@ class WidgetContextCustomCptTax {
 		}
 
 		foreach ( $this->taxonomies as $taxonomy => $tax_settings ) {
-
 			$options[ 'is_tax-' . $taxonomy ] = sprintf(
 				__( 'All "%s" taxonomy archives', 'widget-context' ),
 				$tax_settings->label
 			);
-
 		}
 
 		foreach ( $options as $option => $label ) {
