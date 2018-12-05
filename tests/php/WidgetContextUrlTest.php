@@ -27,7 +27,7 @@ class WidgetContextTest extends TestCase {
 	);
 
 	public function __construct() {
-		$this->plugin = new widget_context();
+		$this->plugin = new WidgetContext( null );
 	}
 
 	public function testUrlMatch() {
