@@ -7,7 +7,7 @@ class WidgetContextWordCount {
 
 	var $words_on_page = 0;
 
-	private function __construct( $plugin ) {
+	public function __construct( $plugin ) {
 		$this->wc = $plugin;
 	}
 

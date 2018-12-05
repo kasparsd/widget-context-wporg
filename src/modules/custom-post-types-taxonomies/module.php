@@ -8,7 +8,7 @@ class WidgetContextCustomCptTax {
 	public $post_types;
 	public $taxonomies;
 
-	private function __construct( $plugin ) {
+	public function __construct( $plugin ) {
 		$this->wc = $plugin;
 	}
 
