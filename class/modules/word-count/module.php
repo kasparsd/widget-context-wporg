@@ -17,20 +17,16 @@ class WidgetContextWordCount {
 
 	var $words_on_page = 0;
 
-
 	static function instance() {
-
 		if ( ! self::$instance ) {
 			self::$instance = new self();
 		}
 
 		return self::$instance;
-
 	}
 
 
 	private function __construct() {
-
 		$this->wc = widget_context::instance();
 
 		// Check the number of words on page
@@ -41,12 +37,10 @@ class WidgetContextWordCount {
 
 		add_filter( 'widget_context_control-word_count', array( $this, 'control_word_count' ), 10, 2 );
 		add_filter( 'widget_context_check-word_count', array( $this, 'context_check_word_count' ), 10, 2 );
-
 	}
 
 
 	function add_word_count_context( $contexts ) {
-
 		$contexts['word_count'] = array(
 			'label' => __( 'Word Count', 'widget-context' ),
 			'description' => __( 'Context based on word count on the page.', 'widget-context' ),
@@ -54,12 +48,10 @@ class WidgetContextWordCount {
 		);
 
 		return $contexts;
-
 	}
 
 
 	function count_words_on_page() {
-
 		global $wp_query;
 
 		if ( empty( $wp_query->posts ) || is_admin() ) {
@@ -69,12 +61,10 @@ class WidgetContextWordCount {
 		foreach ( $wp_query->posts as $post_data ) {
 			$this->words_on_page += str_word_count( strip_tags( strip_shortcodes( $post_data->post_content ) ) );
 		}
-
 	}
 
 
 	function context_check_word_count( $check, $settings ) {
-
 		$settings = wp_parse_args(
 			$settings,
 			array(
@@ -103,12 +93,10 @@ class WidgetContextWordCount {
 		}
 
 		return $check;
-
 	}
 
 
 	function control_word_count( $control_args ) {
-
 		return sprintf(
 			'<p>%s %s %s</p>',
 			$this->wc->make_simple_checkbox( $control_args, 'check_wordcount', __( 'Has', 'widget-context' ) ),
@@ -127,8 +115,6 @@ class WidgetContextWordCount {
 			),
 			$this->wc->make_simple_textfield( $control_args, 'word_count', null, __( 'words', 'widget-context' ) )
 		);
-
 	}
-
 
 }

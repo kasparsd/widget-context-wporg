@@ -19,18 +19,15 @@ class WidgetContextCustomCPTTax {
 
 
 	static function instance() {
-
 		if ( ! self::$instance ) {
 			self::$instance = new self();
 		}
 
 		return self::$instance;
-
 	}
 
 
 	private function __construct() {
-
 		$this->wc = widget_context::instance();
 
 		add_filter( 'widget_contexts', array( $this, 'add_context' ) );
@@ -38,12 +35,10 @@ class WidgetContextCustomCPTTax {
 		add_filter( 'widget_context_control-custom_post_types_taxonomies', array( $this, 'context_controls' ), 10, 2 );
 
 		add_filter( 'widget_context_check-custom_post_types_taxonomies', array( $this, 'context_check' ), 10, 2 );
-
 	}
 
 
 	function set_objects() {
-
 		if ( is_array( $this->post_types ) ) {
 			return;
 		}
@@ -64,12 +59,10 @@ class WidgetContextCustomCPTTax {
 			),
 			'objects'
 		);
-
 	}
 
 
 	function add_context( $contexts ) {
-
 		$contexts['custom_post_types_taxonomies'] = array(
 			'label' => __( 'Custom Post Types and Taxonomies', 'widget-context' ),
 			'description' => __( 'Context based custom post types and taxonomies', 'widget-context' ),
@@ -77,12 +70,10 @@ class WidgetContextCustomCPTTax {
 		);
 
 		return $contexts;
-
 	}
 
 
 	function context_check( $check, $settings ) {
-
 		if ( empty( $settings ) ) {
 			return $check;
 		}
@@ -118,12 +109,10 @@ class WidgetContextCustomCPTTax {
 		}
 
 		return $check;
-
 	}
 
 
 	function context_controls( $control_args ) {
-
 		$options = array();
 		$out = array();
 
@@ -164,8 +153,6 @@ class WidgetContextCustomCPTTax {
 		}
 
 		return sprintf( '%s', esc_html__( 'None.', 'widget-context' ) );
-
 	}
-
 
 }
