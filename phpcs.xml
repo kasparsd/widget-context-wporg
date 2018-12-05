@@ -3,6 +3,8 @@
 	<config name="installed_paths" value="vendor/wp-coding-standards/wpcs" />
 
 	<arg name="extensions" value="php" />
+	<arg name="colors" />
+	<arg value="s" /><!-- Show sniff codes in all reports. -->
 
 	<rule ref="WordPress-Core">
 		<exclude name="Generic.Formatting.MultipleStatementAlignment" />
