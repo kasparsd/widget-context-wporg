@@ -1,7 +1,6 @@
 <?php
 /**
  * Quick and dirty mocks for core WP helper methods.
- *
  */
 
 function wp_parse_args( $args, $defaults ) {

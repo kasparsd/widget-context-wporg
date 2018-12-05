@@ -1,8 +1,9 @@
 <?php
 
 // Check for Widget Context plugin
-if ( ! class_exists( 'widget_context' ) )
+if ( ! class_exists( 'widget_context' ) ) {
 	die;
+}
 
 
 // Go!
@@ -19,8 +20,9 @@ class WidgetContextWordCount {
 
 	static function instance() {
 
-		if ( ! self::$instance )
+		if ( ! self::$instance ) {
 			self::$instance = new self();
+		}
 
 		return self::$instance;
 
@@ -45,11 +47,11 @@ class WidgetContextWordCount {
 
 	function add_word_count_context( $contexts ) {
 
-		$contexts[ 'word_count' ] = array(
-				'label' => __( 'Word Count', 'widget-context' ),
-				'description' => __( 'Context based on word count on the page.', 'widget-context' ),
-				'weight' => 15
-			);
+		$contexts['word_count'] = array(
+			'label' => __( 'Word Count', 'widget-context' ),
+			'description' => __( 'Context based on word count on the page.', 'widget-context' ),
+			'weight' => 15,
+		);
 
 		return $contexts;
 
@@ -60,37 +62,45 @@ class WidgetContextWordCount {
 
 		global $wp_query;
 
-		if ( empty( $wp_query->posts ) || is_admin() )
+		if ( empty( $wp_query->posts ) || is_admin() ) {
 			return;
+		}
 
-		foreach ( $wp_query->posts as $post_data )
+		foreach ( $wp_query->posts as $post_data ) {
 			$this->words_on_page += str_word_count( strip_tags( strip_shortcodes( $post_data->post_content ) ) );
+		}
 
 	}
 
 
 	function context_check_word_count( $check, $settings ) {
 
-		$settings = wp_parse_args( $settings, array(
+		$settings = wp_parse_args(
+			$settings,
+			array(
 				'check_wordcount' => false,
 				'word_count' => null,
-				'check_wordcount_type' => null
-			) );
+				'check_wordcount_type' => null,
+			)
+		);
 
 		// Make sure this context check was enabled
-		if ( ! $settings['check_wordcount'] )
+		if ( ! $settings['check_wordcount'] ) {
 			return $check;
+		}
 
 		$word_count = (int) $settings['word_count'];
 
 		// No word count specified, bail out
-		if ( ! $word_count )
+		if ( ! $word_count ) {
 			return $check;
+		}
 
-		if ( $settings['check_wordcount_type'] == 'less' && $this->words_on_page < $word_count )
+		if ( $settings['check_wordcount_type'] == 'less' && $this->words_on_page < $word_count ) {
 			return true;
-		elseif ( $settings['check_wordcount_type'] == 'more' && $this->words_on_page > $word_count )
+		} elseif ( $settings['check_wordcount_type'] == 'more' && $this->words_on_page > $word_count ) {
 			return true;
+		}
 
 		return $check;
 
@@ -100,11 +110,23 @@ class WidgetContextWordCount {
 	function control_word_count( $control_args ) {
 
 		return sprintf(
-				'<p>%s %s %s</p>',
-				$this->wc->make_simple_checkbox( $control_args, 'check_wordcount', __('Has', 'widget-context') ),
-				$this->wc->make_simple_dropdown( $control_args, 'check_wordcount_type', array( 'less' => __('less', 'widget-context'), 'more' => __('more', 'widget-context') ), null, __('than', 'widget-context') ),
-				$this->wc->make_simple_textfield( $control_args, 'word_count', null, __('words', 'widget-context') )
-			);
+			'<p>%s %s %s</p>',
+			$this->wc->make_simple_checkbox( $control_args, 'check_wordcount', __( 'Has', 'widget-context' ) ),
+			$this->wc->make_simple_dropdown(
+				$control_args,
+				'check_wordcount_type',
+				array(
+					'less' => __( 'less', 'widget-context' ),
+					'more' => __(
+						'more',
+						'widget-context'
+					),
+				),
+				null,
+				__( 'than', 'widget-context' )
+			),
+			$this->wc->make_simple_textfield( $control_args, 'word_count', null, __( 'words', 'widget-context' ) )
+		);
 
 	}
 
