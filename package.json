@@ -4,14 +4,14 @@
   "homepage": "https://widgetcontext.com",
   "author": {
     "name": "Kaspars Dambis",
-    "url": "https://kaspars.net"
+    "url": "https://preseto.com"
   },
   "scripts": {
     "grunt": "grunt",
     "build": "grunt build",
     "deploy": "grunt deploy",
     "deploy-trunk": "grunt deploy-trunk",
-    "precommit": "composer test"
+    "precommit": "composer lint && composer test"
   },
   "repository": {
     "type": "git",
