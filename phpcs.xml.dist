@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <ruleset name="WordPress Coding Standards for Plugins">
 	<config name="installed_paths" value="vendor/wp-coding-standards/wpcs" />
+	<config name="ignore_warnings_on_exit" value="1" />
 
 	<arg name="extensions" value="php" />
 	<arg name="colors" />
