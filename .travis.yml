@@ -4,24 +4,13 @@ php:
   - 7.0
   - 5.6
 
-env:
-  - WP_VERSION=latest DEV_LIB_PATH=vendor/xwp/wp-dev-lib WP_ORG_SLUG=widget-context
-
-addons:
-  apt:
-    packages:
-      - libxml2-utils # For xmllint.
-
 install:
   - npm install
   - composer install
-  - source $DEV_LIB_PATH/travis.install.sh
 
 script:
-  - source $DEV_LIB_PATH/travis.script.sh
-
-after_script:
-  - source $DEV_LIB_PATH/travis.after_script.sh
+  - composer lint
+  - composer test
 
 notifications:
   email: false
