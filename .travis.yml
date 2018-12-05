@@ -13,7 +13,7 @@ script:
   - composer test
 
 after_script:
-  - vendor/bin/php-coveralls
+  - vendor/bin/php-coveralls -v
 
 notifications:
   email: false
