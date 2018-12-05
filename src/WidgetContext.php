@@ -3,7 +3,7 @@
 /**
  * Widget Context plugin core.
  */
-class widget_context {
+class WidgetContext {
 
 	private $asset_version = '1.0.4';
 	private $sidebars_widgets;
@@ -11,45 +11,44 @@ class widget_context {
 	private $settings_name = 'widget_context_settings'; // Widget Context global settings
 	private $sidebars_widgets_copy;
 
-	private $core_modules = array(
-		'word-count',
-		'custom-post-types-taxonomies',
-	);
-
 	private $context_options = array(); // Store visibility settings
 	private $context_settings = array(); // Store admin settings
 	private $contexts = array();
 	private $plugin_path;
 
-
-	static function instance() {
-		static $instance;
-
-		if ( ! $instance ) {
-			$instance = new self();
-		}
-
-		return $instance;
+	/**
+	 * Start the plugin.
+	 *
+	 * @param string $path Absolute path to the plugin.
+	 */
+	public function __construct( $path ) {
+		$this->plugin_path = $path;
 	}
 
 	/**
-	 * Set path to the plugin directory.
+	 * Legacy singleton instance getter.
 	 *
-	 * @param string $path Path to the plugin directory.
+	 * @return WidgetContext
 	 */
-	public function set_path( $path ) {
-		$this->plugin_path = $path;
+	static function instance() {
+		return self;
+	}
+
+	/**
+	 * Interface for registering modules.
+	 *
+	 * @param  mixed $module Instance of the module.
+	 *
+	 * @return void
+	 */
+	public function register_module( $module ) {
+		$module->init();
 	}
 
 	/**
 	 * Hook into WP.
 	 */
 	public function init() {
-		// Ensure that path to this plugin is defined first.
-		if ( empty( $this->plugin_path ) ) {
-			return;
-		}
-
 		// Define available widget contexts
 		add_action( 'init', array( $this, 'define_widget_contexts' ), 5 );
 
@@ -74,10 +73,6 @@ class widget_context {
 
 		// Register admin settings
 		add_action( 'admin_init', array( $this, 'widget_context_settings_init' ) );
-
-		// Register our own debug bar panel
-		add_filter( 'debug_bar_panels', array( $this, 'widget_context_debug_bar_init' ) );
-		add_action( 'debug_bar_enqueue_scripts', array( $this, 'widget_context_debug_bar_scripts' ) );
 	}
 
 
@@ -93,14 +88,6 @@ class widget_context {
 				'contexts' => array(),
 			)
 		);
-
-		foreach ( $this->core_modules as $module ) {
-			$module_file = sprintf( '%s/class/modules/%s/module.php', $this->plugin_path, $module );
-
-			if ( file_exists( $module_file ) ) {
-				include $module_file;
-			}
-		}
 
 		// Default context
 		$default_contexts = array(
@@ -1046,26 +1033,6 @@ class widget_context {
 
 	public function get_sidebars_widgets_copy() {
 		return $this->sidebars_widgets_copy;
-	}
-
-
-	function widget_context_debug_bar_init( $panels ) {
-		include $this->plugin_path . '/debug/debug-bar.php';
-
-		if ( class_exists( 'Debug_Widget_Context' ) ) {
-			$panels[] = new Debug_Widget_Context();
-		}
-
-		return $panels;
-	}
-
-
-	function widget_context_debug_bar_scripts() {
-		wp_enqueue_script(
-			'widget-context-debug-js',
-			$this->asset_url( 'debug/debug.js' ),
-			array( 'jquery' )
-		);
 	}
 
 	/**

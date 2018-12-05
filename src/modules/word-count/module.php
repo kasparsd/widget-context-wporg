@@ -1,15 +1,5 @@
 <?php
 
-// Check for Widget Context plugin
-if ( ! class_exists( 'widget_context' ) ) {
-	die;
-}
-
-
-// Go!
-WidgetContextWordCount::instance();
-
-
 class WidgetContextWordCount {
 
 	private static $instance;
@@ -17,18 +7,11 @@ class WidgetContextWordCount {
 
 	var $words_on_page = 0;
 
-	static function instance() {
-		if ( ! self::$instance ) {
-			self::$instance = new self();
-		}
-
-		return self::$instance;
+	private function __construct( $plugin ) {
+		$this->wc = $plugin;
 	}
 
-
-	private function __construct() {
-		$this->wc = widget_context::instance();
-
+	public function init() {
 		// Check the number of words on page
 		add_action( 'wp', array( $this, 'count_words_on_page' ) );
 
@@ -38,7 +21,6 @@ class WidgetContextWordCount {
 		add_filter( 'widget_context_control-word_count', array( $this, 'control_word_count' ), 10, 2 );
 		add_filter( 'widget_context_check-word_count', array( $this, 'context_check_word_count' ), 10, 2 );
 	}
-
 
 	function add_word_count_context( $contexts ) {
 		$contexts['word_count'] = array(

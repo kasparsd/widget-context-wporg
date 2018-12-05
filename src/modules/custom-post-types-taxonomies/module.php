@@ -1,42 +1,24 @@
 <?php
 
-// Check for Widget Context plugin
-if ( ! class_exists( 'widget_context' ) ) {
-	die;
-}
 
-
-// Go!
-WidgetContextCustomCPTTax::instance();
-
-
-class WidgetContextCustomCPTTax {
+class WidgetContextCustomCptTax {
 
 	private static $instance;
 	private $wc;
 	public $post_types;
 	public $taxonomies;
 
-
-	static function instance() {
-		if ( ! self::$instance ) {
-			self::$instance = new self();
-		}
-
-		return self::$instance;
+	private function __construct( $plugin ) {
+		$this->wc = $plugin;
 	}
 
-
-	private function __construct() {
-		$this->wc = widget_context::instance();
-
+	public function init() {
 		add_filter( 'widget_contexts', array( $this, 'add_context' ) );
 
 		add_filter( 'widget_context_control-custom_post_types_taxonomies', array( $this, 'context_controls' ), 10, 2 );
 
 		add_filter( 'widget_context_check-custom_post_types_taxonomies', array( $this, 'context_check' ), 10, 2 );
 	}
-
 
 	function set_objects() {
 		if ( is_array( $this->post_types ) ) {
