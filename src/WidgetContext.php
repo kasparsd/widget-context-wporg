@@ -256,7 +256,7 @@ class WidgetContext {
 
 		foreach ( $sidebars_widgets as $widget_area => $widget_list ) {
 
-			if ( $widget_area == 'wp_inactive_widgets' || empty( $widget_list ) ) {
+			if ( 'wp_inactive_widgets' === $widget_area || empty( $widget_list ) ) {
 				continue;
 			}
 
@@ -307,16 +307,16 @@ class WidgetContext {
 		$match_rule = $this->context_options[ $widget_id ]['incexc']['condition'];
 
 		// Force show or hide the widget!
-		if ( $match_rule == 'show' ) {
+		if ( 'show' === $match_rule ) {
 			return true;
-		} elseif ( $match_rule == 'hide' ) {
+		} elseif ( 'hide' === $match_rule ) {
 			return false;
 		}
 
-		if ( $match_rule == 'selected' ) {
+		$inc = false;
+
+		if ( 'selected' === $match_rule ) {
 			$inc = true;
-		} else {
-			$inc = false;
 		}
 
 		if ( $inc && in_array( true, $matches ) ) {
@@ -827,7 +827,7 @@ class WidgetContext {
 	 * @return string          Returns option value
 	 */
 	function get_field_value( $parts, $options = null ) {
-		if ( $options == null ) {
+		if ( null === $options ) {
 			$options = $this->context_options;
 		}
 
@@ -911,9 +911,8 @@ class WidgetContext {
 		$context_controls = array();
 
 		foreach ( $this->get_contexts() as $context_id => $context_args ) {
-
 			// Hide core modules from being disabled
-			if ( isset( $context_args['type'] ) && $context_args['type'] == 'core' ) {
+			if ( isset( $context_args['type'] ) && 'core' === $context_args['type'] ) {
 				continue;
 			}
 

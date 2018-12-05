@@ -68,9 +68,9 @@ class WidgetContextWordCount {
 			return $check;
 		}
 
-		if ( $settings['check_wordcount_type'] == 'less' && $this->words_on_page < $word_count ) {
+		if ( 'less' === $settings['check_wordcount_type'] && $this->words_on_page < $word_count ) {
 			return true;
-		} elseif ( $settings['check_wordcount_type'] == 'more' && $this->words_on_page > $word_count ) {
+		} elseif ( 'more' === $settings['check_wordcount_type'] && $this->words_on_page > $word_count ) {
 			return true;
 		}
 
