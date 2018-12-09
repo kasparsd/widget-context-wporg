@@ -1,19 +1,18 @@
 provider: virtualbox
-ip: autonetwork
 name: widgetcontext
 hostname: widgetcontext
 
 folders:
   - map: ./
-    to: /home/vagrant/wp-content/plugins/widget-context
+    to: /home/vagrant/code/wp-content/plugins/widget-context
 
 variables:
   - key: WP_CLI_CONFIG_PATH
-    value: /home/vagrant/wp-content/plugins/widget-context/wp-cli.yaml
+    value: /home/vagrant/code/wp-content/plugins/widget-context/wp-cli.yaml
 
 sites:
   - map: widgetcontext.local
-    to: /home/vagrant
+    to: /home/vagrant/code
 
 databases:
   - homestead
