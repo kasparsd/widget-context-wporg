@@ -1,7 +1,5 @@
 provider: virtualbox
 
-name: widgetcontext.local
-
 hostname: widgetcontext
 
 folders:
