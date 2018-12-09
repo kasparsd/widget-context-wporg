@@ -3,6 +3,9 @@ name: widgetcontext
 hostname: widgetcontext
 
 folders:
+  - map: vendor/wordpress/wordpress
+    to: /home/vagrant/code
+
   - map: ./
     to: /home/vagrant/code/wp-content/plugins/widget-context
 
