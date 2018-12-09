@@ -1,5 +1,6 @@
 provider: virtualbox
-
+ip: autonetwork
+name: widgetcontext
 hostname: widgetcontext
 
 folders:
