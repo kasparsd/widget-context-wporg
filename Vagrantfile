@@ -14,7 +14,7 @@ Vagrant.configure("2") do |config|
 
 	# Download and setup our WP site; wp-cli provided out of the box.
 	config.vm.provision "shell",
-		inline: "wp core download && wp config create",
+		inline: "wp config create",
 		privileged: false
 
 	if defined? VagrantPlugins::HostsUpdater
