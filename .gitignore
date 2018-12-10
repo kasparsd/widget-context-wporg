@@ -1,6 +1,7 @@
 /dist
 /node_modules
 /vendor
+/.vagrant
 /composer.lock
 /package-lock.json
 .DS_Store

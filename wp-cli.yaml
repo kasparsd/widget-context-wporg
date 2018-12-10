@@ -1,0 +1,6 @@
+path: /home/vagrant/code
+
+config create:
+  dbname: homestead
+  dbuser: homestead
+  dbpass: secret

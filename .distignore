@@ -1,3 +1,4 @@
+.*
 /tests
 /vendor
 /node_modules
@@ -11,4 +12,5 @@ phpcs.xml
 phpunit.xml
 readme.md
 readme.txt.md
-.*
+Vagrantfile
+Homestead.yaml

@@ -14,10 +14,25 @@
     "issues": "https://github.com/kasparsd/widget-context-wporg/issues",
     "source": "https://github.com/kasparsd/widget-context-wporg"
   },
+  "repositories": [
+    {
+      "type": "package",
+      "package": {
+        "name": "wordpress/wordpress",
+        "version": "5.0",
+        "dist": {
+          "url": "https://wordpress.org/wordpress-5.0.zip",
+          "type": "zip"
+        }
+      }
+    }
+  ],
   "require-dev": {
     "wp-coding-standards/wpcs": "^1.2.0",
     "phpunit/phpunit": "^5",
-    "php-coveralls/php-coveralls": "^2.1.0"
+    "php-coveralls/php-coveralls": "^2.1.0",
+    "laravel/homestead": "^7.19",
+    "wordpress/wordpress": "^5.0"
   },
   "autoload": {
     "classmap": [
