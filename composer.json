@@ -39,6 +39,9 @@
     ],
     "covarage": [
       "php-coveralls -v"
+    ],
+    "release": [
+      "composer install --no-dev --prefer-dist --optimize-autoloader"
     ]
   }
 }
