@@ -15,6 +15,12 @@ Show or hide widgets on specific posts, pages and sections of your site.
 
 Use [Widget Context](https://widgetcontext.com) to show or hide widgets on certain sections of your site -- front page, posts, pages, archives, search, etc. Use targeting by URLs (with wildcard support) for maximum flexibility.
 
+
+### Block Context
+
+**New**: We've started working on the [Block Context plugin](https://blockcontext.com) which brings similar functionality to Gutenberg blocks.
+
+
 ### Contribute
 
 - Suggest code improvements [on GitHub](https://github.com/kasparsd/widget-context-wporg).
