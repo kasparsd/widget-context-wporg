@@ -82,13 +82,6 @@ module.exports = function( grunt ) {
 
 	});
 
-	var ignoreParse = require( 'parse-gitignore' );
-
-	// Get a list of all the files and directories to exclude from the distribution.
-	var distignore = ignoreParse( '.distignore', {
-		invert: true,
-	} );
-
 	grunt.initConfig( {
 		pkg: grunt.file.readJSON( 'package.json' ),
 
@@ -107,7 +100,16 @@ module.exports = function( grunt ) {
 
 		copy: {
 			dist: {
-				src: [ '**' ].concat( distignore ),
+				src: [
+					'src/**',
+					'vendor/**',
+					'assets/css/**',
+					'assets/js/**',
+					'widget-context.php',
+					'LICENSE',
+					'composer.json',
+					'composer.lock',
+				],
 				dest: '<%= dist_dir %>',
 				expand: true,
 			}
