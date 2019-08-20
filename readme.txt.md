@@ -47,8 +47,8 @@ Use the wildcard symbol `*` for matching dynamic parts of the URL. For example:
 ## Installation
 
 - Search for **Widget Context** under "Plugins → Add New" in your WordPress dashboard.
-
 - Widget Context settings will appear automatically under **each widget** under "Appearance → Widgets".
+- Visit "Settings → Widget Context" to configure the available widget visibility contexts.
 
 
 ## Changelog
