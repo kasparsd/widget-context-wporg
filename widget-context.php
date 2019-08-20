@@ -13,7 +13,7 @@ if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
 	require_once __DIR__ . '/vendor/autoload.php';
 }
 
-$plugin = new WidgetContext( dirname( __FILE__ ) );
+$plugin = new WidgetContext( __FILE__ );
 
 $plugin->register_module( new WidgetContextCustomCptTax( $plugin ) );
 $plugin->register_module( new WidgetContextWordCount( $plugin ) );
