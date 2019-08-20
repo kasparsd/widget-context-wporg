@@ -6,7 +6,7 @@ Requires at least: 3.0
 Tested up to: 5.2  
 Stable tag: {{ version }}  
 License: GPLv2 or later  
-Requires PHP: 5.6   
+Requires PHP: 5.6  
 
 Show or hide widgets on specific posts, pages and sections of your site.
 
