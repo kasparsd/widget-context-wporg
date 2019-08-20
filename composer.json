@@ -36,6 +36,9 @@
     ],
     "test": [
       "phpunit"
+    ],
+    "covarage": [
+      "php-coveralls -v"
     ]
   }
 }
