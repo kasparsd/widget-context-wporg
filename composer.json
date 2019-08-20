@@ -49,7 +49,7 @@
     "test": [
       "phpunit"
     ],
-    "covarage": [
+    "coverage": [
       "php-coveralls -v"
     ],
     "release": [
