@@ -1010,6 +1010,10 @@ class WidgetContext {
 							</p>
 							<ul>
 								<li>
+									<strong><small>NEW:</small></strong>
+									<a href="https://blockcontext.com?utm_source=wc">Block Context</a> for showing or hiding Gutenberg blocks in context.
+								</li>
+								<li>
 									<a href="https://preseto.com/go/cf7-storage?utm_source=wc">Storage for Contact Form 7</a> saves all Contact Form 7 submissions (including attachments) in your WordPress database.
 								</li>
 								<li>
