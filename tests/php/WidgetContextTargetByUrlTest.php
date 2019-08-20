@@ -1,8 +1,11 @@
 <?php
 
+namespace Preseto\WidgetContextTest;
+
+use WP_Mock;
 use Preseto\WidgetContextTest\WidgetContextTestCase;
 
-class WidgetContextTest extends WidgetContextTestCase {
+class WidgetContextTargetByUrlTest extends WidgetContextTestCase {
 
 	protected $plugin;
 
@@ -26,8 +29,19 @@ class WidgetContextTest extends WidgetContextTestCase {
 		'/page/?query=string' => 'page?query=string',
 	);
 
-	public function __construct() {
-		$this->plugin = new WidgetContext( null );
+	public function setUp() {
+		parent::setUp();
+
+		$this->plugin = new \WidgetContext( null );
+
+		WP_Mock::userFunction( 'wp_parse_args' )
+			->andReturnUsing(
+				function( $args, $defaults ) {
+					return array_merge( $defaults, $args );
+				}
+			);
+
+		WP_Mock::alias( 'wp_parse_url', 'parse_url' );
 	}
 
 	public function testUrlMatch() {

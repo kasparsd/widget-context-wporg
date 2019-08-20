@@ -23,6 +23,8 @@
     }
   },
   "require-dev": {
+    "10up/wp_mock": "^0.2.0",
+    "mockery/mockery": "^0.9",
     "php-coveralls/php-coveralls": "^2.1.0",
     "phpunit/phpunit": "^5",
     "wp-coding-standards/wpcs": "^2.1",
