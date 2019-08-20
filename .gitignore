@@ -4,4 +4,6 @@
 /.vagrant
 /composer.lock
 /package-lock.json
+/phpcs.xml
+/phpunit.xml
 .DS_Store
