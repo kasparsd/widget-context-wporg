@@ -33,6 +33,11 @@
       "src/"
     ]
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Preseto\\WidgetContextTest\\": "tests/php/"
+    }
+  },
   "scripts": {
     "lint": [
       "composer validate --no-check-publish --strict",

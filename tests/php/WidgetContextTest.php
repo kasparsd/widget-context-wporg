@@ -1,8 +1,8 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
+use Preseto\WidgetContextTest\WidgetContextTestCase;
 
-class WidgetContextTest extends TestCase {
+class WidgetContextTest extends WidgetContextTestCase {
 
 	protected $plugin;
 
