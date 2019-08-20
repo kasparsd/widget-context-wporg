@@ -109,6 +109,7 @@ module.exports = function( grunt ) {
 					'LICENSE',
 					'composer.json',
 					'composer.lock',
+					'screenshot-*.png',
 				],
 				dest: '<%= dist_dir %>',
 				expand: true,
