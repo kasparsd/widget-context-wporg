@@ -9,10 +9,9 @@
  * Text Domain: widget-context
  */
 
-// TODO Switch to proper autoloading.
-require_once dirname( __FILE__ ) . '/src/WidgetContext.php';
-require_once dirname( __FILE__ ) . '/src/modules/custom-post-types-taxonomies/module.php';
-require_once dirname( __FILE__ ) . '/src/modules/word-count/module.php';
+if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
+	require_once __DIR__ . '/vendor/autoload.php';
+}
 
 $plugin = new WidgetContext( dirname( __FILE__ ) );
 
