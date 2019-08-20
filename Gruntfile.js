@@ -6,7 +6,7 @@ module.exports = function( grunt ) {
 
 	// TODO: Move to own Grunt plugin.
 	grunt.registerTask( 'readmeMdToTxt', 'Log some stuff.', function() {
-		const formatReadme = function( content ) {
+		const formatReadme = ( content ) => {
 			const replaceRules = {
 				'#': '=== $1 ===',
 				'##': '== $1 ==',

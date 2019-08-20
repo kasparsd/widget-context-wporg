@@ -1,4 +1,4 @@
-/* global jQuery */
+/* global jQuery, document */
 jQuery( document ).ready( function( $ ) {
 	function showHideControls( widgetId ) {
 		var condition = $( '#widget-context-' + widgetId + ' .wc-field-select-condition select' ).val();
