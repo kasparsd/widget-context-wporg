@@ -1000,7 +1000,7 @@ class WidgetContext {
 								<?php $user = wp_get_current_user(); ?>
 								<p><label><?php _e( 'Your Name', 'widget-context' ); ?>: <input type="text" name="NAME" value="<?php echo esc_attr( sprintf( '%s %s', $user->first_name, $user->last_name ) ); ?>" /></label></p>
 								<p><label><?php _e( 'Your Email', 'widget-context' ); ?>: <input type="text" name="EMAIL" value="<?php echo esc_attr( $user->user_email ); ?>" /></label></p>
-								<p><input class="button" name="subscribe" type="submit" value="<?php _e( 'Subscribe', 'widget-context' ); ?>" /></p>
+								<p><input class="button" name="subscribe" type="submit" value="<?php esc_attr_e( 'Subscribe', 'widget-context' ); ?>" /></p>
 							</form>
 							<h3>
 								<?php esc_html_e( 'Suggested Plugins', 'widget-context' ); ?>
