@@ -987,7 +987,7 @@ class WidgetContext {
 								printf(
 									// translators: %s: link with an anchor text.
 									esc_html__( 'Widget Context is created and maintained by %s.', 'widget-context' ),
-									'<a href="https://kaspars.net">Kaspars Dambis</a>'
+									'<a href="https://widgetcontext.com/about">Kaspars Dambis</a>'
 								);
 								?>
 							</p>
