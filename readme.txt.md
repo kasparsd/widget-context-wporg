@@ -56,7 +56,7 @@ Use the wildcard symbol `*` for matching dynamic parts of the URL. For example:
 ### 1.2.0 (August 20, 2019)
 
 - Set PHP 5.6 as the minimum supported version of PHP to match WordPress core.
-- Developer tooling update: introduce PHP autoloading, PHP unit tests with proper mocking, linting for JS, switch to Docker inside a Vagrant wrapper for local development environment and update to the latest version of WordPress coding standards.
+- Developer tooling update: introduce PHP autoloading, PHP unit tests with proper mocking, linting for JS, switch to Docker inside a Vagrant wrapper for local development environment and update to the latest version of WordPress coding standards (see [#50](https://github.com/kasparsd/widget-context-wporg/pull/50)).
 
 ### 1.1.1 (June 9, 2019)
 
