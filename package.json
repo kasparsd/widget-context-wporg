@@ -11,7 +11,10 @@
     "build": "grunt build",
     "deploy": "grunt deploy",
     "deploy-trunk": "grunt deploy-trunk",
-    "precommit": "composer lint && composer test"
+    "test": "composer test",
+    "lint": "composer lint",
+    "precommit": "composer lint && composer test",
+    "postinstall": "composer install"
   },
   "repository": {
     "type": "git",
