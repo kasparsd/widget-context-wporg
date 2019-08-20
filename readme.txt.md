@@ -13,7 +13,7 @@ Show or hide widgets on specific posts, pages or sections of your site.
 
 ## Description
 
-[Widget Context](https://widgetcontext.com) will show or hide widgets on certain sections of your site — front page, posts, pages, archives, search, etc. It also features section targeting by URLs (with wildcard support) for maximum flexibility.
+Use [Widget Context](https://widgetcontext.com) to show or hide widgets on certain sections of your site -- front page, posts, pages, archives, search, etc. Use targeting by URLs (with wildcard support) for maximum flexibility.
 
 ### Contribute
 
