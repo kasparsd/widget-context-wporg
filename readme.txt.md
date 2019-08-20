@@ -1,7 +1,7 @@
 # Widget Context
 
 Contributors: kasparsd, jamescollins  
-Tags: widget, widget context, context, logic, widget logic, cms  
+Tags: widget, widget context, context, logic, widget logic, visibility, widget visibility  
 Requires at least: 3.0  
 Tested up to: 5.2  
 Stable tag: {{ version }}  
