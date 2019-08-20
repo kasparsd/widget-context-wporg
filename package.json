@@ -15,6 +15,7 @@
     "lint": "composer lint",
     "precommit": "composer lint && composer test",
     "coverage": "composer coverage",
+    "mess": "composer mess",
     "postinstall": "composer install"
   },
   "repository": {

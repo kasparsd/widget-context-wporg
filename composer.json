@@ -27,6 +27,7 @@
     "mockery/mockery": "^0.9",
     "php-coveralls/php-coveralls": "^2.1.0",
     "phpcompatibility/php-compatibility": "^9.2",
+    "phpmd/phpmd": "^2.7",
     "phpunit/phpunit": "^5",
     "wp-coding-standards/wpcs": "^2.1",
     "wpsh/local": "^0.2.3"
@@ -45,6 +46,9 @@
     "lint": [
       "composer validate --no-check-publish --strict",
       "phpcs ."
+    ],
+    "mess": [
+      "phpmd ./src text phpmd.xml --suffixes php"
     ],
     "test": [
       "phpunit"
