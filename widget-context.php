@@ -4,8 +4,8 @@
  * Plugin URI: https://widgetcontext.com
  * Description: Show or hide widgets depending on the section of the site that is being viewed.
  * Version: 1.1.1
- * Author: Preseto
- * Author URI: https://preseto.com
+ * Author: Kaspars Dambis
+ * Author URI: https://widgetcontext.com
  * Text Domain: widget-context
  */
 
