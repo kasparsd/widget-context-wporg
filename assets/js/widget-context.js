@@ -1,7 +1,7 @@
 /* global jQuery */
 jQuery( document ).ready( function( $ ) {
 	function showHideControls( widgetId ) {
-		const condition = $( '#widget-context-' + widgetId + ' .wc-field-select-condition select' ).val();
+		var condition = $( '#widget-context-' + widgetId + ' .wc-field-select-condition select' ).val();
 
 		$( '#widget-context-' + widgetId ).toggleClass( 'context-global', ( condition === 'show' || condition === 'hide' ) );
 	}
