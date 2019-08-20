@@ -5,7 +5,6 @@
  */
 class WidgetContext {
 
-	private $asset_version = '1.0.4';
 	private $sidebars_widgets;
 	private $options_name = 'widget_logic_options'; // Context settings for widgets (visibility, etc)
 	private $settings_name = 'widget_context_settings'; // Widget Context global settings
@@ -14,15 +13,31 @@ class WidgetContext {
 	private $context_options = array(); // Store visibility settings
 	private $context_settings = array(); // Store admin settings
 	private $contexts = array();
-	private $plugin_path;
+
+	/**
+	 * Instance of the abstract plugin.
+	 *
+	 * @var Preseto\WidgetContext\Plugin
+	 */
+	private $plugin;
+
+	/**
+	 * Instance of the current class for legacy purposes.
+	 *
+	 * @var WidgetContext
+	 */
+	protected static $instance;
 
 	/**
 	 * Start the plugin.
 	 *
-	 * @param string $path Absolute path to the plugin.
+	 * @param Preseto\WidgetContext\Plugin $path Instance of the abstract plugin.
 	 */
-	public function __construct( $path ) {
-		$this->plugin_path = $path;
+	public function __construct( $plugin ) {
+		$this->plugin = $plugin;
+
+		// Keep an instance for legacy purposes.
+		self::$instance = $this;
 	}
 
 	/**
@@ -30,8 +45,8 @@ class WidgetContext {
 	 *
 	 * @return WidgetContext
 	 */
-	static function instance() {
-		return self;
+	public static function instance() {
+		return self::$instance;
 	}
 
 	/**
@@ -186,16 +201,16 @@ class WidgetContext {
 
 		wp_enqueue_style(
 			'widget-context-css',
-			$this->asset_url( 'assets/css/admin.css' ),
+			$this->plugin->asset_url( 'assets/css/admin.css' ),
 			null,
-			$this->asset_version
+			$this->plugin->asset_version()
 		);
 
 		wp_enqueue_script(
 			'widget-context-js',
-			$this->asset_url( 'assets/js/widget-context.js' ),
+			$this->plugin->asset_url( 'assets/js/widget-context.js' ),
 			array( 'jquery' ),
-			$this->asset_version
+			$this->plugin->asset_version()
 		);
 	}
 
@@ -1035,23 +1050,5 @@ class WidgetContext {
 	public function get_sidebars_widgets_copy() {
 		return $this->sidebars_widgets_copy;
 	}
-
-	/**
-	 * Return the public URL of a plugin asset file.
-	 *
-	 * @param string $asset_relative_path Relative path to the asset file.
-	 *
-	 * @return string
-	 */
-	function asset_url( $asset_relative_path ) {
-		$file_path = sprintf(
-			'%s/%s',
-			plugin_basename( $this->plugin_path ),
-			ltrim( $asset_relative_path, '/' )
-		);
-
-		return plugins_url( $file_path );
-	}
-
 
 }
