@@ -53,7 +53,13 @@ Use the wildcard symbol `*` for matching dynamic parts of the URL. For example:
 
 ## Changelog
 
+### 1.2.0 (August 20, 2019)
+
+- Set PHP 5.6 as the minimum supported version of PHP to match WordPress core.
+- Developer tooling update: introduce PHP autoloading, PHP unit tests with proper mocking, linting for JS, switch to Docker inside a Vagrant wrapper for local development environment and update to the latest version of WordPress coding standards.
+
 ### 1.1.1 (June 9, 2019)
+
 - Mark as tested with WordPress 5.2.
 - Add test coverage reporting and remove [Debug Bar](https://wordpress.org/plugins/debug-bar/) integration since it wasn't complete. Refactor plugin structure to support dependency integration. See [#47](https://github.com/kasparsd/widget-context-wporg/pull/47).
 - Added local development environment, see [#48](https://github.com/kasparsd/widget-context-wporg/pull/48).
@@ -158,40 +164,9 @@ Use the wildcard symbol `*` for matching dynamic parts of the URL. For example:
 
 ## Upgrade Notice
 
-### 1.0.2
-Load available custom post types and taxonomies right before visibility checks to avoid PHP warnings. Run visibility checks only after the main post query has run. Fixes issues with WooCommerce.
+### 1.2.0
 
-### 1.0.1
-
-Fix PHP warning in custom post type and taxonomy module.
-
-### 1.0
-
-New modular architecture and settings page. Please make sure you test this version before deploying to a production website.
-
-### 0.8.1
-
-(1) Revert to a legacy method for attaching widget control settings in order to make it work with old plugins. (2) Fix the word count context logic.
-
-### 0.8
-
-Major code rewrite and refactoring to improve plugin performance and usability.
-
-### 0.7.2
-
-Fix PHP warnings/notices.
-
-### 0.7.1
-
-Confirm that plugin works with the latest version of WordPress.
-
-### 0.7
-
-Bug fix: check for active sidebars only after $paged has been set.
-
-### 0.6
-
-Performance improvements - don't check if sidebar has any widgets on every widget load.
+PHP 5.6 is now the minimum supported version of PHP. Also included is developer tooling update and improved PHP unit tests.
 
 
 ## Screenshots
