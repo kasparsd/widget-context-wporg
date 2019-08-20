@@ -245,7 +245,7 @@ class WidgetContext {
 
 		// Remove non-existant widget contexts from the settings
 		foreach ( $this->context_options as $widget_id => $widget_context ) {
-			if ( ! in_array( $widget_id, $all_widget_ids ) ) {
+			if ( ! in_array( $widget_id, $all_widget_ids, true ) ) {
 				unset( $this->context_options[ $widget_id ] );
 			}
 		}
@@ -334,9 +334,9 @@ class WidgetContext {
 			$inc = true;
 		}
 
-		if ( $inc && in_array( true, $matches ) ) {
+		if ( $inc && in_array( true, $matches, true ) ) {
 			return true;
-		} elseif ( ! $inc && ! in_array( true, $matches ) ) {
+		} elseif ( ! $inc && ! in_array( true, $matches, true ) ) {
 			return true;
 		}
 
@@ -534,7 +534,7 @@ class WidgetContext {
 			}
 
 			// Store core controls
-			if ( isset( $context_settings['type'] ) && 'core' == $context_settings['type'] ) {
+			if ( isset( $context_settings['type'] ) && 'core' === $context_settings['type'] ) {
 				$controls_core[] = $context_name;
 			}
 
@@ -576,6 +576,7 @@ class WidgetContext {
 					sprintf(
 						'<p class="error">%s</p>',
 						sprintf(
+							/* translators: %s is a URL to the settings page. */
 							__( 'No widget controls enabled. You can enable them in <a href="%s">Widget Context settings</a>.', 'widget-context' ),
 							admin_url( 'options-general.php?page=widget_context_settings' )
 						)
