@@ -20,6 +20,11 @@ script:
 after_script:
   - npm run coverage
 
+branches:
+  only:
+  - master
+  - develop
+
 notifications:
   email: false
 
