@@ -35,6 +35,7 @@
   },
   "scripts": {
     "lint": [
+      "composer validate --no-check-publish --strict",
       "phpcs ."
     ],
     "test": [
