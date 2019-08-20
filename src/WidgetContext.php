@@ -674,11 +674,10 @@ class WidgetContext {
 
 
 	function make_simple_checkbox( $control_args, $option, $label ) {
+		$value = false;
 
 		if ( isset( $control_args['settings'][ $option ] ) && $control_args['settings'][ $option ] ) {
 			$value = true;
-		} else {
-			$value = false;
 		}
 
 		return sprintf(
@@ -703,10 +702,10 @@ class WidgetContext {
 
 
 	function make_simple_textarea( $control_args, $option, $label = null ) {
+		$value = '';
+
 		if ( isset( $control_args['settings'][ $option ] ) ) {
 			$value = esc_textarea( $control_args['settings'][ $option ] );
-		} else {
-			$value = '';
 		}
 
 		return sprintf(
@@ -727,10 +726,10 @@ class WidgetContext {
 
 
 	function make_simple_textfield( $control_args, $option, $label_before = null, $label_after = null ) {
+		$value = false;
+
 		if ( isset( $control_args['settings'][ $option ] ) ) {
 			$value = esc_attr( $control_args['settings'][ $option ] );
-		} else {
-			$value = false;
 		}
 
 		return sprintf(
@@ -755,11 +754,10 @@ class WidgetContext {
 
 	function make_simple_dropdown( $control_args, $option, $selection = array(), $label_before = null, $label_after = null ) {
 		$options = array();
+		$value = false;
 
 		if ( isset( $control_args['settings'][ $option ] ) ) {
 			$value = $control_args['settings'][ $option ];
-		} else {
-			$value = false;
 		}
 
 		if ( empty( $selection ) ) {
