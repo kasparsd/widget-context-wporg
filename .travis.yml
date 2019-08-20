@@ -16,3 +16,8 @@ after_script:
 
 notifications:
   email: false
+
+cache:
+  npm: true
+  directories:
+    - $HOME/.composer/cache
