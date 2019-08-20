@@ -3,54 +3,61 @@
   "description": "WordPress plugin for showing or hiding widgets on specific posts, pages and sections of a site.",
   "homepage": "https://widgetcontext.com",
   "type": "wordpress-plugin",
-  "license": "GPL-2.0",
+  "license": "GPL-2.0-or-later",
   "authors": [
     {
       "name": "Kaspars Dambis",
-      "homepage": "https://preseto.com"
+      "homepage": "https://widgetcontext.com"
     }
   ],
   "support": {
     "issues": "https://github.com/kasparsd/widget-context-wporg/issues",
     "source": "https://github.com/kasparsd/widget-context-wporg"
   },
-  "repositories": [
-    {
-      "type": "package",
-      "package": {
-        "name": "wordpress/wordpress",
-        "version": "5.0",
-        "dist": {
-          "url": "https://wordpress.org/wordpress-5.0.zip",
-          "type": "zip"
-        }
-      }
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "config": {
+    "sort-packages": true,
+    "platform": {
+      "php": "5.6.20"
     }
-  ],
+  },
   "require-dev": {
-    "wp-coding-standards/wpcs": "^1.2.0",
-    "phpunit/phpunit": "^5",
+    "10up/wp_mock": "^0.2.0",
+    "mockery/mockery": "^0.9",
     "php-coveralls/php-coveralls": "^2.1.0",
-    "laravel/homestead": "^7.19",
-    "wordpress/wordpress": "^5.0"
+    "phpcompatibility/php-compatibility": "^9.2",
+    "phpmd/phpmd": "^2.7",
+    "phpunit/phpunit": "^5",
+    "wp-coding-standards/wpcs": "^2.1",
+    "wpsh/local": "^0.2.3"
   },
   "autoload": {
     "classmap": [
       "src/"
     ]
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Preseto\\WidgetContextTest\\": "tests/php/"
+    }
+  },
   "scripts": {
     "lint": [
-      "vendor/bin/phpcs ."
+      "composer validate --no-check-publish --strict",
+      "phpcs ."
+    ],
+    "mess": [
+      "phpmd ./src text phpmd.xml --suffixes php"
     ],
     "test": [
-      "vendor/bin/phpunit"
+      "phpunit"
     ],
-    "post-install-cmd": [
-      "npm install"
+    "coverage": [
+      "php-coveralls -v"
     ],
-    "post-update-cmd": [
-      "npm install"
+    "release": [
+      "composer install --no-dev --prefer-dist --optimize-autoloader"
     ]
   }
 }

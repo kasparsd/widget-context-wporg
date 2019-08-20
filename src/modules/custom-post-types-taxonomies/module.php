@@ -104,12 +104,14 @@ class WidgetContextCustomCptTax {
 
 		foreach ( $this->post_types as $post_type => $post_type_settings ) {
 			$options[ 'is_singular-' . $post_type ] = sprintf(
+				/* translators: %s is the post type label. */
 				__( 'All "%s" posts', 'widget-context' ),
 				$post_type_settings->label
 			);
 
 			if ( $post_type_settings->has_archive ) {
 				$options[ 'is_archive-' . $post_type ] = sprintf(
+					/* translators: %s is the post type label. */
 					__( 'Archive of "%s" posts', 'widget-context' ),
 					$post_type_settings->label
 				);
@@ -118,6 +120,7 @@ class WidgetContextCustomCptTax {
 
 		foreach ( $this->taxonomies as $taxonomy => $tax_settings ) {
 			$options[ 'is_tax-' . $taxonomy ] = sprintf(
+				/* translators: %s is the taxonomy label. */
 				__( 'All "%s" taxonomy archives', 'widget-context' ),
 				$tax_settings->label
 			);

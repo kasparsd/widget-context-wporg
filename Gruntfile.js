@@ -1,15 +1,13 @@
-/* jshint es3: false, esversion: 5, node: true */
+/* eslint-env node */
 
 module.exports = function( grunt ) {
-
 	// Load all Grunt plugins.
 	require( 'load-grunt-tasks' )( grunt );
 
 	// TODO: Move to own Grunt plugin.
 	grunt.registerTask( 'readmeMdToTxt', 'Log some stuff.', function() {
-
-		var formatReadme = function( content ) {
-			var replaceRules = {
+		const formatReadme = ( content ) => {
+			const replaceRules = {
 				'#': '=== $1 ===',
 				'##': '== $1 ==',
 				'#{3,}': '= $1 =',
@@ -17,7 +15,7 @@ module.exports = function( grunt ) {
 
 			// Replace Markdown headings with WP.org style headings
 			Object.keys( replaceRules ).forEach( function( pattern ) {
-				var patternRegExp = [ '^', pattern, '\\s(.+)$' ].join('');
+				const patternRegExp = [ '^', pattern, '\\s(.+)$' ].join( '' );
 
 				content = content.replace(
 					new RegExp( patternRegExp, 'gm' ),
@@ -28,39 +26,39 @@ module.exports = function( grunt ) {
 			return content;
 		};
 
-		var replaceVars = function( content, vars ) {
-			var handlebars = require( 'handlebars' );
-			var template = handlebars.compile( content );
+		const replaceVars = ( content, vars ) => {
+			const handlebars = require( 'handlebars' );
+			const template = handlebars.compile( content );
 
 			return template( vars );
 		};
 
-		var getPluginVersion = function( pluginFile ) {
-			var pluginSource = grunt.file.read( pluginFile );
-			var pattern = new RegExp( 'Version:\\s*(.+)$', 'mi' );
-			var match = pluginSource.match( pattern );
+		const getPluginVersion = ( pluginFile ) => {
+			const pluginSource = grunt.file.read( pluginFile );
+			const pattern = new RegExp( 'Version:\\s*(.+)$', 'mi' );
+			const match = pluginSource.match( pattern );
 
 			if ( match.length ) {
-				return match[1];
+				return match[ 1 ];
 			}
 
 			return null;
 		};
 
-		var path = require('path');
-		var pkgConfig = grunt.config.get( 'pkg' );
+		const path = require( 'path' );
+		const pkgConfig = grunt.config.get( 'pkg' );
 
-		var options = this.options( {
+		const options = this.options( {
 			src: 'readme.md',
 			dest: 'readme.txt',
 		} );
 
-		var srcFile = grunt.file.read( options.src );
-		var destDir = path.dirname( options.dest );
+		const srcFile = grunt.file.read( options.src );
+		const destDir = path.dirname( options.dest );
 
 		// Extract the version from the main plugin file.
 		if ( 'undefined' === typeof pkgConfig.version ) {
-			var pluginVersion = getPluginVersion( 'widget-context.php' );
+			const pluginVersion = getPluginVersion( 'widget-context.php' );
 
 			if ( ! pluginVersion ) {
 				grunt.warn( 'Failed to parse the plugin version in the plugin file.' );
@@ -70,7 +68,7 @@ module.exports = function( grunt ) {
 		}
 
 		// Replace all variables.
-		var readmeTxt = replaceVars( srcFile, pkgConfig );
+		const readmeTxt = replaceVars( srcFile, pkgConfig );
 
 		// Ensure we have the destination directory.
 		if ( destDir ) {
@@ -79,14 +77,6 @@ module.exports = function( grunt ) {
 
 		// Write the readme.txt.
 		grunt.file.write( options.dest, formatReadme( readmeTxt ) );
-
-	});
-
-	var ignoreParse = require( 'parse-gitignore' );
-
-	// Get a list of all the files and directories to exclude from the distribution.
-	var distignore = ignoreParse( '.distignore', {
-		invert: true,
 	} );
 
 	grunt.initConfig( {
@@ -107,10 +97,20 @@ module.exports = function( grunt ) {
 
 		copy: {
 			dist: {
-				src: [ '**' ].concat( distignore ),
+				src: [
+					'src/**',
+					'vendor/**',
+					'assets/css/**',
+					'assets/js/**',
+					'widget-context.php',
+					'LICENSE',
+					'composer.json',
+					'composer.lock',
+					'screenshot-*.png',
+				],
 				dest: '<%= dist_dir %>',
 				expand: true,
-			}
+			},
 		},
 
 		wp_deploy: {
@@ -124,13 +124,13 @@ module.exports = function( grunt ) {
 				options: {
 					deploy_tag: true,
 					deploy_trunk: true,
-				}
+				},
 			},
 			trunk: {
 				options: {
 					deploy_tag: false,
-				}
-			}
+				},
+			},
 		},
 	} );
 
@@ -155,5 +155,4 @@ module.exports = function( grunt ) {
 			'wp_deploy:trunk',
 		]
 	);
-
 };

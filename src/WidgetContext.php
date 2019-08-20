@@ -5,7 +5,6 @@
  */
 class WidgetContext {
 
-	private $asset_version = '1.0.4';
 	private $sidebars_widgets;
 	private $options_name = 'widget_logic_options'; // Context settings for widgets (visibility, etc)
 	private $settings_name = 'widget_context_settings'; // Widget Context global settings
@@ -14,15 +13,31 @@ class WidgetContext {
 	private $context_options = array(); // Store visibility settings
 	private $context_settings = array(); // Store admin settings
 	private $contexts = array();
-	private $plugin_path;
+
+	/**
+	 * Instance of the abstract plugin.
+	 *
+	 * @var Preseto\WidgetContext\Plugin
+	 */
+	private $plugin;
+
+	/**
+	 * Instance of the current class for legacy purposes.
+	 *
+	 * @var WidgetContext
+	 */
+	protected static $instance;
 
 	/**
 	 * Start the plugin.
 	 *
-	 * @param string $path Absolute path to the plugin.
+	 * @param Preseto\WidgetContext\Plugin $path Instance of the abstract plugin.
 	 */
-	public function __construct( $path ) {
-		$this->plugin_path = $path;
+	public function __construct( $plugin ) {
+		$this->plugin = $plugin;
+
+		// Keep an instance for legacy purposes.
+		self::$instance = $this;
 	}
 
 	/**
@@ -30,8 +45,8 @@ class WidgetContext {
 	 *
 	 * @return WidgetContext
 	 */
-	static function instance() {
-		return self;
+	public static function instance() {
+		return self::$instance;
 	}
 
 	/**
@@ -186,16 +201,16 @@ class WidgetContext {
 
 		wp_enqueue_style(
 			'widget-context-css',
-			$this->asset_url( 'assets/css/admin.css' ),
+			$this->plugin->asset_url( 'assets/css/admin.css' ),
 			null,
-			$this->asset_version
+			$this->plugin->asset_version()
 		);
 
 		wp_enqueue_script(
 			'widget-context-js',
-			$this->asset_url( 'assets/js/widget-context.js' ),
+			$this->plugin->asset_url( 'assets/js/widget-context.js' ),
 			array( 'jquery' ),
-			$this->asset_version
+			$this->plugin->asset_version()
 		);
 	}
 
@@ -230,7 +245,7 @@ class WidgetContext {
 
 		// Remove non-existant widget contexts from the settings
 		foreach ( $this->context_options as $widget_id => $widget_context ) {
-			if ( ! in_array( $widget_id, $all_widget_ids ) ) {
+			if ( ! in_array( $widget_id, $all_widget_ids, true ) ) {
 				unset( $this->context_options[ $widget_id ] );
 			}
 		}
@@ -319,9 +334,9 @@ class WidgetContext {
 			$inc = true;
 		}
 
-		if ( $inc && in_array( true, $matches ) ) {
+		if ( $inc && in_array( true, $matches, true ) ) {
 			return true;
-		} elseif ( ! $inc && ! in_array( true, $matches ) ) {
+		} elseif ( ! $inc && ! in_array( true, $matches, true ) ) {
 			return true;
 		}
 
@@ -519,7 +534,7 @@ class WidgetContext {
 			}
 
 			// Store core controls
-			if ( isset( $context_settings['type'] ) && 'core' == $context_settings['type'] ) {
+			if ( isset( $context_settings['type'] ) && 'core' === $context_settings['type'] ) {
 				$controls_core[] = $context_name;
 			}
 
@@ -561,6 +576,7 @@ class WidgetContext {
 					sprintf(
 						'<p class="error">%s</p>',
 						sprintf(
+							/* translators: %s is a URL to the settings page. */
 							__( 'No widget controls enabled. You can enable them in <a href="%s">Widget Context settings</a>.', 'widget-context' ),
 							admin_url( 'options-general.php?page=widget_context_settings' )
 						)
@@ -674,11 +690,10 @@ class WidgetContext {
 
 
 	function make_simple_checkbox( $control_args, $option, $label ) {
+		$value = false;
 
 		if ( isset( $control_args['settings'][ $option ] ) && $control_args['settings'][ $option ] ) {
 			$value = true;
-		} else {
-			$value = false;
 		}
 
 		return sprintf(
@@ -703,10 +718,10 @@ class WidgetContext {
 
 
 	function make_simple_textarea( $control_args, $option, $label = null ) {
+		$value = '';
+
 		if ( isset( $control_args['settings'][ $option ] ) ) {
 			$value = esc_textarea( $control_args['settings'][ $option ] );
-		} else {
-			$value = '';
 		}
 
 		return sprintf(
@@ -727,10 +742,10 @@ class WidgetContext {
 
 
 	function make_simple_textfield( $control_args, $option, $label_before = null, $label_after = null ) {
+		$value = false;
+
 		if ( isset( $control_args['settings'][ $option ] ) ) {
 			$value = esc_attr( $control_args['settings'][ $option ] );
-		} else {
-			$value = false;
 		}
 
 		return sprintf(
@@ -755,11 +770,10 @@ class WidgetContext {
 
 	function make_simple_dropdown( $control_args, $option, $selection = array(), $label_before = null, $label_after = null ) {
 		$options = array();
+		$value = false;
 
 		if ( isset( $control_args['settings'][ $option ] ) ) {
 			$value = $control_args['settings'][ $option ];
-		} else {
-			$value = false;
 		}
 
 		if ( empty( $selection ) ) {
@@ -989,7 +1003,7 @@ class WidgetContext {
 								printf(
 									// translators: %s: link with an anchor text.
 									esc_html__( 'Widget Context is created and maintained by %s.', 'widget-context' ),
-									'<a href="https://kaspars.net">Kaspars Dambis</a>'
+									'<a href="https://widgetcontext.com/about">Kaspars Dambis</a>'
 								);
 								?>
 							</p>
@@ -997,12 +1011,12 @@ class WidgetContext {
 
 						<div class="wc-sidebar-section wc-sidebar-newsletter">
 							<h3><?php esc_html_e( 'News & Updates', 'widget-context' ); ?></h3>
-							<p><?php esc_html_e( 'Subscribe to receive news & updates about the plugin.', 'widget-context' ); ?></p>
+							<p><?php esc_html_e( 'Subscribe to receive news and updates about the plugin.', 'widget-context' ); ?></p>
 							<form action="//osc.us2.list-manage.com/subscribe/post?u=e8d173fc54c0fc4286a2b52e8&amp;id=8afe96c5a3" method="post" target="_blank">
 								<?php $user = wp_get_current_user(); ?>
 								<p><label><?php _e( 'Your Name', 'widget-context' ); ?>: <input type="text" name="NAME" value="<?php echo esc_attr( sprintf( '%s %s', $user->first_name, $user->last_name ) ); ?>" /></label></p>
 								<p><label><?php _e( 'Your Email', 'widget-context' ); ?>: <input type="text" name="EMAIL" value="<?php echo esc_attr( $user->user_email ); ?>" /></label></p>
-								<p><input class="button" name="subscribe" type="submit" value="<?php _e( 'Subscribe', 'widget-context' ); ?>" /></p>
+								<p><input class="button" name="subscribe" type="submit" value="<?php esc_attr_e( 'Subscribe', 'widget-context' ); ?>" /></p>
 							</form>
 							<h3>
 								<?php esc_html_e( 'Suggested Plugins', 'widget-context' ); ?>
@@ -1012,10 +1026,14 @@ class WidgetContext {
 							</p>
 							<ul>
 								<li>
+									<strong><small>NEW:</small></strong>
+									<a href="https://blockcontext.com?utm_source=wc">Block Context</a> for showing or hiding Gutenberg blocks in context.
+								</li>
+								<li>
 									<a href="https://preseto.com/go/cf7-storage?utm_source=wc">Storage for Contact Form 7</a> saves all Contact Form 7 submissions (including attachments) in your WordPress database.
 								</li>
 								<li>
-									<a href="https://wordpress.org/plugins/contact-form-7-extras/">Contact Form 7 Controls</a> adds a simple interface for managing Contact Form 7 form settings.
+									<a href="https://formcontrols.com/?utm_source=wc">Contact Form 7 Controls</a> adds a simple interface for managing Contact Form 7 form settings.
 								</li>
 							</ul>
 						</div>
@@ -1033,23 +1051,5 @@ class WidgetContext {
 	public function get_sidebars_widgets_copy() {
 		return $this->sidebars_widgets_copy;
 	}
-
-	/**
-	 * Return the public URL of a plugin asset file.
-	 *
-	 * @param string $asset_relative_path Relative path to the asset file.
-	 *
-	 * @return string
-	 */
-	function asset_url( $asset_relative_path ) {
-		$file_path = sprintf(
-			'%s/%s',
-			plugin_basename( $this->plugin_path ),
-			ltrim( $asset_relative_path, '/' )
-		);
-
-		return plugins_url( $file_path );
-	}
-
 
 }

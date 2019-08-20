@@ -1,29 +1,20 @@
-jQuery(document).ready(function($) {
+/* global jQuery, document */
+jQuery( document ).ready( function( $ ) {
+	function showHideControls( widgetId ) {
+		var condition = $( '#widget-context-' + widgetId + ' .wc-field-select-condition select' ).val();
 
-	function show_hide_controls( widget_id ) {
-
-		var condition = $( '#widget-context-' + widget_id + ' .wc-field-select-condition select' ).val();
-
-		$( '#widget-context-' + widget_id ).toggleClass( 'context-global', ( condition == 'show' || condition == 'hide' ) );
-
+		$( '#widget-context-' + widgetId ).toggleClass( 'context-global', ( condition === 'show' || condition === 'hide' ) );
 	}
 
-	$('.widget-context-inside').each(function() {
+	$( '.widget-context-inside' ).each( function() {
+		showHideControls( $( this ).data( 'widget-id' ) );
+	} );
 
-		show_hide_controls( $(this).data('widget-id') );
-
-	});
-
-	$('#widgets-right, #widgets-left, #customize-theme-controls').on( 'change', '.wc-field-select-condition select', function(){
-
-		show_hide_controls( $(this).parent().data('widget-id') );
-
-	});
+	$( '#widgets-right, #widgets-left, #customize-theme-controls' ).on( 'change', '.wc-field-select-condition select', function() {
+		showHideControls( $( this ).parent().data( 'widget-id' ) );
+	} );
 
 	$( document ).on( 'widget-updated widget-added', function( e, widget ) {
-
-		show_hide_controls( widget.find('input[name="widget-id"]').val() );
-
-	});
-
-});
+		showHideControls( widget.find( 'input[name="widget-id"]' ).val() );
+	} );
+} );

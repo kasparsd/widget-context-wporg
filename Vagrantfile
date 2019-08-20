@@ -1,23 +1,10 @@
-require 'yaml'
+# Local dev environment https://github.com/wpsh/wpsh-local
 
-confDir = File.expand_path("vendor/laravel/homestead", File.dirname(__FILE__))
-homesteadYamlPath = File.expand_path("Homestead.yaml", File.dirname(__FILE__))
+load File.join(
+	File.dirname(__FILE__),
+	"vendor/wpsh/local/Vagrantfile"
+)
 
-require File.expand_path(confDir + '/scripts/homestead.rb')
-
-Vagrant.require_version '>= 1.9.0'
-
-Vagrant.configure("2") do |config|
-	settings = YAML::load(File.read(homesteadYamlPath))
-
-	Homestead.configure(config, settings)
-
-	# Download and setup our WP site; wp-cli provided out of the box.
-	config.vm.provision "shell",
-		inline: "wp config create",
-		privileged: false
-
-	if defined? VagrantPlugins::HostsUpdater
-		config.hostsupdater.aliases = settings['sites'].map { |site| site['map'] }
-	end
+Vagrant.configure(2) do |config|
+	config.vm.hostname = "widgetcontext"
 end

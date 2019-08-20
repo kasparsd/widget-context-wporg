@@ -3,20 +3,20 @@
  * Plugin Name: Widget Context
  * Plugin URI: https://widgetcontext.com
  * Description: Show or hide widgets depending on the section of the site that is being viewed.
- * Version: 1.1.1
- * Author: Preseto
- * Author URI: https://preseto.com
+ * Version: 1.2.0
+ * Author: Kaspars Dambis
+ * Author URI: https://widgetcontext.com
  * Text Domain: widget-context
  */
 
-// TODO Switch to proper autoloading.
-require_once dirname( __FILE__ ) . '/src/WidgetContext.php';
-require_once dirname( __FILE__ ) . '/src/modules/custom-post-types-taxonomies/module.php';
-require_once dirname( __FILE__ ) . '/src/modules/word-count/module.php';
+if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
+	require_once __DIR__ . '/vendor/autoload.php';
+}
 
-$plugin = new WidgetContext( dirname( __FILE__ ) );
+$plugin = new Preseto\WidgetContext\Plugin( __FILE__ );
+$widget_context = new WidgetContext( $plugin );
 
-$plugin->register_module( new WidgetContextCustomCptTax( $plugin ) );
-$plugin->register_module( new WidgetContextWordCount( $plugin ) );
+$widget_context->register_module( new WidgetContextCustomCptTax( $widget_context ) );
+$widget_context->register_module( new WidgetContextWordCount( $widget_context ) );
 
-$plugin->init();
+$widget_context->init();

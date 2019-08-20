@@ -1,18 +1,19 @@
 # Widget Context
 
 Contributors: kasparsd, jamescollins  
-Tags: widget, widget context, context, logic, widget logic, cms  
+Tags: widget, widgets, widget context, context, logic, widget logic, visibility, widget visibility  
 Requires at least: 3.0  
 Tested up to: 5.2  
 Stable tag: {{ version }}  
 License: GPLv2 or later  
+Requires PHP: 5.6  
 
-Show or hide widgets on specific posts, pages or sections of your site.
+Show or hide widgets on specific posts, pages and sections of your site.
 
 
 ## Description
 
-[Widget Context](https://widgetcontext.com) will show or hide widgets on certain sections of your site — front page, posts, pages, archives, search, etc. It also features section targeting by URLs (with wildcard support) for maximum flexibility.
+Use [Widget Context](https://widgetcontext.com) to show or hide widgets on certain sections of your site -- front page, posts, pages, archives, search, etc. Use targeting by URLs (with wildcard support) for maximum flexibility.
 
 ### Contribute
 
@@ -51,6 +52,11 @@ Use the wildcard symbol `*` for matching dynamic parts of the URL. For example:
 
 
 ## Changelog
+
+### 1.1.1 (June 9, 2019)
+- Mark as tested with WordPress 5.2.
+- Add test coverage reporting and remove [Debug Bar](https://wordpress.org/plugins/debug-bar/) integration since it wasn't complete. Refactor plugin structure to support dependency integration. See [#47](https://github.com/kasparsd/widget-context-wporg/pull/47).
+- Added local development environment, see [#48](https://github.com/kasparsd/widget-context-wporg/pull/48).
 
 ### 1.1.0 (June 13, 2018)
 - Fix URL matching for URLs with query strings.

@@ -1,6 +1,6 @@
 # Widget Context
 
-[![Build Status](https://travis-ci.org/kasparsd/widget-context-wporg.svg?branch=master)](https://travis-ci.org/kasparsd/widget-context-wporg)
+[![Build Status](https://travis-ci.com/kasparsd/widget-context-wporg.svg?branch=master)](https://travis-ci.com/kasparsd/widget-context-wporg)
 [![Coverage Status](https://coveralls.io/repos/github/kasparsd/widget-context-wporg/badge.svg?branch=master)](https://coveralls.io/github/kasparsd/widget-context-wporg?branch=master)
 
 Source of the [Widget Context plugin](https://widgetcontext.com) for WordPress.
@@ -22,9 +22,15 @@ Source of the [Widget Context plugin](https://widgetcontext.com) for WordPress.
 	   git clone https://github.com/kasparsd/widget-context-wporg.git
 	   cd widget-context-wporg
 
-2. Setup the development environment and tools:
+2. Install the development dependencies:
 
-	   composer install
+	   npm install
+
+3. Start the development environment:
+
+	   vagrant up
+	
+	which is available at [widgetcontext.local](http://widgetcontext.local).
 
 
 ## Screenshots

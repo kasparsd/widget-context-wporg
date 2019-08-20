@@ -1,8 +1,11 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
+namespace Preseto\WidgetContextTest;
 
-class WidgetContextTest extends TestCase {
+use WP_Mock;
+use Preseto\WidgetContextTest\WidgetContextTestCase;
+
+class WidgetContextTargetByUrlTest extends WidgetContextTestCase {
 
 	protected $plugin;
 
@@ -13,6 +16,7 @@ class WidgetContextTest extends TestCase {
 		'http://example.com/page/' => 'page',
 		'http://example.com/?query=param' => '?query=param',
 		'http://example.com:9000/page/subpage/?query=param' => 'page/subpage?query=param',
+		'http://example.com:9000/page/?another=param#hashtoo' => 'page?another=param',
 	);
 
 	protected $map_relative = array(
@@ -26,8 +30,19 @@ class WidgetContextTest extends TestCase {
 		'/page/?query=string' => 'page?query=string',
 	);
 
-	public function __construct() {
-		$this->plugin = new WidgetContext( null );
+	public function setUp() {
+		parent::setUp();
+
+		$this->plugin = new \WidgetContext( null );
+
+		WP_Mock::userFunction( 'wp_parse_args' )
+			->andReturnUsing(
+				function( $args, $defaults ) {
+					return array_merge( $defaults, $args );
+				}
+			);
+
+		WP_Mock::alias( 'wp_parse_url', 'parse_url' );
 	}
 
 	public function testUrlMatch() {
