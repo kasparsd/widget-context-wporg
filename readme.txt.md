@@ -52,6 +52,11 @@ Use the wildcard symbol `*` for matching dynamic parts of the URL. For example:
 
 ## Changelog
 
+### 1.1.1 (June 9, 2019)
+- Mark as tested with WordPress 5.2.
+- Add test coverage reporting and remove [Debug Bar](https://wordpress.org/plugins/debug-bar/) integration since it wasn't complete. Refactor plugin structure to support dependency integration. See [#47](https://github.com/kasparsd/widget-context-wporg/pull/47).
+- Added local development environment, see [#48](https://github.com/kasparsd/widget-context-wporg/pull/48).
+
 ### 1.1.0 (June 13, 2018)
 - Fix URL matching for URLs with query strings.
 - Introduce unit tests for the URL context.
