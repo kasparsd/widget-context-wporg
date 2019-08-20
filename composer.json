@@ -23,9 +23,9 @@
     }
   },
   "require-dev": {
-    "wp-coding-standards/wpcs": "^1.2.0",
-    "phpunit/phpunit": "^5",
     "php-coveralls/php-coveralls": "^2.1.0",
+    "phpunit/phpunit": "^5",
+    "wp-coding-standards/wpcs": "^2.1",
     "wpsh/local": "^0.2.3"
   },
   "autoload": {
