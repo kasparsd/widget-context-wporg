@@ -16,6 +16,7 @@ class WidgetContextTargetByUrlTest extends WidgetContextTestCase {
 		'http://example.com/page/' => 'page',
 		'http://example.com/?query=param' => '?query=param',
 		'http://example.com:9000/page/subpage/?query=param' => 'page/subpage?query=param',
+		'http://example.com:9000/page/?another=param#hashtoo' => 'page?another=param',
 	);
 
 	protected $map_relative = array(
