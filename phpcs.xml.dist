@@ -1,11 +1,13 @@
 <?xml version="1.0"?>
 <ruleset name="WordPress Coding Standards for Plugins">
-	<config name="installed_paths" value="vendor/wp-coding-standards/wpcs" />
+	<config name="installed_paths" value="vendor/wp-coding-standards/wpcs,vendor/phpcompatibility/php-compatibility" />
 	<config name="ignore_warnings_on_exit" value="1" />
 
 	<arg name="extensions" value="php" />
 	<arg name="colors" />
 	<arg value="s" /><!-- Show sniff codes in all reports. -->
+
+	<rule ref="PHPCompatibility" />
 
 	<rule ref="WordPress-Core">
 		<exclude name="WordPress.Files.FileName" /><!-- We'll be switching to PSR-4 naming soon. -->
