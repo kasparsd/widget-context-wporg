@@ -8,7 +8,7 @@
   },
   "scripts": {
     "grunt": "grunt",
-    "build": "grunt build",
+    "build": "composer release && grunt build",
     "deploy": "grunt deploy",
     "deploy-trunk": "grunt deploy-trunk",
     "test": "composer test",
