@@ -1017,7 +1017,7 @@ class WidgetContext {
 									<a href="https://preseto.com/go/cf7-storage?utm_source=wc">Storage for Contact Form 7</a> saves all Contact Form 7 submissions (including attachments) in your WordPress database.
 								</li>
 								<li>
-									<a href="https://wordpress.org/plugins/contact-form-7-extras/">Contact Form 7 Controls</a> adds a simple interface for managing Contact Form 7 form settings.
+									<a href="https://formcontrols.com/?utm_source=wc">Contact Form 7 Controls</a> adds a simple interface for managing Contact Form 7 form settings.
 								</li>
 							</ul>
 						</div>
