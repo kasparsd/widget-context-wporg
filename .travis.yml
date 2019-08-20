@@ -15,7 +15,7 @@ install:
 script:
   - npm run lint
   - npm run test
-  - npm run mess -- --ignore-violations-on-exit
+  - npm run mess -- -- --ignore-violations-on-exit
 
 after_script:
   - npm run coverage
