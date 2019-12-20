@@ -147,13 +147,23 @@ class WidgetContextTargetByUrlTest extends WidgetContextTestCase {
 		);
 
 		$this->assertFalse(
-			$this->plugin->match_path( 'another/page', implode( "\n", array( '!inverted/page', 'another' ) ) ),
+			$this->plugin->match_path( 'positive/page', implode( "\n", array( '!inverted/page', 'positive' ) ) ),
 			'Inverse can only override a positive match'
 		);
 
 		$this->assertFalse(
 			$this->plugin->match_path( 'this/page/child', implode( "\n", array( 'this/page/*', '!this/page/child' ) ) ),
 			'Inverse can override a direct match'
+		);
+
+		$this->assertTrue(
+			$this->plugin->match_path( 'page/one', implode( "\n", array( 'page/*', '!page/two' ) ) ),
+			'Wildcard is honored even with an unrelated inverted rule'
+		);
+
+		$this->assertTrue(
+			$this->plugin->match_path( 'random-path', implode( "\n", array( '!this/*' ) ) ),
+			'Standalone inverted lookups are supported'
 		);
 	}
 
