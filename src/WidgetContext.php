@@ -1,6 +1,7 @@
 <?php
 
 use Preseto\WidgetContext\UriPatternMatcher;
+use Preseto\WidgetContext\UriRules;
 
 /**
  * Widget Context plugin core.
@@ -466,7 +467,7 @@ class WidgetContext {
 			$patterns
 		);
 
-		$matcher = new UriPatternMatcher( array_filter( $patterns ) );
+		$matcher = new UriPatternMatcher( new UriRules( array_filter( $patterns ) ) );
 
 		// Match against the path with and without the query string.
 		if ( $matcher->match_path( $path ) || $matcher->match_path( $path_only ) ) {
