@@ -8,6 +8,11 @@ namespace Preseto\WidgetContext;
 class UriPatternMatcher {
 
 	/**
+	 * Delimiter used in the regex expressions.
+	 */
+	const DELIMITER = '/';
+
+	/**
 	 * Map quoted regex patterns to actual regex patterns.
 	 *
 	 * @var array
@@ -44,7 +49,7 @@ class UriPatternMatcher {
 		return array_map(
 			function( $pattern ) {
 				// Escape regex chars before we enable back the wildcards and inverse matches.
-				$pattern_quoted = preg_quote( trim( $pattern ), '/' ); // Note that '/' is the delimiter we're using for the final expression below.
+				$pattern_quoted = preg_quote( trim( $pattern ), self::DELIMITER ); // Note that '/' is the delimiter we're using for the final expression below.
 
 				// Enable wildcard and inverted checks.
 				$pattern_quoted = str_replace(
@@ -75,9 +80,12 @@ class UriPatternMatcher {
 	 * @return bool
 	 */
 	public function match_path( $path ) {
+		// String must start with any of the rules in the group.
 		$regex = sprintf(
-			'/^(%s)/i',
-			implode( '|', $this->patterns )
+			'%s^(%s)%si',
+			self::DELIMITER,
+			implode( '|', $this->patterns ),
+			self::DELIMITER
 		);
 
 		return (bool) preg_match( $regex, $path );
