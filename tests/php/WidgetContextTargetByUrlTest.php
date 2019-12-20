@@ -55,6 +55,11 @@ class WidgetContextTargetByUrlTest extends WidgetContextTestCase {
 			$this->plugin->match_path( 'page', 'page/' ),
 			'Exact with trailing'
 		);
+
+		$this->assertFalse(
+			$this->plugin->match_path( 'page-that-start-with-page', 'page' ),
+			'Ignores prefixes without a wildcard'
+		);
 	}
 
 	public function testUrlWildcards() {
@@ -133,6 +138,23 @@ class WidgetContextTargetByUrlTest extends WidgetContextTestCase {
 		foreach ( $this->map_relative as $request => $path ) {
 			$this->assertEquals( $this->plugin->get_request_path( $request ), $path );
 		}
+	}
+
+	public function testInversePattern() {
+		$this->assertTrue(
+			$this->plugin->match_path( 'another/page', implode( "\n", array( 'another/page', '!another/page/child' ) ) ),
+			'Ignore a related inverse when a positive match is found'
+		);
+
+		$this->assertFalse(
+			$this->plugin->match_path( 'another/page', implode( "\n", array( '!inverted/page', 'another' ) ) ),
+			'Inverse can only override a positive match'
+		);
+
+		$this->assertFalse(
+			$this->plugin->match_path( 'this/page/child', implode( "\n", array( 'this/page/*', '!this/page/child' ) ) ),
+			'Inverse can override a direct match'
+		);
 	}
 
 }

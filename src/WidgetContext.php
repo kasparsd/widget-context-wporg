@@ -1,5 +1,8 @@
 <?php
 
+use Preseto\WidgetContext\UriRuleMatcher;
+use Preseto\WidgetContext\UriRules;
+
 /**
  * Widget Context plugin core.
  */
@@ -456,49 +459,22 @@ class WidgetContext {
 		$path_only = strtok( $path, '?' );
 		$patterns = explode( "\n", $rules );
 
-		foreach ( $patterns as &$pattern ) {
-			// Use the same logic for parsing the visibility rules.
-			$pattern = $this->get_request_path( trim( $pattern ) );
-		}
+		$patterns = array_map(
+			function( $pattern ) {
+				// Resolve rule paths the same way as the request URI.
+				return $this->get_request_path( trim( $pattern ) );
+			},
+			$patterns
+		);
 
-		// Remove empty patterns.
-		$patterns = array_filter( $patterns );
+		$matcher = new UriRuleMatcher( new UriRules( array_filter( $patterns ) ) );
 
 		// Match against the path with and without the query string.
-		if ( $this->path_matches_patterns( $path, $patterns ) || $this->path_matches_patterns( $path_only, $patterns ) ) {
+		if ( $matcher->match_path( $path ) || $matcher->match_path( $path_only ) ) {
 			return true;
 		}
 
 		return false;
-	}
-
-	/**
-	 * Check if a URI path matches a set of regex patterns.
-	 *
-	 * @param  string $path Request URI.
-	 * @param  array  $patterns A list of patterns.
-	 *
-	 * @return bool
-	 */
-	public function path_matches_patterns( $path, $patterns ) {
-		if ( empty( $patterns ) ) {
-			return false;
-		}
-
-		foreach ( $patterns as &$pattern ) {
-			// Escape regex chars since we only support wildcards.
-			$pattern = preg_quote( trim( $pattern ), '/' );
-
-			// Enable wildcard checks.
-			$pattern = str_replace( '\*', '.*', $pattern );
-		}
-
-		$regex = sprintf(
-			'/^(%s)$/i',
-			implode( '|', $patterns )
-		);
-
-		return (bool) preg_match( $regex, $path );
 	}
 
 
