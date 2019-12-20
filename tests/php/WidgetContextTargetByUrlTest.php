@@ -146,6 +146,11 @@ class WidgetContextTargetByUrlTest extends WidgetContextTestCase {
 			'Ignore a related inverse when a positive match is found'
 		);
 
+		$this->assertTrue(
+			$this->plugin->match_path( 'child/page', implode( "\n", array( 'child/*', '!child/page/excluded' ) ) ),
+			'Wildcard is still matched even if inverse does not match'
+		);
+
 		$this->assertFalse(
 			$this->plugin->match_path( 'positive/page', implode( "\n", array( '!inverted/page', 'positive' ) ) ),
 			'Inverse can only override a positive match'
