@@ -142,12 +142,12 @@ class WidgetContextTargetByUrlTest extends WidgetContextTestCase {
 
 	public function testInversePattern() {
 		$this->assertTrue(
-			$this->plugin->match_path( 'another/page', '!inverted/page' ),
+			$this->plugin->path_matches_patterns( 'another/page', [ '!inverted/page', 'another' ] ),
 			'Anything else is an inverse of the specified path'
 		);
 
 		$this->assertFalse(
-			$this->plugin->match_path( 'this/page', '!this/page' ),
+			$this->plugin->path_matches_patterns( 'this/page', [ '!this/page', 'some-other-page' ] ),
 			'Does not match the inverse of self'
 		);
 	}
