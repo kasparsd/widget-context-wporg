@@ -55,6 +55,11 @@ class WidgetContextTargetByUrlTest extends WidgetContextTestCase {
 			$this->plugin->match_path( 'page', 'page/' ),
 			'Exact with trailing'
 		);
+
+		$this->assertFalse(
+			$this->plugin->match_path( 'page-that-start-with-page', 'page' ),
+			'Ignores prefixes without a wildcard'
+		);
 	}
 
 	public function testUrlWildcards() {
