@@ -485,17 +485,38 @@ class WidgetContext {
 			return false;
 		}
 
-		foreach ( $patterns as &$pattern ) {
-			// Escape regex chars since we only support wildcards.
-			$pattern = preg_quote( trim( $pattern ), '/' );
+		$to_expressions = array(
+			'\*' => '.*', // Enable the wildcard selectors.
+			'\!' => '?!', // Enable the inverse lookup.
+		);
 
-			// Enable wildcard checks.
-			$pattern = str_replace( '\*', '.*', $pattern );
+		$patterns_quoted = array();
+
+		foreach ( $patterns as $pattern ) {
+			// Escape regex chars before we enable back the wildcards and inverse matches.
+			$pattern_quoted = preg_quote( trim( $pattern ), '/' ); // Note that '/' is the delimiter we're using for the final expression below.
+
+			// Enable wildcard and inverted checks.
+			$pattern_quoted = str_replace(
+				array_keys( $to_expressions ),
+				$to_expressions,
+				$pattern_quoted
+			);
+
+			/**
+			 * The negative look-ahead for the inverted must be in its own group
+			 * and it can't have the $ (end of a string) rule to report a match.
+			 */
+			if ( '?!' === substr( $pattern_quoted, 0, 2 ) ) {
+				$patterns_quoted[] = sprintf( '(%s)', $pattern_quoted );
+			} else {
+				$patterns_quoted[] = sprintf( '%s$', $pattern_quoted );
+			}
 		}
 
 		$regex = sprintf(
-			'/^(%s)$/i',
-			implode( '|', $patterns )
+			'/^(%s)/i',
+			implode( '|', $patterns_quoted )
 		);
 
 		return (bool) preg_match( $regex, $path );
