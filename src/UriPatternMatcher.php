@@ -24,6 +24,11 @@ class UriPatternMatcher {
 	 */
 	private $patterns = array();
 
+	/**
+	 * Setup the pattern matcher.
+	 *
+	 * @param array $patterns List of regex-like match patterns.
+	 */
 	public function __construct( $patterns ) {
 		$this->patterns = $this->build_patterns( $patterns );
 	}
