@@ -22,27 +22,19 @@ class UriRuleMatcher {
 	);
 
 	/**
-	 * Keep all the positive patterns.
+	 * Rules to use for lookup.
 	 *
-	 * @var array
+	 * @var \Preseto\WidgetContext\UriRules
 	 */
-	private $positive_patterns = array();
-
-	/**
-	 * Keep all the inverted patterns.
-	 *
-	 * @var array
-	 */
-	private $inverted_patterns = array();
+	private $rules;
 
 	/**
 	 * Setup the pattern matcher.
 	 *
-	 * @param array $patterns List of regex-like match patterns.
+	 * @param \Preseto\WidgetContext\UriRules $rules Instance of match rules.
 	 */
 	public function __construct( $rules ) {
-		$this->positive_patterns = $this->quote_rules( $rules->positive() );
-		$this->inverted_patterns = $this->quote_rules( $rules->inverted() );
+		$this->rules = $rules;
 	}
 
 	/**
@@ -81,7 +73,7 @@ class UriRuleMatcher {
 			function ( $rule ) {
 				return sprintf( '(%s$)', $rule );
 			},
-			$rules
+			$this->quote_rules( $rules )
 		);
 
 		return sprintf(
@@ -100,15 +92,28 @@ class UriRuleMatcher {
 	 * @return bool
 	 */
 	public function match_path( $path ) {
-		$inverted_match = false;
+		$match_positive = null;
+		$match_inverted = null;
 
-		if ( ! empty( $this->inverted_patterns ) ) {
-			$inverted_match = (bool) preg_match( $this->rules_to_expression( $this->inverted_patterns ), $path );
+		$rules_positive = $this->rules->positive();
+		$rules_inverted = $this->rules->inverted();
+
+		if ( ! empty( $rules_positive ) ) {
+			$match_positive = (bool) preg_match( $this->rules_to_expression( $rules_positive ), $path );
 		}
 
-		$positive_match = (bool) preg_match( $this->rules_to_expression( $this->positive_patterns ), $path );
+		if ( ! empty( $rules_inverted ) ) {
+			$match_inverted = (bool) preg_match( $this->rules_to_expression( $rules_inverted ), $path );
+		}
 
-		return ( $positive_match && ! $inverted_match );
+		if ( null !== $match_positive && null !== $match_inverted ) {
+			return ( $match_positive && ! $match_inverted );
+		} elseif ( null !== $match_positive ) {
+			return $match_positive;
+		} elseif ( null !== $match_inverted ) {
+			return ! $match_inverted;
+		}
+
+		return false;
 	}
-
 }
