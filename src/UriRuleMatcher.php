@@ -3,9 +3,9 @@
 namespace Preseto\WidgetContext;
 
 /**
- * Match URI path patterns.
+ * Match URI path regex-like rules.
  */
-class UriPatternMatcher {
+class UriRuleMatcher {
 
 	/**
 	 * Delimiter used in the regex expressions.
