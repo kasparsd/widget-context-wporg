@@ -460,7 +460,7 @@ class WidgetContext {
 
 		$patterns = array_map(
 			function( $pattern ) {
-				// Use the same logic for parsing the visibility rules.
+				// Resolve rule paths the same way as the request URI.
 				return $this->get_request_path( trim( $pattern ) );
 			},
 			$patterns
