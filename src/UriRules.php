@@ -53,4 +53,19 @@ class UriRules {
 			}
 		);
 	}
+
+	/**
+	 * Check if any of the rules demand query string matching.
+	 *
+	 * @return boolean
+	 */
+	public function has_rules_with_query_strings() {
+		foreach ( $this->rules as $rule ) {
+			if ( false !== strpos( $rule, '?' ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 }
