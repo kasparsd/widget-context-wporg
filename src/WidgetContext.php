@@ -415,8 +415,10 @@ class WidgetContext {
 			$path = $this->get_request_path( $_SERVER['REQUEST_URI'] );
 		}
 
-		if ( $this->match_path( $path, $urls ) ) {
-			return true;
+		$matched = $this->match_path( $path, $urls );
+
+		if ( null !== $matched ) {
+			return $matched;
 		}
 
 		return $check;
@@ -467,14 +469,18 @@ class WidgetContext {
 			$patterns
 		);
 
-		$matcher = new UriRuleMatcher( new UriRules( array_filter( $patterns ) ) );
+		$uri_rules = new UriRules( array_filter( $patterns ) );
+		$matcher = new UriRuleMatcher( $uri_rules );
 
-		// Match against the path with and without the query string.
-		if ( $matcher->match_path( $path ) || $matcher->match_path( $path_only ) ) {
-			return true;
+		/**
+		 * Ignore query parameters in path unless any of the rules actually use them.
+		 * Defaults to matching paths with any query parameters.
+		 */
+		if ( $uri_rules->has_rules_with_query_strings() ) {
+			return $matcher->match_path( $path );
 		}
 
-		return false;
+		return $matcher->match_path( $path_only );
 	}
 
 

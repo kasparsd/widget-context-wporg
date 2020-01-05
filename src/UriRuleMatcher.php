@@ -89,7 +89,7 @@ class UriRuleMatcher {
 	 *
 	 * @param  string $path URI path to check.
 	 *
-	 * @return bool
+	 * @return bool|null
 	 */
 	public function match_path( $path ) {
 		$match_positive = null;
@@ -114,6 +114,6 @@ class UriRuleMatcher {
 			return ! $match_inverted;
 		}
 
-		return false;
+		return null;
 	}
 }

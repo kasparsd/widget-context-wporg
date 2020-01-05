@@ -121,11 +121,6 @@ class WidgetContextTargetByUrlTest extends WidgetContextTestCase {
 			$this->plugin->match_path( 'campaigns?cc=automotive', 'campaigns/?some=other' ),
 			'Respect query string if differen used'
 		);
-
-		$this->assertFalse(
-			$this->plugin->match_path( 'campaigns?cc=automotive', 'campaigns/?has=query' ),
-			'Ignore query string because no rules use it'
-		);
 	}
 
 	public function testPathResolverAbsolute() {
