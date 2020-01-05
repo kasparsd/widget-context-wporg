@@ -443,10 +443,8 @@ class WidgetContext {
 			$path = $this->get_request_path( $_SERVER['REQUEST_URI'] );
 		}
 
-		$matched = $this->match_path( $path, $urls );
-
-		if ( null !== $matched ) {
-			return $matched;
+		if ( $this->match_path( $path, $urls ) ) {
+			return true;
 		}
 
 		return $check;
