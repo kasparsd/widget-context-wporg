@@ -34,12 +34,9 @@ We've started working on the [Block Context plugin](https://blockcontext.com) wh
 
 #### Target by URL
 
-The “Target by URL” is a very powerful feature with a lot of flexibility for targeting sections of your website based on the request URLs. It was inspired by a similar feature in the [Drupal CMS](https://www.drupal.org).
+The "Target by URL" is a powerful feature for targeting sections of your website based on the request URLs. It was inspired by a similar feature in the [Drupal CMS](https://www.drupal.org).
 
-- Use relative URLs such as `page/sub-page` instead of absolute URLs `https://example.com/page/sub-page`.
-
-- Relative are URLs more flexible and make the logic portable between different domains and server environments.
-
+Use relative URLs such as `page/sub-page` instead of absolute URLs `https://example.com/page/sub-page` because relative URLs are more flexible and make the logic portable between different domains and server environments.
 
 ##### Wildcards
 
@@ -50,6 +47,10 @@ Use the wildcard symbol `*` for matching dynamic parts of the URL. For example:
 - `page-slug/*` to match all child pages of the page-slug parent page.
 
 - Use a trailing `?*` to capture URL with all query arguments such as `utm_source`, etc. For example, for every `blog/post-slug` also include `blog/post-slug?*`.
+
+##### Exclude URLs
+
+Prefix URL fragments with an exclamation mark `!` to exclude pages that would otherwise be captured by the more general URL fragments. For example, add `!about/family` in addition to `about/*` to exclude the `family` child page from the selection.
 
 
 ## Installation
