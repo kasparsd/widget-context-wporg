@@ -32,6 +32,8 @@ We've started working on the [Block Context plugin](https://blockcontext.com) wh
 
 ### Documentation
 
+Widget visibility can be configured under individual widget settings under "Appearance → Widgets" in your WordPress administration area or through the widget editing interface in the Customizer.
+
 #### Target by URL
 
 The "Target by URL" is a powerful feature for targeting sections of your website based on the request URLs. It was inspired by a similar feature in the [Drupal CMS](https://www.drupal.org).
