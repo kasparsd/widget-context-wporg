@@ -18,9 +18,9 @@ Use [Widget Context](https://widgetcontext.com) to show or hide widgets on certa
 https://www.youtube.com/watch?v=rEHvqsWoXAE
 
 
-### Block Context
+### NEW: Block Context
 
-**New**: We've started working on the [Block Context plugin](https://blockcontext.com) which brings similar functionality to Gutenberg blocks.
+We've started working on the [Block Context plugin](https://blockcontext.com) which brings similar functionality to Gutenberg blocks.
 
 
 ### Contribute
