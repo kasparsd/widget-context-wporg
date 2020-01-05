@@ -292,13 +292,63 @@ class WidgetContext {
 		return $sidebars_widgets;
 	}
 
-
-	function check_widget_visibility( $widget_id ) {
-		// Check if this widget even has context set
+	/**
+	 * Determine widget visibility according to the current global context.
+	 *
+	 * @param string $widget_id Widget ID.
+	 *
+	 * @return boolean
+	 */
+	public function check_widget_visibility( $widget_id ) {
+		// Check if this widget even has context set.
 		if ( ! isset( $this->context_options[ $widget_id ] ) ) {
 			return true;
 		}
 
+		// Get the match rule for this widget (show/hide/selected/notselected).
+		$match_rule = $this->context_options[ $widget_id ]['incexc']['condition'];
+
+		// Force show or hide the widget!
+		if ( 'show' === $match_rule ) {
+			return true;
+		} elseif ( 'hide' === $match_rule ) {
+			return false;
+		}
+
+		return $this->context_matches_condition_for_widget_id(
+			$widget_id,
+			( 'selected' === $match_rule )
+		);
+	}
+
+	/**
+	 * If widget context rules match the selected conditional (regular or inverted).
+	 *
+	 * @param string $widget_id Widget ID.
+	 * @param boolean $condition Regular or inverted logic.
+	 *
+	 * @return boolean
+	 */
+	public function context_matches_condition_for_widget_id( $widget_id, $condition ) {
+		$matches = $this->context_matches_for_widget_id( $widget_id );
+
+		if ( $condition && in_array( true, $matches, true ) ) {
+			return true;
+		} elseif ( ! $condition && ! in_array( true, $matches, true ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get context rule matches for a widget ID.
+	 *
+	 * @param string $widget_id Widget ID.
+	 *
+	 * @return array
+	 */
+	public function context_matches_for_widget_id( $widget_id ) {
 		$matches = array();
 
 		foreach ( $this->get_contexts() as $context_id => $context_settings ) {
@@ -321,29 +371,7 @@ class WidgetContext {
 			);
 		}
 
-		// Get the match rule for this widget (show/hide/selected/notselected)
-		$match_rule = $this->context_options[ $widget_id ]['incexc']['condition'];
-
-		// Force show or hide the widget!
-		if ( 'show' === $match_rule ) {
-			return true;
-		} elseif ( 'hide' === $match_rule ) {
-			return false;
-		}
-
-		$inc = false;
-
-		if ( 'selected' === $match_rule ) {
-			$inc = true;
-		}
-
-		if ( $inc && in_array( true, $matches, true ) ) {
-			return true;
-		} elseif ( ! $inc && ! in_array( true, $matches, true ) ) {
-			return true;
-		}
-
-		return false;
+		return $matches;
 	}
 
 
