@@ -315,30 +315,27 @@ class WidgetContext {
 			return false;
 		}
 
-		return $this->context_matches_condition_for_widget_id(
-			$widget_id,
-			( 'selected' === $match_rule )
-		);
+		// Show or hide on match.
+		$condition = ( 'selected' === $match_rule );
+
+		if ( $this->context_matches_condition_for_widget_id( $widget_id ) ) {
+			return $condition;
+		}
+
+		return ! $condition;
 	}
 
 	/**
-	 * If widget context rules match the selected conditional (regular or inverted).
+	 * Check if widget visibility rules match the current context.
 	 *
 	 * @param string $widget_id Widget ID.
-	 * @param boolean $condition Regular or inverted logic.
 	 *
 	 * @return boolean
 	 */
-	public function context_matches_condition_for_widget_id( $widget_id, $condition ) {
+	public function context_matches_condition_for_widget_id( $widget_id ) {
 		$matches = $this->context_matches_for_widget_id( $widget_id );
 
-		if ( $condition && in_array( true, $matches, true ) ) {
-			return true;
-		} elseif ( ! $condition && ! in_array( true, $matches, true ) ) {
-			return true;
-		}
-
-		return false;
+		return in_array( true, $matches, true );
 	}
 
 	/**
@@ -443,11 +440,7 @@ class WidgetContext {
 			$path = $this->get_request_path( $_SERVER['REQUEST_URI'] );
 		}
 
-		if ( $this->match_path( $path, $urls ) ) {
-			return true;
-		}
-
-		return $check;
+		return $this->match_path( $path, $urls );
 	}
 
 	/**
