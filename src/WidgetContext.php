@@ -307,10 +307,10 @@ class WidgetContext {
 				continue;
 			}
 
+			$widget_context_args = array();
+
 			// Make sure that context settings for this widget are defined
-			if ( ! isset( $this->context_options[ $widget_id ][ $context_id ] ) ) {
-				$widget_context_args = array();
-			} else {
+			if ( ! empty( $this->context_options[ $widget_id ][ $context_id ] ) ) {
 				$widget_context_args = $this->context_options[ $widget_id ][ $context_id ];
 			}
 
