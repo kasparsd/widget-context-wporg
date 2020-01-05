@@ -61,6 +61,10 @@ Use the wildcard symbol `*` for matching dynamic parts of the URL. For example:
 
 ## Changelog
 
+### 1.3.0 (January 5, 2020)
+
+- Prefix URL fragments with an exclamation mark `!` in the "Target by URL" selector to exclude specific pages that would otherwise be captured by more general URL fragments. For example, add `!about/family` in addition to `about/*` to exclude the `family` child page from the selection.
+
 ### 1.2.0 (August 20, 2019)
 
 - Set PHP 5.6 as the minimum supported version of PHP to match WordPress core.
