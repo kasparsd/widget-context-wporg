@@ -133,7 +133,7 @@ class WidgetContext {
 				'weight' => 20,
 			),
 			self::RULE_KEY_URLS_INVERT => array(
-				'label' => __( 'Exclude Target by URL', 'widget-context' ),
+				'label' => __( 'Exclude by URL', 'widget-context' ),
 				'description' => __( 'Override other matches using URL patterns.', 'widget-context' ),
 				'weight' => 25,
 			),
