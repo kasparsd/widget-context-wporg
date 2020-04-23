@@ -1071,6 +1071,17 @@ class WidgetContext {
 						?>
 
 						<table class="form-table" role="presentation">
+							<tr id="widget-context-pro">
+								<th scrope="row">
+									<?php esc_html_e( 'Support', 'widget-context' ); ?>
+								</th>
+								<td>
+									<p>
+										<a href="https://widgetcontext.com/pro">Subscribe to get premium support</a> and the 🚀 PRO version of the plugin for free when it's launched!
+										Your support enables consistent maintenance and new feature development, and is greatly appreciated.
+									</p>
+								</td>
+							</tr>
 							<tr>
 								<th scrope="row">
 									<?php esc_html_e( 'Configure Widgets', 'widget-context' ); ?>
