@@ -123,23 +123,23 @@ class WidgetContext {
 				'type' => 'core',
 			),
 			'location' => array(
-				'label' => __( 'Global Sections', 'widget-context' ),
+				'label' => __( 'View Context', 'widget-context' ),
 				'description' => __( 'Match using the standard WordPress template tags.', 'widget-context' ),
 				'weight' => 10,
 			),
 			'url' => array(
 				'label' => __( 'Target by URL', 'widget-context' ),
-				'description' => __( 'Match with URL patterns.', 'widget-context' ),
+				'description' => __( 'Match using URL patterns.', 'widget-context' ),
 				'weight' => 20,
 			),
 			self::RULE_KEY_URLS_INVERT => array(
-				'label' => __( 'Ignore by URL', 'widget-context' ),
-				'description' => __( 'Override other matches with URL patterns.', 'widget-context' ),
+				'label' => __( 'Invert by URL', 'widget-context' ),
+				'description' => __( 'Override other matches using URL patterns.', 'widget-context' ),
 				'weight' => 25,
 			),
 			'admin_notes' => array(
 				'label' => __( 'Notes (invisible to public)', 'widget-context' ),
-				'description' => __( 'Enables private notes on widget context settings.', 'widget-context' ),
+				'description' => __( 'Keep private notes on widget context settings.', 'widget-context' ),
 				'weight' => 90,
 			),
 		);

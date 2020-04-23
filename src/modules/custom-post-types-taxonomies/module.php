@@ -47,7 +47,7 @@ class WidgetContextCustomCptTax {
 	function add_context( $contexts ) {
 		$contexts['custom_post_types_taxonomies'] = array(
 			'label' => __( 'Custom Post Types and Taxonomies', 'widget-context' ),
-			'description' => __( 'Context based custom post types and taxonomies', 'widget-context' ),
+			'description' => __( 'Match posts and archives of custom post types and taxonomies.', 'widget-context' ),
 			'weight' => 10,
 		);
 
