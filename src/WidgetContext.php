@@ -1015,7 +1015,7 @@ class WidgetContext {
 
 			if ( ! empty( $context_args['description'] ) ) {
 				$context_description = sprintf(
-					'<p class="context-desc">%s</p>',
+					'<p class="description">%s</p>',
 					esc_html( $context_args['description'] )
 				);
 			} else {
@@ -1028,7 +1028,7 @@ class WidgetContext {
 			}
 
 			$context_controls[] = sprintf(
-				'<li class="context-%s">
+				'<li class="enabled-contexts-item context-%s">
 					<label>
 						<input type="hidden" name="%s[contexts][%s]" value="0" />
 						<input type="checkbox" name="%s[contexts][%s]" value="1" %s /> %s
@@ -1059,16 +1059,33 @@ class WidgetContext {
 							do_settings_sections( $this->settings_name );
 						?>
 
-						<?php
-							printf(
-								'<div class="settings-section settings-section-modules">
-									<h3>%s</h3>
-									<ul>%s</ul>
-								</div>',
-								esc_html__( 'Enabled Context Modules', 'widget-context' ),
-								implode( '', $context_controls )
-							);
-						?>
+						<table class="form-table" role="presentation">
+							<tr>
+								<th scrope="row">
+									<?php esc_html_e( 'Configure Widgets', 'widget-context' ); ?>
+								</th>
+								<td>
+									<p>
+										<a class="button" href=""><?php esc_html_e( 'Configure Widgets', 'widget-context' ); ?></a>
+									</p>
+									<p class="description">
+										<?php esc_html_e( 'Configure the widget context using the WordPress Customizer (with preview) or the widget settings under "Appearance → Widgets".', 'widget-context' ); ?>
+									</p>
+
+								</td>
+							</tr>
+							<tr>
+								<th scrope="row">
+									<?php esc_html_e( 'Enabled Contexts', 'widget-context' ); ?>
+								</th>
+								<td>
+									<p>
+										<?php esc_html_e( 'Select the context rules available for widgets:', 'widget-context' ); ?>
+									</p>
+									<?php printf( '<ul>%s</ul>', implode( '', $context_controls ) ); ?>
+								</td>
+							</tr>
+						</table>
 
 						<?php
 							submit_button();
