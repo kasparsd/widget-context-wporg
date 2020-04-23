@@ -412,6 +412,29 @@ class WidgetContext {
 	}
 
 	/**
+	 * Fetch a setting value for the context setting as a string.
+	 *
+	 * @param array $settings List of all settings by setting key.
+	 * @param string $key Setting key to check.
+	 *
+	 * @return string
+	 */
+	protected function get_setting_as_string( $settings, $key ) {
+		if ( ! is_array( $settings ) ) {
+			$settings = array();
+		}
+
+		$settings = wp_parse_args(
+			$settings,
+			array(
+				$key => null,
+			)
+		);
+
+		return trim( (string) $settings[ $key ] );
+	}
+
+	/**
 	 * Conditional logic for the URL check.
 	 *
 	 * @param  bool  $check Current visibility state.
@@ -421,23 +444,10 @@ class WidgetContext {
 	 */
 	public function context_check_url( $check, $settings ) {
 		$path = $this->get_request_path();
-
-		$settings = wp_parse_args(
-			$settings,
-			array(
-				'urls' => null,
-			)
-		);
-
-		$urls = trim( $settings['urls'] );
+		$urls = $this->get_setting_as_string( $settings, 'urls' );
 
 		if ( empty( $urls ) ) {
 			return $check;
-		}
-
-		if ( ! isset( $path ) ) {
-			// Do the parsing only once.
-			$path = $this->get_request_path( $_SERVER['REQUEST_URI'] );
 		}
 
 		return $this->match_path( $path, $urls );
