@@ -7,7 +7,7 @@
 
 .widget-context .widget-context-header { float:left; width:100%; clear:both; }
 .widget-context .widget-context-header h3 { font-size:1.1em; margin:0 0.5em 0.5em 0; padding:0; float:left; }
-.widget-context .widget-context-header a { float:right; }
+.widget-context .widget-context-header { color:#ccc; }
 
 .widget-context .context-group { float:left; width:100%; clear:both; margin-bottom:0.5em; }
 .widget-context .context-toggle { margin:0 0 0.3em 0; display:block; text-decoration:none; color:inherit; font-weight:bold; }

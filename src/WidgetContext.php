@@ -665,14 +665,19 @@ class WidgetContext {
 			}
 		}
 
-		$settings_link = '';
+		$settings_link = array();
 
 		if ( current_user_can( 'edit_theme_options' ) ) {
-			$settings_link = sprintf(
-				'<a href="%s" class="widget-context-settings-link" title="%s" target="_blank">%s</a>',
+			$settings_link[] = sprintf(
+				'<a href="%s" title="%s" target="_blank">%s</a>',
 				admin_url( 'options-general.php?page=widget_context_settings' ),
 				esc_attr__( 'Widget Context Settings', 'widget-context' ),
 				esc_html__( 'Settings', 'widget-context' )
+			);
+
+			$settings_link[] = sprintf(
+				'<a href="%s" target="_blank">PRO 🚀</a>',
+				esc_url( 'https://widgetcontext.com/pro' )
 			);
 		}
 
@@ -680,14 +685,14 @@ class WidgetContext {
 			'<div class="widget-context">
 				<div class="widget-context-header">
 					<h3>%s</h3>
-					%s
+					<span class="widget-context-settings-link">%s</span>
 				</div>
 				<div class="widget-context-inside" id="widget-context-%s" data-widget-id="%s">
 					%s
 				</div>
 			</div>',
 			__( 'Widget Context', 'widget-context' ),
-			$settings_link,
+			implode( ' | ', $settings_link ),
 			// Inslide classes
 			esc_attr( $widget_id ),
 			esc_attr( $widget_id ),
