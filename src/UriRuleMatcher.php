@@ -85,6 +85,40 @@ class UriRuleMatcher {
 	}
 
 	/**
+	 * Check if a path matches the positive rules.
+	 *
+	 * @param string $path Path to check.
+	 *
+	 * @return boolean|null
+	 */
+	public function match_path_positive( $path ) {
+		$rules = $this->rules->positive();
+
+		if ( ! empty( $rules ) ) {
+			return (bool) preg_match( $this->rules_to_expression( $rules ), $path );
+		}
+
+		return null;
+	}
+
+	/**
+	 * Check if a path matches the inverted rules.
+	 *
+	 * @param string $path Path to check.
+	 *
+	 * @return boolean|null
+	 */
+	public function match_path_inverted( $path ) {
+		$rules = $this->rules->inverted();
+
+		if ( ! empty( $rules ) ) {
+			return ( false === (bool) preg_match( $this->rules_to_expression( $rules ), $path ) );
+		}
+
+		return null;
+	}
+
+	/**
 	 * Check if a URI path matches any of the patterns.
 	 *
 	 * @param  string $path URI path to check.
@@ -92,19 +126,8 @@ class UriRuleMatcher {
 	 * @return bool|null
 	 */
 	public function match_path( $path ) {
-		$match_positive = null;
-		$match_inverted = null;
-
-		$rules_positive = $this->rules->positive();
-		$rules_inverted = $this->rules->inverted();
-
-		if ( ! empty( $rules_positive ) ) {
-			$match_positive = (bool) preg_match( $this->rules_to_expression( $rules_positive ), $path );
-		}
-
-		if ( ! empty( $rules_inverted ) ) {
-			$match_inverted = (bool) preg_match( $this->rules_to_expression( $rules_inverted ), $path );
-		}
+		$match_positive = $this->match_path_positive( $path );
+		$match_inverted = $this->match_path_inverted( $path );
 
 		if ( null !== $match_positive && null !== $match_inverted ) {
 			return ( $match_positive && ! $match_inverted );
