@@ -67,7 +67,7 @@ Specify URLs to ignore even if they're matched by any of the other context rules
 
 ### 1.3.0 (April 23, 2020)
 
-- Introduce the long-awaited "Exclude by URL" feature to prevent certain URLs from showing or hiding a widget when it's matched by any other visbility rule.
+- Introduce the long-awaited "Exclude by URL" feature to prevent certain URLs from showing or hiding a widget when it's matched by any other visibility rule.
 - Introduce [premium support](https://widgetcontext.com/pro) to help maintain the plugin. Subscribe now to get the PRO version of the Widget Context for free when it's launched!
 
 ### 1.2.0 (August 20, 2019)
