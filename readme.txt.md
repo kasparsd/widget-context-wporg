@@ -7,6 +7,7 @@ Tested up to: 5.3
 Stable tag: {{ version }}  
 License: GPLv2 or later  
 Requires PHP: 5.6  
+Donate link: https://widgetcontext.com/pro
 
 Show or hide widgets on specific posts, pages and sections of your site.
 
@@ -18,9 +19,9 @@ Use [Widget Context](https://widgetcontext.com) to show or hide widgets on certa
 https://www.youtube.com/watch?v=rEHvqsWoXAE
 
 
-### NEW: Block Context
+### Premium Support
 
-We've started working on the [Block Context plugin](https://blockcontext.com) which brings similar functionality to Gutenberg blocks.
+Subscribe to our [Premium Support service](https://widgetcontext.com/pro) and get the PRO 🚀 version of the plugin for free when it’s launched! Your support enables consistent maintenance and new feature development, and is greatly appreciated.
 
 
 ### Contribute
