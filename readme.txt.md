@@ -9,12 +9,12 @@ License: GPLv2 or later
 Requires PHP: 5.6  
 Donate link: https://widgetcontext.com/pro
 
-Show or hide widgets on specific posts, pages and sections of your site.
+Show and hide widgets on specific posts, pages and sections of your site.
 
 
 ## Description
 
-Use [Widget Context](https://widgetcontext.com) to show or hide widgets on certain sections of your site -- front page, posts, pages, archives, search, etc. Use targeting by URLs (with wildcard support) for maximum flexibility.
+Use [Widget Context](https://widgetcontext.com) to show and hide widgets on certain sections of your site -- front page, posts, pages, archives, search, etc. Use targeting by URLs (with wildcard support) for maximum flexibility.
 
 https://www.youtube.com/watch?v=rEHvqsWoXAE
 
