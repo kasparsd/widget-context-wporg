@@ -22,22 +22,6 @@ class UriRuleMatcher {
 	);
 
 	/**
-	 * Rules to use for lookup.
-	 *
-	 * @var \Preseto\WidgetContext\UriRules
-	 */
-	private $rules;
-
-	/**
-	 * Setup the pattern matcher.
-	 *
-	 * @param \Preseto\WidgetContext\UriRules $rules Instance of match rules.
-	 */
-	public function __construct( $rules ) {
-		$this->rules = $rules;
-	}
-
-	/**
 	 * Helper to sanitize and format rules for regex.
 	 *
 	 * @param array $rules List of regex-like rules.
@@ -85,33 +69,16 @@ class UriRuleMatcher {
 	}
 
 	/**
-	 * Check if a URI path matches any of the patterns.
+	 * Check if a path matches the regex rules.
 	 *
-	 * @param  string $path URI path to check.
+	 * @param string $uri Path to check.
+	 * @param array  $rules List of URIs to check against.
 	 *
-	 * @return bool|null
+	 * @return boolean|null Return null if no lookup performed because of missing rules.
 	 */
-	public function match_path( $path ) {
-		$match_positive = null;
-		$match_inverted = null;
-
-		$rules_positive = $this->rules->positive();
-		$rules_inverted = $this->rules->inverted();
-
-		if ( ! empty( $rules_positive ) ) {
-			$match_positive = (bool) preg_match( $this->rules_to_expression( $rules_positive ), $path );
-		}
-
-		if ( ! empty( $rules_inverted ) ) {
-			$match_inverted = (bool) preg_match( $this->rules_to_expression( $rules_inverted ), $path );
-		}
-
-		if ( null !== $match_positive && null !== $match_inverted ) {
-			return ( $match_positive && ! $match_inverted );
-		} elseif ( null !== $match_positive ) {
-			return $match_positive;
-		} elseif ( null !== $match_inverted ) {
-			return ! $match_inverted;
+	public function uri_matches_rules( $uri, $rules ) {
+		if ( ! empty( $rules ) ) {
+			return (bool) preg_match( $this->rules_to_expression( $rules ), $uri );
 		}
 
 		return null;
