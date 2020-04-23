@@ -124,12 +124,12 @@ class WidgetContext {
 			),
 			'location' => array(
 				'label' => __( 'Global Sections', 'widget-context' ),
-				'description' => __( 'Based on standard WordPress template tags.', 'widget-context' ),
+				'description' => __( 'Match using the standard WordPress template tags.', 'widget-context' ),
 				'weight' => 10,
 			),
 			'url' => array(
 				'label' => __( 'Target by URL', 'widget-context' ),
-				'description' => __( 'Based on URL patterns.', 'widget-context' ),
+				'description' => __( 'Match with URL patterns.', 'widget-context' ),
 				'weight' => 20,
 			),
 			self::RULE_KEY_URLS_INVERT => array(
