@@ -210,7 +210,7 @@ class WidgetContext {
 
 	function admin_scripts( $page ) {
 		// Enqueue only on widgets and customizer view
-		if ( ! in_array( $page, array( 'widgets.php', 'settings_page_widget_context_settings' ), true ) ) {
+		if ( ! in_array( $page, array( 'widgets.php', 'appearance_page_widget_context_settings' ), true ) ) {
 			return;
 		}
 
@@ -989,12 +989,13 @@ class WidgetContext {
 
 
 	function widget_context_settings_menu() {
-		add_options_page(
+		add_theme_page(
 			__( 'Widget Context Settings', 'widget-context' ),
 			__( 'Widget Context', 'widget-context' ),
 			'manage_options',
 			$this->settings_name,
-			array( $this, 'widget_context_admin_view' )
+			array( $this, 'widget_context_admin_view' ),
+			3 // Try to place it right under the Widgets.
 		);
 	}
 
