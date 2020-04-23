@@ -473,7 +473,7 @@ class WidgetContext {
 	 *
 	 * @return bool
 	 */
-	public function context_check_url_invert( $check, $settings ) {
+	public function context_check_urls_invert( $check, $settings ) {
 		$path = $this->get_request_path();
 		$urls = $this->get_setting_as_string( $settings, self::RULE_KEY_URLS_INVERT );
 
