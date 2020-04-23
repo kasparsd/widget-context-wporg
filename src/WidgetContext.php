@@ -123,7 +123,7 @@ class WidgetContext {
 				'type' => 'core',
 			),
 			'location' => array(
-				'label' => __( 'View Context', 'widget-context' ),
+				'label' => __( 'Global Sections', 'widget-context' ),
 				'description' => __( 'Match using the standard WordPress template tags.', 'widget-context' ),
 				'weight' => 10,
 			),

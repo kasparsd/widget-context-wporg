@@ -51,9 +51,9 @@ Use the wildcard symbol `*` for matching dynamic parts of the URL. For example:
 
 - Use a trailing `?*` to capture URL with all query arguments such as `utm_source`, etc. For example, for every `blog/post-slug` also include `blog/post-slug?*`.
 
-##### Exclude URLs
+#### Exclude Target by URL
 
-Prefix URL fragments with an exclamation mark `!` to exclude pages that would otherwise be captured by the more general URL fragments. For example, add `!about/family` in addition to `about/*` to exclude the `family` child page from the selection.
+Specify URLs to ignore even if they're matched by any of the other context rules. For example, enter `example/sub-page` to hide a widget on this page even when "All Posts" is selected under "Global Sections".
 
 
 ## Installation
