@@ -133,7 +133,7 @@ class WidgetContext {
 		);
 
 		// Add default context controls and checks
-		foreach ( $default_contexts as $context_name => $context_desc ) {
+		foreach ( array_keys( $default_contexts ) as $context_name ) {
 			add_filter( 'widget_context_control-' . $context_name, array( $this, 'control_' . $context_name ), 10, 2 );
 			add_filter( 'widget_context_check-' . $context_name, array( $this, 'context_check_' . $context_name ), 10, 2 );
 		}
