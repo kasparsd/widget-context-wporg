@@ -110,14 +110,10 @@ class UriRuleMatcher {
 		$match_positive = $this->path_matches_rules( $path, $this->rules->positive() );
 		$match_inverted = $this->path_matches_rules( $path, $this->rules->inverted() );
 
-		if ( null !== $match_positive && null !== $match_inverted ) {
-			return ( $match_positive && ! $match_inverted );
-		} elseif ( null !== $match_positive ) {
-			return $match_positive;
-		} elseif ( null !== $match_inverted ) {
-			return ! $match_inverted;
+		if ( $match_inverted ) {
+			return false;
 		}
 
-		return null;
+		return $match_positive;
 	}
 }

@@ -161,7 +161,7 @@ class WidgetContextTargetByUrlTest extends WidgetContextTestCase {
 			'Wildcard is honored even with an unrelated inverted rule'
 		);
 
-		$this->assertTrue(
+		$this->assertNull(
 			$this->plugin->match_path( 'random-path', implode( "\n", array( '!this/*' ) ) ),
 			'Standalone inverted lookups are supported'
 		);
