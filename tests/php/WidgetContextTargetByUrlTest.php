@@ -125,13 +125,13 @@ class WidgetContextTargetByUrlTest extends WidgetContextTestCase {
 
 	public function testPathResolverAbsolute() {
 		foreach ( $this->map_absolute as $request => $path ) {
-			$this->assertEquals( $this->plugin->get_request_path( $request ), $path );
+			$this->assertEquals( $this->plugin->path_from_uri( $request ), $path );
 		}
 	}
 
 	public function testPathResolverRelative() {
 		foreach ( $this->map_relative as $request => $path ) {
-			$this->assertEquals( $this->plugin->get_request_path( $request ), $path );
+			$this->assertEquals( $this->plugin->path_from_uri( $request ), $path );
 		}
 	}
 

@@ -411,7 +411,6 @@ class WidgetContext {
 		return $check;
 	}
 
-
 	/**
 	 * Conditional logic for the URL check.
 	 *
@@ -420,8 +419,8 @@ class WidgetContext {
 	 *
 	 * @return bool
 	 */
-	function context_check_url( $check, $settings ) {
-		static $path;
+	public function context_check_url( $check, $settings ) {
+		$path = $this->get_request_path();
 
 		$settings = wp_parse_args(
 			$settings,
@@ -445,6 +444,21 @@ class WidgetContext {
 	}
 
 	/**
+	 * Fetch the request path for the current request.
+	 *
+	 * @return string
+	 */
+	protected function get_request_path() {
+		static $path;
+
+		if ( ! isset( $path ) ) {
+			$path = $this->path_from_uri( $_SERVER['REQUEST_URI'] );
+		}
+
+		return $path;
+	}
+
+	/**
 	 * Return the path relative to the root of the hostname. We always remove
 	 * the leading and trailing slashes around the URI path.
 	 *
@@ -452,7 +466,7 @@ class WidgetContext {
 	 *
 	 * @return string
 	 */
-	public function get_request_path( $uri ) {
+	public function path_from_uri( $uri ) {
 		$parts = wp_parse_args(
 			wp_parse_url( $uri ),
 			array(
@@ -484,7 +498,7 @@ class WidgetContext {
 		$patterns = array_map(
 			function( $pattern ) {
 				// Resolve rule paths the same way as the request URI.
-				return $this->get_request_path( trim( $pattern ) );
+				return $this->path_from_uri( trim( $pattern ) );
 			},
 			$patterns
 		);

@@ -43,12 +43,12 @@ class WidgetContextTest extends WidgetContextTestCase {
 	public function testRequestPathResolver() {
 		$this->assertEquals(
 			'path-to-a/url.html?true=2',
-			$this->plugin->get_request_path( 'https://example.com:8999/path-to-a/url.html?true=2' )
+			$this->plugin->path_from_uri( 'https://example.com:8999/path-to-a/url.html?true=2' )
 		);
 
 		$this->assertEquals(
 			'path-to-a/url.html',
-			$this->plugin->get_request_path( 'path-to-a/url.html' )
+			$this->plugin->path_from_uri( 'path-to-a/url.html' )
 		);
 	}
 
