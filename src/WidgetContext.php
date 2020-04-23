@@ -446,11 +446,11 @@ class WidgetContext {
 		$path = $this->get_request_path();
 		$urls = $this->get_setting_as_string( $settings, 'urls' );
 
-		if ( empty( $urls ) ) {
-			return $check;
+		if ( ! empty( $urls ) ) {
+			return $this->match_path( $path, $urls );
 		}
 
-		return $this->match_path( $path, $urls );
+		return $check;
 	}
 
 	/**
