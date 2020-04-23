@@ -202,6 +202,16 @@ class WidgetContext {
 	}
 
 
+	/**
+	 * Get the state of the PRO nag.
+	 *
+	 * @return boolean
+	 */
+	public function pro_nag_enabled() {
+		return (bool) apply_filters( 'widget_context_pro_nag', true );
+	}
+
+
 	function set_widget_contexts_frontend() {
 		// Hide/show widgets for is_active_sidebar() to work
 		add_filter( 'sidebars_widgets', array( $this, 'maybe_unset_widgets_by_context' ), 10 );
@@ -675,10 +685,12 @@ class WidgetContext {
 				esc_html__( 'Settings', 'widget-context' )
 			);
 
-			$settings_link[] = sprintf(
-				'<a href="%s" target="_blank">PRO 🚀</a>',
-				esc_url( 'https://widgetcontext.com/pro' )
-			);
+			if ( $this->pro_nag_enabled() ) {
+				$settings_link[] = sprintf(
+					'<a href="%s" target="_blank">PRO 🚀</a>',
+					esc_url( 'https://widgetcontext.com/pro' )
+				);
+			}
 		}
 
 		return sprintf(
