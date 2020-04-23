@@ -435,7 +435,7 @@ class WidgetContext {
 	}
 
 	/**
-	 * Conditional logic for the URL check.
+	 * Check if a set of URL paths match the current request.
 	 *
 	 * @param  bool  $check Current visibility state.
 	 * @param  array $settings Visibility settings.
@@ -446,8 +446,8 @@ class WidgetContext {
 		$path = $this->get_request_path();
 		$urls = $this->get_setting_as_string( $settings, 'urls' );
 
-		if ( ! empty( $urls ) ) {
-			return $this->match_path( $path, $urls );
+		if ( ! empty( $urls ) && $this->match_path( $path, $urls ) ) {
+			return true;
 		}
 
 		return $check;
@@ -494,16 +494,14 @@ class WidgetContext {
 	}
 
 	/**
-	 * Check if the current request matches path rules.
+	 * Parse a text blob of URI fragments into URI rules.
 	 *
-	 * @param  string $path  Current request relative to the root of the hostname.
-	 * @param  string $rules A list of path patterns seperated by new line.
+	 * @param string $paths String of URI paths seperated by line breaks.
 	 *
-	 * @return bool|null Return `null` if no rules to match against.
+	 * @return array List of formatted URI paths.
 	 */
-	function match_path( $path, $rules ) {
-		$path_only = strtok( $path, '?' );
-		$patterns = explode( "\n", $rules );
+	protected function uri_rules_from_paths( $paths ) {
+		$patterns = explode( "\n", $paths );
 
 		$patterns = array_map(
 			function( $pattern ) {
@@ -513,23 +511,36 @@ class WidgetContext {
 			$patterns
 		);
 
-		$matcher = new UriRuleMatcher();
-		$uri_rules = new UriRules( array_filter( $patterns ) );
+		return array_filter( $patterns );
+	}
+
+	/**
+	 * Check if the current request matches path rules.
+	 *
+	 * @param  string $path  Current request relative to the root of the hostname.
+	 * @param  string $rules A list of path patterns seperated by new line.
+	 *
+	 * @return bool|null Return `null` if no rules to match against.
+	 */
+	public function match_path( $path, $rules ) {
+		$uri_rules = new UriRules( $this->uri_rules_from_paths( $rules ) );
+		$uri_rules_paths = $uri_rules->rules();
 
 		/**
 		 * Ignore query parameters in path unless any of the rules actually use them.
 		 * Defaults to matching paths with any query parameters.
 		 */
 		if ( ! $uri_rules->has_rules_with_query_strings() ) {
-			$path = $path_only;
+			$path = strtok( $path, '?' );
 		}
 
-		// Inverted rules are higher priority.
-		if ( $matcher->uri_matches_rules( $path, $uri_rules->inverted() ) ) {
-			return false;
+		if ( ! empty( $uri_rules_paths ) ) {
+			$matcher = new UriRuleMatcher();
+
+			return $matcher->uri_matches_rules( $path, $uri_rules_paths );
 		}
 
-		return $matcher->uri_matches_rules( $path, $uri_rules->positive() );
+		return null;
 	}
 
 

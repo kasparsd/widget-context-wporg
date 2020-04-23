@@ -74,13 +74,13 @@ class UriRuleMatcher {
 	 * @param string $uri Path to check.
 	 * @param array  $rules List of URIs to check against.
 	 *
-	 * @return boolean|null Return null if no lookup performed because of missing rules.
+	 * @return boolean
 	 */
 	public function uri_matches_rules( $uri, $rules ) {
 		if ( ! empty( $rules ) ) {
 			return (bool) preg_match( $this->rules_to_expression( $rules ), $uri );
 		}
 
-		return null;
+		return false;
 	}
 }

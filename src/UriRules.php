@@ -24,34 +24,12 @@ class UriRules {
 	}
 
 	/**
-	 * Return just the inverted rules that start with '!'.
+	 * Return the URIs.
 	 *
-	 * @return array
+	 * @return array List of URIs.
 	 */
-	public function inverted() {
-		$rules = array_diff( $this->rules, $this->positive() );
-
-		// Remove the inverted prefix.
-		return array_map(
-			function( $rule ) {
-				return substr( $rule, 1 );
-			},
-			$rules
-		);
-	}
-
-	/**
-	 * Return just the positive rules that don't start with '!'.
-	 *
-	 * @return array
-	 */
-	public function positive() {
-		return array_filter(
-			$this->rules,
-			function( $rule ) {
-				return ( 0 !== strpos( $rule, '!' ) );
-			}
-		);
+	public function rules() {
+		return $this->rules;
 	}
 
 	/**

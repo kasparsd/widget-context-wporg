@@ -60,6 +60,11 @@ class WidgetContextTargetByUrlTest extends WidgetContextTestCase {
 			$this->plugin->match_path( 'page-that-start-with-page', 'page' ),
 			'Ignores prefixes without a wildcard'
 		);
+
+		$this->assertNull(
+			$this->plugin->match_path( 'random-path', ' ' ),
+			'Empty rule matches are ignored'
+		);
 	}
 
 	public function testUrlWildcards() {
@@ -133,38 +138,6 @@ class WidgetContextTargetByUrlTest extends WidgetContextTestCase {
 		foreach ( $this->map_relative as $request => $path ) {
 			$this->assertEquals( $this->plugin->path_from_uri( $request ), $path );
 		}
-	}
-
-	public function testInversePattern() {
-		$this->assertTrue(
-			$this->plugin->match_path( 'another/page', implode( "\n", array( 'another/page', '!another/page/child' ) ) ),
-			'Ignore a related inverse when a positive match is found'
-		);
-
-		$this->assertTrue(
-			$this->plugin->match_path( 'child/page', implode( "\n", array( 'child/*', '!child/page/excluded' ) ) ),
-			'Wildcard is still matched even if inverse does not match'
-		);
-
-		$this->assertFalse(
-			$this->plugin->match_path( 'positive/page', implode( "\n", array( '!inverted/page', 'positive' ) ) ),
-			'Inverse can only override a positive match'
-		);
-
-		$this->assertFalse(
-			$this->plugin->match_path( 'this/page/child', implode( "\n", array( 'this/page/*', '!this/page/child' ) ) ),
-			'Inverse can override a direct match'
-		);
-
-		$this->assertTrue(
-			$this->plugin->match_path( 'page/one', implode( "\n", array( 'page/*', '!page/two' ) ) ),
-			'Wildcard is honored even with an unrelated inverted rule'
-		);
-
-		$this->assertNull(
-			$this->plugin->match_path( 'random-path', implode( "\n", array( '!this/*' ) ) ),
-			'Standalone inverted lookups are supported'
-		);
 	}
 
 }
