@@ -1080,7 +1080,7 @@ class WidgetContext {
 										<a class="button button-primary" href="<?php echo esc_url( $this->get_customize_widgets_admin_url() ); ?>"><?php esc_html_e( 'Configure Widgets', 'widget-context' ); ?></a>
 									</p>
 									<p class="description">
-										<?php esc_html_e( 'Configure the widget context using the WordPress Customizer (with preview) or the widget settings under "Appearance → Widgets".', 'widget-context' ); ?>
+										<?php esc_html_e( 'Configure widget context using the WordPress Customizer (with preview) or using the widget settings under "Appearance → Widgets".', 'widget-context' ); ?>
 									</p>
 								</td>
 							</tr>
