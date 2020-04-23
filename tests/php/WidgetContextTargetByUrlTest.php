@@ -55,6 +55,16 @@ class WidgetContextTargetByUrlTest extends WidgetContextTestCase {
 			$this->plugin->match_path( 'page', 'page/' ),
 			'Exact with trailing'
 		);
+
+		$this->assertFalse(
+			$this->plugin->match_path( 'page-that-start-with-page', 'page' ),
+			'Ignores prefixes without a wildcard'
+		);
+
+		$this->assertNull(
+			$this->plugin->match_path( 'random-path', ' ' ),
+			'Empty rule matches are ignored'
+		);
 	}
 
 	public function testUrlWildcards() {
@@ -116,22 +126,17 @@ class WidgetContextTargetByUrlTest extends WidgetContextTestCase {
 			$this->plugin->match_path( 'campaigns?cc=automotive', 'campaigns/?some=other' ),
 			'Respect query string if differen used'
 		);
-
-		$this->assertFalse(
-			$this->plugin->match_path( 'campaigns?cc=automotive', 'campaigns/?has=query' ),
-			'Ignore query string because no rules use it'
-		);
 	}
 
 	public function testPathResolverAbsolute() {
 		foreach ( $this->map_absolute as $request => $path ) {
-			$this->assertEquals( $this->plugin->get_request_path( $request ), $path );
+			$this->assertEquals( $this->plugin->path_from_uri( $request ), $path );
 		}
 	}
 
 	public function testPathResolverRelative() {
 		foreach ( $this->map_relative as $request => $path ) {
-			$this->assertEquals( $this->plugin->get_request_path( $request ), $path );
+			$this->assertEquals( $this->plugin->path_from_uri( $request ), $path );
 		}
 	}
 

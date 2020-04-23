@@ -3,22 +3,25 @@
 Contributors: kasparsd, jamescollins  
 Tags: widget, widgets, widget context, context, logic, widget logic, visibility, widget visibility  
 Requires at least: 3.0  
-Tested up to: 5.2  
+Tested up to: 5.4  
 Stable tag: {{ version }}  
 License: GPLv2 or later  
 Requires PHP: 5.6  
+Donate link: https://widgetcontext.com/pro
 
-Show or hide widgets on specific posts, pages and sections of your site.
+Show and hide widgets on specific posts, pages and sections of your site.
 
 
 ## Description
 
-Use [Widget Context](https://widgetcontext.com) to show or hide widgets on certain sections of your site -- front page, posts, pages, archives, search, etc. Use targeting by URLs (with wildcard support) for maximum flexibility.
+Use [Widget Context](https://widgetcontext.com) to show and hide widgets on certain sections of your site -- front page, posts, pages, archives, search, etc. Use targeting by URLs (with wildcard support) for maximum flexibility.
+
+https://www.youtube.com/watch?v=rEHvqsWoXAE
 
 
-### Block Context
+### Premium Support
 
-**New**: We've started working on the [Block Context plugin](https://blockcontext.com) which brings similar functionality to Gutenberg blocks.
+Subscribe to our [Premium Support service](https://widgetcontext.com/pro) and get the PRO 🚀 version of the plugin for free when it’s launched! Your support enables consistent maintenance and new feature development, and is greatly appreciated.
 
 
 ### Contribute
@@ -30,14 +33,13 @@ Use [Widget Context](https://widgetcontext.com) to show or hide widgets on certa
 
 ### Documentation
 
+Widget visibility can be configured under individual widget settings under "Appearance → Widgets" in your WordPress administration area or through the widget editing interface in the Customizer.
+
 #### Target by URL
 
-The “Target by URL” is a very powerful feature with a lot of flexibility for targeting sections of your website based on the request URLs. It was inspired by a similar feature in the [Drupal CMS](https://www.drupal.org).
+The "Target by URL" is a powerful feature for targeting sections of your website based on the request URLs. It was inspired by a similar feature in the [Drupal CMS](https://www.drupal.org).
 
-- Use relative URLs such as `page/sub-page` instead of absolute URLs `https://example.com/page/sub-page`.
-
-- Relative are URLs more flexible and make the logic portable between different domains and server environments.
-
+Use relative URLs such as `page/sub-page` instead of absolute URLs `https://example.com/page/sub-page` because relative URLs are more flexible and make the logic portable between different domains and server environments.
 
 ##### Wildcards
 
@@ -49,6 +51,10 @@ Use the wildcard symbol `*` for matching dynamic parts of the URL. For example:
 
 - Use a trailing `?*` to capture URL with all query arguments such as `utm_source`, etc. For example, for every `blog/post-slug` also include `blog/post-slug?*`.
 
+#### Exclude by URL
+
+Specify URLs to ignore even if they're matched by any of the other context rules. For example, enter `example/sub-page` to hide a widget on this page even when "All Posts" is selected under "Global Sections".
+
 
 ## Installation
 
@@ -58,6 +64,11 @@ Use the wildcard symbol `*` for matching dynamic parts of the URL. For example:
 
 
 ## Changelog
+
+### 1.3.0 (April 23, 2020)
+
+- Introduce the long-awaited "Exclude by URL" feature to prevent certain URLs from showing or hiding a widget when it's matched by any other visbility rule.
+- Introduce [premium support](https://widgetcontext.com/pro) to help maintain the plugin. Subscribe now to get the PRO version of the Widget Context for free when it's launched!
 
 ### 1.2.0 (August 20, 2019)
 

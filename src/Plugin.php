@@ -165,7 +165,12 @@ class Plugin {
 		static $meta;
 
 		if ( ! isset( $meta ) ) {
-			$meta = get_plugin_data( $this->file );
+			$meta = get_file_data(
+				$this->file,
+				array(
+					'Version' => 'Version',
+				)
+			);
 		}
 
 		if ( isset( $field ) ) {

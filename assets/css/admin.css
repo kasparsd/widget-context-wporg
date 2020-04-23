@@ -7,7 +7,7 @@
 
 .widget-context .widget-context-header { float:left; width:100%; clear:both; }
 .widget-context .widget-context-header h3 { font-size:1.1em; margin:0 0.5em 0.5em 0; padding:0; float:left; }
-.widget-context .widget-context-header a { float:right; }
+.widget-context .widget-context-header { color:#ccc; }
 
 .widget-context .context-group { float:left; width:100%; clear:both; margin-bottom:0.5em; }
 .widget-context .context-toggle { margin:0 0 0.3em 0; display:block; text-decoration:none; color:inherit; font-weight:bold; }
@@ -36,12 +36,7 @@
 
 /** Settings UI **/
 
-.widget-context-form th { width:auto; }
-.widget-context-form ul { border-top:1px solid #ddd; margin:0 0 1em 0; padding:0; float:left; width:100%; clear:both; display:block; }
-.widget-context-form li { float:left; width:100%; clear:both; margin:0; padding:0.5em 0; border-bottom:1px solid #ddd; }
-.widget-context-form li label { vertical-align:middle; float:left; width:34%; margin:0 -100em 0 0; }
-.widget-context-form li label input { vertical-align:middle; }
-.widget-context-form .context-desc { font-style:italic; color:#666; margin:0 0 0 40%; }
+.widget-context-form .enabled-contexts-item { margin:0 0 1em 0; }
 .widget-context-settings-wrap { padding-right:300px; }
 .widget-context-form { float:left; width:100%; margin-right:-100em; }
 .widget-context-sidebar { float:right; width:280px; position:relative; right:-300px; border:1px solid #ddd; }
@@ -50,6 +45,8 @@
 .wc-sidebar-in { padding:1em; }
 .wc-sidebar-credits { padding-bottom:0.5em; margin-bottom:1em; border-bottom:1px solid #ddd; }
 .wc-sidebar-credits img { float:left; margin:0 1em 1em 0; }
+
+#widget-context-pro:target td { background-color:#fff3cd; border:1px solid #ffeeba; border-radius:4px; padding-left:1em; }
 
 /** Sets correct widget height when child element height changes **/
 .widget-control-actions,

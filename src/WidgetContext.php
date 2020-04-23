@@ -1,9 +1,19 @@
 <?php
 
+use Preseto\WidgetContext\UriRuleMatcher;
+use Preseto\WidgetContext\UriRules;
+
 /**
  * Widget Context plugin core.
  */
 class WidgetContext {
+
+	/**
+	 * Rule ID for the invert by URL.
+	 *
+	 * @var string
+	 */
+	const RULE_KEY_URLS_INVERT = 'urls_invert';
 
 	private $sidebars_widgets;
 	private $options_name = 'widget_logic_options'; // Context settings for widgets (visibility, etc)
@@ -114,23 +124,28 @@ class WidgetContext {
 			),
 			'location' => array(
 				'label' => __( 'Global Sections', 'widget-context' ),
-				'description' => __( 'Based on standard WordPress template tags.', 'widget-context' ),
+				'description' => __( 'Match using the standard WordPress template tags.', 'widget-context' ),
 				'weight' => 10,
 			),
 			'url' => array(
 				'label' => __( 'Target by URL', 'widget-context' ),
-				'description' => __( 'Based on URL patterns.', 'widget-context' ),
+				'description' => __( 'Match using URL patterns.', 'widget-context' ),
 				'weight' => 20,
+			),
+			self::RULE_KEY_URLS_INVERT => array(
+				'label' => __( 'Exclude by URL', 'widget-context' ),
+				'description' => __( 'Override other matches using URL patterns.', 'widget-context' ),
+				'weight' => 25,
 			),
 			'admin_notes' => array(
 				'label' => __( 'Notes (invisible to public)', 'widget-context' ),
-				'description' => __( 'Enables private notes on widget context settings.', 'widget-context' ),
+				'description' => __( 'Keep private notes on widget context settings.', 'widget-context' ),
 				'weight' => 90,
 			),
 		);
 
 		// Add default context controls and checks
-		foreach ( $default_contexts as $context_name => $context_desc ) {
+		foreach ( array_keys( $default_contexts ) as $context_name ) {
 			add_filter( 'widget_context_control-' . $context_name, array( $this, 'control_' . $context_name ), 10, 2 );
 			add_filter( 'widget_context_check-' . $context_name, array( $this, 'context_check_' . $context_name ), 10, 2 );
 		}
@@ -187,6 +202,16 @@ class WidgetContext {
 	}
 
 
+	/**
+	 * Get the state of the PRO nag.
+	 *
+	 * @return boolean
+	 */
+	public function pro_nag_enabled() {
+		return (bool) apply_filters( 'widget_context_pro_nag', true );
+	}
+
+
 	function set_widget_contexts_frontend() {
 		// Hide/show widgets for is_active_sidebar() to work
 		add_filter( 'sidebars_widgets', array( $this, 'maybe_unset_widgets_by_context' ), 10 );
@@ -195,7 +220,7 @@ class WidgetContext {
 
 	function admin_scripts( $page ) {
 		// Enqueue only on widgets and customizer view
-		if ( ! in_array( $page, array( 'widgets.php', 'settings_page_widget_context_settings' ), true ) ) {
+		if ( ! in_array( $page, array( 'widgets.php', 'appearance_page_widget_context_settings' ), true ) ) {
 			return;
 		}
 
@@ -289,13 +314,61 @@ class WidgetContext {
 		return $sidebars_widgets;
 	}
 
-
-	function check_widget_visibility( $widget_id ) {
-		// Check if this widget even has context set
+	/**
+	 * Determine widget visibility according to the current global context.
+	 *
+	 * @param string $widget_id Widget ID.
+	 *
+	 * @return boolean
+	 */
+	public function check_widget_visibility( $widget_id ) {
+		// Check if this widget even has context set.
 		if ( ! isset( $this->context_options[ $widget_id ] ) ) {
 			return true;
 		}
 
+		// Get the match rule for this widget (show/hide/selected/notselected).
+		$match_rule = $this->context_options[ $widget_id ]['incexc']['condition'];
+
+		// Force show or hide the widget!
+		if ( 'show' === $match_rule ) {
+			return true;
+		} elseif ( 'hide' === $match_rule ) {
+			return false;
+		}
+
+		// Show or hide on match.
+		$condition = ( 'selected' === $match_rule );
+
+		if ( $this->context_matches_condition_for_widget_id( $widget_id ) ) {
+			return $condition;
+		}
+
+		return ! $condition;
+	}
+
+	/**
+	 * Check if widget visibility rules match the current context.
+	 *
+	 * @param string $widget_id Widget ID.
+	 *
+	 * @return boolean
+	 */
+	public function context_matches_condition_for_widget_id( $widget_id ) {
+		$matches = $this->context_matches_for_widget_id( $widget_id );
+
+		// Inverted rules can only override another positive match.
+		return ( in_array( true, $matches, true ) && ! in_array( false, $matches, true ) );
+	}
+
+	/**
+	 * Get context rule matches for a widget ID.
+	 *
+	 * @param string $widget_id Widget ID.
+	 *
+	 * @return array
+	 */
+	public function context_matches_for_widget_id( $widget_id ) {
 		$matches = array();
 
 		foreach ( $this->get_contexts() as $context_id => $context_settings ) {
@@ -304,10 +377,10 @@ class WidgetContext {
 				continue;
 			}
 
+			$widget_context_args = array();
+
 			// Make sure that context settings for this widget are defined
-			if ( ! isset( $this->context_options[ $widget_id ][ $context_id ] ) ) {
-				$widget_context_args = array();
-			} else {
+			if ( ! empty( $this->context_options[ $widget_id ][ $context_id ] ) ) {
 				$widget_context_args = $this->context_options[ $widget_id ][ $context_id ];
 			}
 
@@ -318,29 +391,7 @@ class WidgetContext {
 			);
 		}
 
-		// Get the match rule for this widget (show/hide/selected/notselected)
-		$match_rule = $this->context_options[ $widget_id ]['incexc']['condition'];
-
-		// Force show or hide the widget!
-		if ( 'show' === $match_rule ) {
-			return true;
-		} elseif ( 'hide' === $match_rule ) {
-			return false;
-		}
-
-		$inc = false;
-
-		if ( 'selected' === $match_rule ) {
-			$inc = true;
-		}
-
-		if ( $inc && in_array( true, $matches, true ) ) {
-			return true;
-		} elseif ( ! $inc && ! in_array( true, $matches, true ) ) {
-			return true;
-		}
-
-		return false;
+		return $matches;
 	}
 
 
@@ -382,41 +433,80 @@ class WidgetContext {
 		return $check;
 	}
 
+	/**
+	 * Fetch a setting value for the context setting as a string.
+	 *
+	 * @param array $settings List of all settings by setting key.
+	 * @param string $key Setting key to check.
+	 *
+	 * @return string
+	 */
+	protected function get_setting_as_string( $settings, $key ) {
+		if ( ! is_array( $settings ) ) {
+			$settings = array();
+		}
+
+		$settings = wp_parse_args(
+			$settings,
+			array(
+				$key => null,
+			)
+		);
+
+		return trim( (string) $settings[ $key ] );
+	}
 
 	/**
-	 * Conditional logic for the URL check.
+	 * Check if a set of URL paths match the current request.
 	 *
 	 * @param  bool  $check Current visibility state.
 	 * @param  array $settings Visibility settings.
 	 *
 	 * @return bool
 	 */
-	function context_check_url( $check, $settings ) {
-		static $path;
+	public function context_check_url( $check, $settings ) {
+		$path = $this->get_request_path();
+		$urls = $this->get_setting_as_string( $settings, 'urls' );
 
-		$settings = wp_parse_args(
-			$settings,
-			array(
-				'urls' => null,
-			)
-		);
-
-		$urls = trim( $settings['urls'] );
-
-		if ( empty( $urls ) ) {
-			return $check;
-		}
-
-		if ( ! isset( $path ) ) {
-			// Do the parsing only once.
-			$path = $this->get_request_path( $_SERVER['REQUEST_URI'] );
-		}
-
-		if ( $this->match_path( $path, $urls ) ) {
+		if ( ! empty( $urls ) && $this->match_path( $path, $urls ) ) {
 			return true;
 		}
 
 		return $check;
+	}
+
+	/**
+	 * Check if a set of URL paths match the current request.
+	 *
+	 * @param  bool  $check Current visibility state.
+	 * @param  array $settings Visibility settings.
+	 *
+	 * @return bool
+	 */
+	public function context_check_urls_invert( $check, $settings ) {
+		$path = $this->get_request_path();
+		$urls = $this->get_setting_as_string( $settings, self::RULE_KEY_URLS_INVERT );
+
+		if ( ! empty( $urls ) && $this->match_path( $path, $urls ) ) {
+			return false; // Override any positive matches.
+		}
+
+		return $check;
+	}
+
+	/**
+	 * Fetch the request path for the current request.
+	 *
+	 * @return string
+	 */
+	protected function get_request_path() {
+		static $path;
+
+		if ( ! isset( $path ) ) {
+			$path = $this->path_from_uri( $_SERVER['REQUEST_URI'] );
+		}
+
+		return $path;
 	}
 
 	/**
@@ -427,7 +517,7 @@ class WidgetContext {
 	 *
 	 * @return string
 	 */
-	public function get_request_path( $uri ) {
+	public function path_from_uri( $uri ) {
 		$parts = wp_parse_args(
 			wp_parse_url( $uri ),
 			array(
@@ -445,60 +535,53 @@ class WidgetContext {
 	}
 
 	/**
+	 * Parse a text blob of URI fragments into URI rules.
+	 *
+	 * @param string $paths String of URI paths seperated by line breaks.
+	 *
+	 * @return array List of formatted URI paths.
+	 */
+	protected function uri_rules_from_paths( $paths ) {
+		$patterns = explode( "\n", $paths );
+
+		$patterns = array_map(
+			function( $pattern ) {
+				// Resolve rule paths the same way as the request URI.
+				return $this->path_from_uri( trim( $pattern ) );
+			},
+			$patterns
+		);
+
+		return array_filter( $patterns );
+	}
+
+	/**
 	 * Check if the current request matches path rules.
 	 *
 	 * @param  string $path  Current request relative to the root of the hostname.
 	 * @param  string $rules A list of path patterns seperated by new line.
 	 *
-	 * @return bool
+	 * @return bool|null Return `null` if no rules to match against.
 	 */
-	function match_path( $path, $rules ) {
-		$path_only = strtok( $path, '?' );
-		$patterns = explode( "\n", $rules );
+	public function match_path( $path, $rules ) {
+		$uri_rules = new UriRules( $this->uri_rules_from_paths( $rules ) );
+		$uri_rules_paths = $uri_rules->rules();
 
-		foreach ( $patterns as &$pattern ) {
-			// Use the same logic for parsing the visibility rules.
-			$pattern = $this->get_request_path( trim( $pattern ) );
+		/**
+		 * Ignore query parameters in path unless any of the rules actually use them.
+		 * Defaults to matching paths with any query parameters.
+		 */
+		if ( ! $uri_rules->has_rules_with_query_strings() ) {
+			$path = strtok( $path, '?' );
 		}
 
-		// Remove empty patterns.
-		$patterns = array_filter( $patterns );
+		if ( ! empty( $uri_rules_paths ) ) {
+			$matcher = new UriRuleMatcher();
 
-		// Match against the path with and without the query string.
-		if ( $this->path_matches_patterns( $path, $patterns ) || $this->path_matches_patterns( $path_only, $patterns ) ) {
-			return true;
+			return $matcher->uri_matches_rules( $path, $uri_rules_paths );
 		}
 
-		return false;
-	}
-
-	/**
-	 * Check if a URI path matches a set of regex patterns.
-	 *
-	 * @param  string $path Request URI.
-	 * @param  array  $patterns A list of patterns.
-	 *
-	 * @return bool
-	 */
-	public function path_matches_patterns( $path, $patterns ) {
-		if ( empty( $patterns ) ) {
-			return false;
-		}
-
-		foreach ( $patterns as &$pattern ) {
-			// Escape regex chars since we only support wildcards.
-			$pattern = preg_quote( trim( $pattern ), '/' );
-
-			// Enable wildcard checks.
-			$pattern = str_replace( '\*', '.*', $pattern );
-		}
-
-		$regex = sprintf(
-			'/^(%s)$/i',
-			implode( '|', $patterns )
-		);
-
-		return (bool) preg_match( $regex, $path );
+		return null;
 	}
 
 
@@ -578,7 +661,7 @@ class WidgetContext {
 						sprintf(
 							/* translators: %s is a URL to the settings page. */
 							__( 'No widget controls enabled. You can enable them in <a href="%s">Widget Context settings</a>.', 'widget-context' ),
-							admin_url( 'options-general.php?page=widget_context_settings' )
+							$this->plugin_settings_admin_url()
 						)
 					),
 				);
@@ -592,29 +675,36 @@ class WidgetContext {
 			}
 		}
 
-		$settings_link = '';
+		$settings_link = array();
 
 		if ( current_user_can( 'edit_theme_options' ) ) {
-			$settings_link = sprintf(
-				'<a href="%s" class="widget-context-settings-link" title="%s">%s</a>',
+			$settings_link[] = sprintf(
+				'<a href="%s" title="%s" target="_blank">%s</a>',
 				admin_url( 'options-general.php?page=widget_context_settings' ),
 				esc_attr__( 'Widget Context Settings', 'widget-context' ),
 				esc_html__( 'Settings', 'widget-context' )
 			);
+
+			if ( $this->pro_nag_enabled() ) {
+				$settings_link[] = sprintf(
+					'<a href="%s" target="_blank">PRO 🚀</a>',
+					esc_url( 'https://widgetcontext.com/pro' )
+				);
+			}
 		}
 
 		return sprintf(
 			'<div class="widget-context">
 				<div class="widget-context-header">
 					<h3>%s</h3>
-					%s
+					<span class="widget-context-settings-link">%s</span>
 				</div>
 				<div class="widget-context-inside" id="widget-context-%s" data-widget-id="%s">
 					%s
 				</div>
 			</div>',
 			__( 'Widget Context', 'widget-context' ),
-			$settings_link,
+			implode( ' | ', $settings_link ),
 			// Inslide classes
 			esc_attr( $widget_id ),
 			esc_attr( $widget_id ),
@@ -670,7 +760,17 @@ class WidgetContext {
 			'<div>%s</div>
 			<p class="help">%s</p>',
 			$this->make_simple_textarea( $control_args, 'urls' ),
-			__( 'Enter one location fragment per line. Use <strong>*</strong> character as a wildcard. Example: <code>category/peace/*</code> to target all posts in category <em>peace</em>.', 'widget-context' )
+			__( 'Enter one location fragment per line. Use <strong>*</strong> character as a wildcard. Example: <code>page/example</code> to target a specific page or <code>page/*</code> to target all children of a page.', 'widget-context' )
+		);
+	}
+
+
+	function control_urls_invert( $control_args ) {
+		return sprintf(
+			'<div>%s</div>
+			<p class="help">%s</p>',
+			$this->make_simple_textarea( $control_args, self::RULE_KEY_URLS_INVERT ),
+			__( 'Specify URLs to override the Target by URLs settings. Useful for excluding specific URLs when using wildcards in Target by URL.', 'widget-context' )
 		);
 	}
 
@@ -906,18 +1006,39 @@ class WidgetContext {
 
 
 	function widget_context_settings_menu() {
-		add_options_page(
+		add_theme_page(
 			__( 'Widget Context Settings', 'widget-context' ),
 			__( 'Widget Context', 'widget-context' ),
 			'manage_options',
 			$this->settings_name,
-			array( $this, 'widget_context_admin_view' )
+			array( $this, 'widget_context_admin_view' ),
+			3 // Try to place it right under the Widgets.
 		);
 	}
 
 
 	function widget_context_settings_init() {
 		register_setting( $this->settings_name, $this->settings_name );
+	}
+
+
+	/**
+	 * Return a link to the Customize Widgets admin page.
+	 *
+	 * @return string
+	 */
+	public function customize_widgets_admin_url() {
+		return admin_url( 'customize.php?autofocus[panel]=widgets' );
+	}
+
+
+	/**
+	 * Get the URL to the plugin settings page.
+	 *
+	 * @return string
+	 */
+	public function plugin_settings_admin_url() {
+		return admin_url( 'themes.php?page=widget_context_settings' );
 	}
 
 
@@ -932,7 +1053,7 @@ class WidgetContext {
 
 			if ( ! empty( $context_args['description'] ) ) {
 				$context_description = sprintf(
-					'<p class="context-desc">%s</p>',
+					'<p class="description">%s</p>',
 					esc_html( $context_args['description'] )
 				);
 			} else {
@@ -945,7 +1066,7 @@ class WidgetContext {
 			}
 
 			$context_controls[] = sprintf(
-				'<li class="context-%s">
+				'<li class="enabled-contexts-item context-%s">
 					<label>
 						<input type="hidden" name="%s[contexts][%s]" value="0" />
 						<input type="checkbox" name="%s[contexts][%s]" value="1" %s /> %s
@@ -976,16 +1097,43 @@ class WidgetContext {
 							do_settings_sections( $this->settings_name );
 						?>
 
-						<?php
-							printf(
-								'<div class="settings-section settings-section-modules">
-									<h3>%s</h3>
-									<ul>%s</ul>
-								</div>',
-								esc_html__( 'Enabled Context Modules', 'widget-context' ),
-								implode( '', $context_controls )
-							);
-						?>
+						<table class="form-table" role="presentation">
+							<tr id="widget-context-pro">
+								<th scrope="row">
+									<?php esc_html_e( 'Support', 'widget-context' ); ?>
+								</th>
+								<td>
+									<p>
+										<a href="https://widgetcontext.com/pro">Subscribe to get premium support</a> and the 🚀 PRO version of the plugin for free when it's launched!
+										Your support enables consistent maintenance and new feature development, and is greatly appreciated.
+									</p>
+								</td>
+							</tr>
+							<tr>
+								<th scrope="row">
+									<?php esc_html_e( 'Configure Widgets', 'widget-context' ); ?>
+								</th>
+								<td>
+									<p>
+										<a class="button button-primary" href="<?php echo esc_url( $this->customize_widgets_admin_url() ); ?>"><?php esc_html_e( 'Configure Widgets', 'widget-context' ); ?></a>
+									</p>
+									<p class="description">
+										<?php esc_html_e( 'Configure widget context using the WordPress Customizer (with preview) or using the widget settings under "Appearance → Widgets".', 'widget-context' ); ?>
+									</p>
+								</td>
+							</tr>
+							<tr>
+								<th scrope="row">
+									<?php esc_html_e( 'Enabled Contexts', 'widget-context' ); ?>
+								</th>
+								<td>
+									<p>
+										<?php esc_html_e( 'Select the context rules available for all widgets and hide the unused ones:', 'widget-context' ); ?>
+									</p>
+									<?php printf( '<ul>%s</ul>', implode( '', $context_controls ) ); ?>
+								</td>
+							</tr>
+						</table>
 
 						<?php
 							submit_button();
