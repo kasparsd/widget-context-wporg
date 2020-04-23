@@ -1005,6 +1005,16 @@ class WidgetContext {
 	}
 
 
+	/**
+	 * Return a link to the Customize Widgets admin page.
+	 *
+	 * @return string
+	 */
+	public function get_customize_widgets_admin_url() {
+		return admin_url( '/customize.php?autofocus[panel]=widgets' );
+	}
+
+
 	function widget_context_admin_view() {
 		$context_controls = array();
 
@@ -1067,12 +1077,11 @@ class WidgetContext {
 								</th>
 								<td>
 									<p>
-										<a class="button" href=""><?php esc_html_e( 'Configure Widgets', 'widget-context' ); ?></a>
+										<a class="button button-primary" href="<?php echo esc_url( $this->get_customize_widgets_admin_url() ); ?>"><?php esc_html_e( 'Configure Widgets', 'widget-context' ); ?></a>
 									</p>
 									<p class="description">
 										<?php esc_html_e( 'Configure the widget context using the WordPress Customizer (with preview) or the widget settings under "Appearance → Widgets".', 'widget-context' ); ?>
 									</p>
-
 								</td>
 							</tr>
 							<tr>
