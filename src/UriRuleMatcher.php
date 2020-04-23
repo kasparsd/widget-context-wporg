@@ -22,22 +22,6 @@ class UriRuleMatcher {
 	);
 
 	/**
-	 * Rules to use for lookup.
-	 *
-	 * @var \Preseto\WidgetContext\UriRules
-	 */
-	private $rules;
-
-	/**
-	 * Setup the pattern matcher.
-	 *
-	 * @param \Preseto\WidgetContext\UriRules $rules Instance of match rules.
-	 */
-	public function __construct( $rules ) {
-		$this->rules = $rules;
-	}
-
-	/**
 	 * Helper to sanitize and format rules for regex.
 	 *
 	 * @param array $rules List of regex-like rules.
@@ -87,31 +71,16 @@ class UriRuleMatcher {
 	/**
 	 * Check if a path matches the regex rules.
 	 *
-	 * @param string $path Path to check.
+	 * @param string $uri Path to check.
+	 * @param array  $rules List of URIs to check against.
 	 *
-	 * @return boolean|null
+	 * @return boolean|null Return null if no lookup performed because of missing rules.
 	 */
-	public function path_matches_rules( $path, $rules ) {
+	public function uri_matches_rules( $uri, $rules ) {
 		if ( ! empty( $rules ) ) {
-			return (bool) preg_match( $this->rules_to_expression( $rules ), $path );
+			return (bool) preg_match( $this->rules_to_expression( $rules ), $uri );
 		}
 
 		return null;
-	}
-
-	/**
-	 * Check if a URI path matches any of the patterns.
-	 *
-	 * @param  string $path URI path to check.
-	 *
-	 * @return bool|null
-	 */
-	public function match_path( $path ) {
-		// Returning false will hide the widget only if another rule has returned true.
-		if ( $this->path_matches_rules( $path, $this->rules->inverted() ) ) {
-			return false;
-		}
-
-		return $this->path_matches_rules( $path, $this->rules->positive() );
 	}
 }

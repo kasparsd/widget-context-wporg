@@ -335,7 +335,8 @@ class WidgetContext {
 	public function context_matches_condition_for_widget_id( $widget_id ) {
 		$matches = $this->context_matches_for_widget_id( $widget_id );
 
-		return in_array( true, $matches, true );
+		// Inverted rules can only override another positive match.
+		return ( in_array( true, $matches, true ) && ! in_array( false, $matches, true ) );
 	}
 
 	/**
@@ -474,7 +475,7 @@ class WidgetContext {
 	 * @param  string $path  Current request relative to the root of the hostname.
 	 * @param  string $rules A list of path patterns seperated by new line.
 	 *
-	 * @return bool
+	 * @return bool|null Return `null` if no rules to match against.
 	 */
 	function match_path( $path, $rules ) {
 		$path_only = strtok( $path, '?' );
@@ -488,18 +489,23 @@ class WidgetContext {
 			$patterns
 		);
 
+		$matcher = new UriRuleMatcher();
 		$uri_rules = new UriRules( array_filter( $patterns ) );
-		$matcher = new UriRuleMatcher( $uri_rules );
 
 		/**
 		 * Ignore query parameters in path unless any of the rules actually use them.
 		 * Defaults to matching paths with any query parameters.
 		 */
-		if ( $uri_rules->has_rules_with_query_strings() ) {
-			return $matcher->match_path( $path );
+		if ( ! $uri_rules->has_rules_with_query_strings() ) {
+			$path = $path_only;
 		}
 
-		return $matcher->match_path( $path_only );
+		// Inverted rules are higher priority.
+		if ( $matcher->uri_matches_rules( $path, $uri_rules->inverted() ) ) {
+			return false;
+		}
+
+		return $matcher->uri_matches_rules( $path, $uri_rules->positive() );
 	}
 
 
