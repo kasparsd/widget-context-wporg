@@ -133,7 +133,7 @@ class WidgetContext {
 				'weight' => 20,
 			),
 			self::RULE_KEY_URLS_INVERT => array(
-				'label' => __( 'Invert by URL', 'widget-context' ),
+				'label' => __( 'Inverted Target by URL', 'widget-context' ),
 				'description' => __( 'Override other matches using URL patterns.', 'widget-context' ),
 				'weight' => 25,
 			),
@@ -1080,7 +1080,7 @@ class WidgetContext {
 								</th>
 								<td>
 									<p>
-										<?php esc_html_e( 'Select the context rules available for widgets:', 'widget-context' ); ?>
+										<?php esc_html_e( 'Select the context rules available for all widgets and hide the unused ones:', 'widget-context' ); ?>
 									</p>
 									<?php printf( '<ul>%s</ul>', implode( '', $context_controls ) ); ?>
 								</td>
