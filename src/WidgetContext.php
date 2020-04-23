@@ -758,7 +758,7 @@ class WidgetContext {
 			'<div>%s</div>
 			<p class="help">%s</p>',
 			$this->make_simple_textarea( $control_args, self::RULE_KEY_URLS_INVERT ),
-			__( 'Specify URLs to invert the Target by URLs settings.', 'widget-context' )
+			__( 'Specify URLs to override the Target by URLs settings. Useful for excluding specific URLs when using wildcards in Target by URL.', 'widget-context' )
 		);
 	}
 
