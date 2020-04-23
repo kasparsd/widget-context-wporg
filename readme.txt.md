@@ -65,9 +65,10 @@ Specify URLs to ignore even if they're matched by any of the other context rules
 
 ## Changelog
 
-### 1.3.0 (January 5, 2020)
+### 1.3.0 (April 23, 2020)
 
-- Prefix URL fragments with an exclamation mark `!` in the "Target by URL" selector to exclude specific pages that would otherwise be captured by more general URL fragments. For example, add `!about/family` in addition to `about/*` to exclude the `family` child page from the selection.
+- Introduce the long-awaited "Exclude Target by URL" feature to exclude certain URLs from showing when they are matched by any of the other visbility contexts.
+- Introduce [premium support](https://widgetcontext.com/pro) to help maintain the plugin. Subscribe now to get the PRO version of the Widget Context for free when it's launched!
 
 ### 1.2.0 (August 20, 2019)
 
