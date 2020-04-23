@@ -8,6 +8,13 @@ use Preseto\WidgetContext\UriRules;
  */
 class WidgetContext {
 
+	/**
+	 * Rule ID for the invert by URL.
+	 *
+	 * @var string
+	 */
+	const RULE_KEY_URLS_INVERT = 'urls_invert';
+
 	private $sidebars_widgets;
 	private $options_name = 'widget_logic_options'; // Context settings for widgets (visibility, etc)
 	private $settings_name = 'widget_context_settings'; // Widget Context global settings
@@ -124,6 +131,11 @@ class WidgetContext {
 				'label' => __( 'Target by URL', 'widget-context' ),
 				'description' => __( 'Based on URL patterns.', 'widget-context' ),
 				'weight' => 20,
+			),
+			self::RULE_KEY_URLS_INVERT => array(
+				'label' => __( 'Ignore by URL', 'widget-context' ),
+				'description' => __( 'Override other matches with URL patterns.', 'widget-context' ),
+				'weight' => 25,
 			),
 			'admin_notes' => array(
 				'label' => __( 'Notes (invisible to public)', 'widget-context' ),
@@ -454,6 +466,25 @@ class WidgetContext {
 	}
 
 	/**
+	 * Check if a set of URL paths match the current request.
+	 *
+	 * @param  bool  $check Current visibility state.
+	 * @param  array $settings Visibility settings.
+	 *
+	 * @return bool
+	 */
+	public function context_check_url_invert( $check, $settings ) {
+		$path = $this->get_request_path();
+		$urls = $this->get_setting_as_string( $settings, self::RULE_KEY_URLS_INVERT );
+
+		if ( ! empty( $urls ) && $this->match_path( $path, $urls ) ) {
+			return false; // Override any positive matches.
+		}
+
+		return $check;
+	}
+
+	/**
 	 * Fetch the request path for the current request.
 	 *
 	 * @return string
@@ -712,7 +743,17 @@ class WidgetContext {
 			'<div>%s</div>
 			<p class="help">%s</p>',
 			$this->make_simple_textarea( $control_args, 'urls' ),
-			__( 'Enter one location fragment per line. Use <strong>*</strong> character as a wildcard. Example: <code>category/peace/*</code> to target all posts in category <em>peace</em>.', 'widget-context' )
+			__( 'Enter one location fragment per line. Use <strong>*</strong> character as a wildcard. Example: <code>page/example</code> to target a specific page or <code>page/*</code> to target all children of a page.', 'widget-context' )
+		);
+	}
+
+
+	function control_url_exclude( $control_args ) {
+		return sprintf(
+			'<div>%s</div>
+			<p class="help">%s</p>',
+			$this->make_simple_textarea( $control_args, 'urls_exclude' ),
+			__( 'Enter one location fragment per line. Use <strong>*</strong> character as a wildcard. Example: <code>page/example</code> to target a specific page or <code>page/*</code> to target all children of a page.', 'widget-context' )
 		);
 	}
 
