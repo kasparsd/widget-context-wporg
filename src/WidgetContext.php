@@ -133,7 +133,7 @@ class WidgetContext {
 				'weight' => 20,
 			),
 			self::RULE_KEY_URLS_INVERT => array(
-				'label' => __( 'Inverted Target by URL', 'widget-context' ),
+				'label' => __( 'Exclude Target by URL', 'widget-context' ),
 				'description' => __( 'Override other matches using URL patterns.', 'widget-context' ),
 				'weight' => 25,
 			),
@@ -748,12 +748,12 @@ class WidgetContext {
 	}
 
 
-	function control_url_exclude( $control_args ) {
+	function control_urls_invert( $control_args ) {
 		return sprintf(
 			'<div>%s</div>
 			<p class="help">%s</p>',
-			$this->make_simple_textarea( $control_args, 'urls_exclude' ),
-			__( 'Enter one location fragment per line. Use <strong>*</strong> character as a wildcard. Example: <code>page/example</code> to target a specific page or <code>page/*</code> to target all children of a page.', 'widget-context' )
+			$this->make_simple_textarea( $control_args, self::RULE_KEY_URLS_INVERT ),
+			__( 'Specify URLs to invert the Target by URLs settings.', 'widget-context' )
 		);
 	}
 
