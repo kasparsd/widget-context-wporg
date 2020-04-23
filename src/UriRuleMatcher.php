@@ -107,13 +107,11 @@ class UriRuleMatcher {
 	 * @return bool|null
 	 */
 	public function match_path( $path ) {
-		$match_positive = $this->path_matches_rules( $path, $this->rules->positive() );
-		$match_inverted = $this->path_matches_rules( $path, $this->rules->inverted() );
-
-		if ( $match_inverted ) {
+		// Returning false will hide the widget only if another rule has returned true.
+		if ( $this->path_matches_rules( $path, $this->rules->inverted() ) ) {
 			return false;
 		}
 
-		return $match_positive;
+		return $this->path_matches_rules( $path, $this->rules->positive() );
 	}
 }
