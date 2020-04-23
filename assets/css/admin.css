@@ -46,6 +46,8 @@
 .wc-sidebar-credits { padding-bottom:0.5em; margin-bottom:1em; border-bottom:1px solid #ddd; }
 .wc-sidebar-credits img { float:left; margin:0 1em 1em 0; }
 
+#widget-context-pro:target td { background-color:#fff3cd; border:1px solid #ffeeba; border-radius:4px; padding-left:1em; }
+
 /** Sets correct widget height when child element height changes **/
 .widget-control-actions,
 .widget-content,
