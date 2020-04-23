@@ -651,7 +651,7 @@ class WidgetContext {
 						sprintf(
 							/* translators: %s is a URL to the settings page. */
 							__( 'No widget controls enabled. You can enable them in <a href="%s">Widget Context settings</a>.', 'widget-context' ),
-							admin_url( 'options-general.php?page=widget_context_settings' )
+							$this->plugin_settings_admin_url()
 						)
 					),
 				);
@@ -1010,8 +1010,18 @@ class WidgetContext {
 	 *
 	 * @return string
 	 */
-	public function get_customize_widgets_admin_url() {
-		return admin_url( '/customize.php?autofocus[panel]=widgets' );
+	public function customize_widgets_admin_url() {
+		return admin_url( 'customize.php?autofocus[panel]=widgets' );
+	}
+
+
+	/**
+	 * Get the URL to the plugin settings page.
+	 *
+	 * @return string
+	 */
+	public function plugin_settings_admin_url() {
+		return admin_url( 'themes.php?page=widget_context_settings' );
 	}
 
 
@@ -1088,7 +1098,7 @@ class WidgetContext {
 								</th>
 								<td>
 									<p>
-										<a class="button button-primary" href="<?php echo esc_url( $this->get_customize_widgets_admin_url() ); ?>"><?php esc_html_e( 'Configure Widgets', 'widget-context' ); ?></a>
+										<a class="button button-primary" href="<?php echo esc_url( $this->customize_widgets_admin_url() ); ?>"><?php esc_html_e( 'Configure Widgets', 'widget-context' ); ?></a>
 									</p>
 									<p class="description">
 										<?php esc_html_e( 'Configure widget context using the WordPress Customizer (with preview) or using the widget settings under "Appearance → Widgets".', 'widget-context' ); ?>
