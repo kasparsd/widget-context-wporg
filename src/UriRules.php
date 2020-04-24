@@ -39,7 +39,8 @@ class UriRules {
 	 */
 	public function has_rules_with_query_strings() {
 		foreach ( $this->rules as $rule ) {
-			if ( false !== strpos( $rule, '?' ) ) {
+			// Assume that only query parameters can contain equal signs.
+			if ( false !== strpos( $rule, '=' ) ) {
 				return true;
 			}
 		}

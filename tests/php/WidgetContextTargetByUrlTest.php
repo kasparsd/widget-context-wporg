@@ -116,7 +116,20 @@ class WidgetContextTargetByUrlTest extends WidgetContextTestCase {
 		);
 	}
 
+	public function testQueryStringsWithWildcards() {
+		$this->assertTrue(
+			$this->plugin->match_path( 'categoria-producte/cosmetica/?pwb-brand-filter=clarins', '*pwb-brand-filter=*' ),
+			'Matching query param key with wrapping wildcards'
+		);
+
+		$this->assertTrue(
+			$this->plugin->match_path( 'producte/cosmetica?pwb-brand-filter=clarins', '*/cosmetica/?pwb-brand-filter=*' ),
+			'Ignore trailing slashes on rule paths'
+		);
+	}
+
 	public function testUrlSpecial() {
+		// Disregard things like utm_source and other tracking parameters.
 		$this->assertTrue(
 			$this->plugin->match_path( 'campaigns?cc=automotive', 'campaigns/' ),
 			'Ignore query string because no rules use it'

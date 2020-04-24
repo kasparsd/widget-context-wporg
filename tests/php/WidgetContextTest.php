@@ -50,6 +50,12 @@ class WidgetContextTest extends WidgetContextTestCase {
 			'path-to-a/url.html',
 			$this->plugin->path_from_uri( 'path-to-a/url.html' )
 		);
+
+		$this->assertEquals(
+			'producte/cosmetica?pwb-brand-filter=clarins',
+			$this->plugin->path_from_uri( 'producte/cosmetica/?pwb-brand-filter=clarins' ),
+			'Normalize the path by removing the trailing slash'
+		);
 	}
 
 }
