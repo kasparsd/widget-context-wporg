@@ -65,6 +65,10 @@ Specify URLs to ignore even if they're matched by any of the other context rules
 
 ## Changelog
 
+### 1.3.1 (April 24, 2020)
+
+- Bugfix: better support for URL rules with query parameters.
+
 ### 1.3.0 (April 23, 2020)
 
 - Introduce the long-awaited "Exclude by URL" feature to prevent certain URLs from showing or hiding a widget when it's matched by any other visibility rule.
