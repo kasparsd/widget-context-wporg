@@ -40,6 +40,20 @@ class WidgetContextTest extends WidgetContextTestCase {
 		);
 	}
 
+	public function testSettingsUrl() {
+		WP_Mock::userFunction(
+			'admin_url',
+			array(
+				'args' => array(
+					WP_Mock\Functions::type( 'string' ),
+				),
+				'times' => 1,
+			)
+		);
+
+		$this->plugin->plugin_settings_admin_url();
+	}
+
 	public function testRequestPathResolver() {
 		$this->assertEquals(
 			'path-to-a/url.html?true=2',
