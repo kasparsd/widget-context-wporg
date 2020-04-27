@@ -9,8 +9,8 @@
   "scripts": {
     "grunt": "grunt",
     "build": "composer release && grunt build",
-    "deploy": "grunt deploy",
-    "deploy-trunk": "grunt deploy-trunk",
+    "deploy": "composer release && grunt deploy",
+    "deploy-trunk": "composer release && grunt deploy-trunk",
     "test": "composer test",
     "lint": "composer lint && npm run lint-js",
     "lint-js": "eslint *.js assets/js",
