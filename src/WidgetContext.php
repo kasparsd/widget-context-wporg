@@ -230,11 +230,13 @@ class WidgetContext {
 		);
 
 		if ( $this->pro_nag_enabled() ) {
-			$settings_link[] = sprintf(
+			$links[] = sprintf(
 				'<a href="%s" target="_blank">PRO 🚀</a>',
 				esc_url( 'https://widgetcontext.com/pro' )
 			);
 		}
+
+		return $links;
 	}
 
 	function set_widget_contexts_frontend() {
