@@ -224,7 +224,7 @@ class WidgetContext {
 	 */
 	public function plugin_action_links( $links ) {
 		$links[] = sprintf(
-			'<a href="%s" target="_blank">%s</a>',
+			'<a href="%s">%s</a>',
 			esc_url( $this->plugin_settings_admin_url() ),
 			esc_html__( 'Settings', 'widget-context' )
 		);
