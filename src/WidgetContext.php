@@ -680,7 +680,7 @@ class WidgetContext {
 		if ( current_user_can( 'edit_theme_options' ) ) {
 			$settings_link[] = sprintf(
 				'<a href="%s" title="%s" target="_blank">%s</a>',
-				admin_url( 'options-general.php?page=widget_context_settings' ),
+				esc_url( $this->plugin_settings_admin_url() ),
 				esc_attr__( 'Widget Context Settings', 'widget-context' ),
 				esc_html__( 'Settings', 'widget-context' )
 			);
