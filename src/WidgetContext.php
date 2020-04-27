@@ -96,8 +96,14 @@ class WidgetContext {
 		// Register admin settings menu
 		add_action( 'admin_menu', array( $this, 'widget_context_settings_menu' ) );
 
-		// Register admin settings
+		// Register admin settings.
 		add_action( 'admin_init', array( $this, 'widget_context_settings_init' ) );
+
+		// Add quick links to the plugin list.
+		add_action(
+			'plugin_action_links_' . $this->plugin->basename(),
+			array( $this, 'plugin_action_links' )
+		);
 	}
 
 
@@ -211,6 +217,33 @@ class WidgetContext {
 		return (bool) apply_filters( 'widget_context_pro_nag', true );
 	}
 
+	/**
+	 * Add a link to the plugin settings in the plugin list.
+	 *
+	 * @return array List of links.
+	 */
+	public function plugin_action_links( $links ) {
+		$links[] = sprintf(
+			'<a href="%s">%s</a>',
+			esc_url( $this->plugin_settings_admin_url() ),
+			esc_html__( 'Settings', 'widget-context' )
+		);
+
+		$links[] = sprintf(
+			'<a href="%s">%s</a>',
+			esc_url( $this->customize_widgets_admin_url() ),
+			esc_html__( 'Configure Widgets', 'widget-context' )
+		);
+
+		if ( $this->pro_nag_enabled() ) {
+			$links[] = sprintf(
+				'<a href="%s" target="_blank">PRO 🚀</a>',
+				esc_url( 'https://widgetcontext.com/pro' )
+			);
+		}
+
+		return $links;
+	}
 
 	function set_widget_contexts_frontend() {
 		// Hide/show widgets for is_active_sidebar() to work
@@ -680,7 +713,7 @@ class WidgetContext {
 		if ( current_user_can( 'edit_theme_options' ) ) {
 			$settings_link[] = sprintf(
 				'<a href="%s" title="%s" target="_blank">%s</a>',
-				admin_url( 'options-general.php?page=widget_context_settings' ),
+				esc_url( $this->plugin_settings_admin_url() ),
 				esc_attr__( 'Widget Context Settings', 'widget-context' ),
 				esc_html__( 'Settings', 'widget-context' )
 			);
