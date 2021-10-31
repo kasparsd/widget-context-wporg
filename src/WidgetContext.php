@@ -168,20 +168,6 @@ class WidgetContext {
 		uasort( $this->contexts, array( $this, 'sort_context_by_weight' ) );
 	}
 
-
-	public function get_context_options( $widget_id = null ) {
-		if ( ! $widget_id ) {
-			return $this->context_options;
-		}
-
-		if ( isset( $this->context_options[ $widget_id ] ) ) {
-			return $this->context_options[ $widget_id ];
-		}
-
-		return null;
-	}
-
-
 	public function get_context_settings( $widget_id = null ) {
 		if ( ! $widget_id ) {
 			return $this->context_settings;
