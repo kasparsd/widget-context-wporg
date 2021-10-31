@@ -46,7 +46,10 @@
   "scripts": {
     "lint": [
       "composer validate --no-check-publish --strict",
-      "phpcs ."
+      "phpcs"
+    ],
+    "lint-fix": [
+      "phpcbf"
     ],
     "mess": [
       "phpmd ./src text phpmd.xml --suffixes php"
