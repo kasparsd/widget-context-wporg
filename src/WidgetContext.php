@@ -295,13 +295,39 @@ class WidgetContext {
 		// Remove non-existant widget contexts from the settings
 		foreach ( $this->context_options as $widget_id => $widget_context ) {
 			if ( ! in_array( $widget_id, $all_widget_ids, true ) ) {
-				unset( $this->context_options[ $widget_id ] );
+				$this->delete_context_settings_for_widget( $widget_id );
 			}
 		}
 
-		update_option( $this->options_name, $this->context_options );
+		$this->store_widget_context_settings();
 	}
 
+	/**
+	 * Setting context settings for a widget by ID.
+	 *
+	 * @return void
+	 */
+	protected function update_context_settings_for_widget( $widget_id, $settings ) {
+		$this->context_options[ $widget_id ] = $settings;
+	}
+
+	/**
+	 * Delete context settings for a widget by ID.
+	 *
+	 * @return void
+	 */
+	protected function delete_context_settings_for_widget( $widget_id ) {
+		unset( $this->context_options[ $widget_id ] );
+	}
+
+	/**
+	 * Persist the context settings for all widgets.
+	 *
+	 * @return void
+	 */
+	protected function store_widget_context_settings() {
+		update_option( $this->options_name, $this->context_options );
+	}
 
 	function maybe_unset_widgets_by_context( $sidebars_widgets ) {
 		// Don't run this at the backend or before
