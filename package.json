@@ -7,6 +7,10 @@
     "name": "Kaspars Dambis",
     "url": "https://widgetcontext.com/about"
   },
+  "engineStrict": true,
+  "engines": {
+    "node": ">=14"
+  },
   "scripts": {
     "grunt": "grunt",
     "build": "composer release && grunt build",
