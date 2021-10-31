@@ -90,6 +90,7 @@ class WidgetContext {
 		// Allow users to disable the block widget editor.
 		add_filter( 'gutenberg_use_widgets_block_editor', array( $this, 'maybe_disable_block_widget_editor' ) );
 		add_filter( 'use_widgets_block_editor', array( $this, 'maybe_disable_block_widget_editor' ) );
+		add_action( 'admin_notices', array( $this, 'maybe_notify_of_disabled_block_widget_editor' ) );
 
 		// Save widget context settings, when in admin area
 		add_action( 'sidebar_admin_setup', array( $this, 'save_widget_context_settings' ) );
@@ -1108,6 +1109,22 @@ class WidgetContext {
 		return admin_url( sprintf( 'themes.php?page=%s', $this->settings_name ) );
 	}
 
+	/**
+	 * Maybe display a notice about the widget interface.
+	 *
+	 * @return void
+	 */
+	public function maybe_notify_of_disabled_block_widget_editor() {
+		$admin_screen = get_current_screen();
+
+		if ( ! empty( $admin_screen->base ) && 'widgets' === $admin_screen->base ) {
+			printf(
+				'<div class="notice notice-info"><p>%s <a class="button" href="%s">Configure</a></p></div>',
+				esc_html__( 'The legacy widget editor is currently enabled in the Widget Context settings.', 'widget-context' ),
+				esc_url( $this->plugin_settings_admin_url() )
+			);
+		}
+	}
 
 	function widget_context_admin_view() {
 		$context_controls = array();
