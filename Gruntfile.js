@@ -61,7 +61,9 @@ module.exports = function( grunt ) {
 			const pluginVersion = getPluginVersion( 'widget-context.php' );
 
 			if ( ! pluginVersion ) {
-				grunt.warn( 'Failed to parse the plugin version in the plugin file.' );
+				grunt.warn(
+					'Failed to parse the plugin version in the plugin file.'
+				);
 			}
 
 			pkgConfig.version = pluginVersion;
@@ -134,25 +136,7 @@ module.exports = function( grunt ) {
 		},
 	} );
 
-	grunt.registerTask(
-		'build', [
-			'clean',
-			'copy',
-			'readmeMdToTxt',
-		]
-	);
-
-	grunt.registerTask(
-		'deploy', [
-			'build',
-			'wp_deploy:all',
-		]
-	);
-
-	grunt.registerTask(
-		'deploy-trunk', [
-			'build',
-			'wp_deploy:trunk',
-		]
-	);
+	grunt.registerTask( 'build', [ 'clean', 'copy', 'readmeMdToTxt' ] );
+	grunt.registerTask( 'deploy', [ 'build', 'wp_deploy:all' ] );
+	grunt.registerTask( 'deploy-trunk', [ 'build', 'wp_deploy:trunk' ] );
 };

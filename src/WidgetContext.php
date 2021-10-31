@@ -229,6 +229,12 @@ class WidgetContext {
 			esc_html__( 'Settings', 'widget-context' )
 		);
 
+		$links[] = sprintf(
+			'<a href="%s">%s</a>',
+			esc_url( $this->customize_widgets_admin_url() ),
+			esc_html__( 'Configure Widgets', 'widget-context' )
+		);
+
 		if ( $this->pro_nag_enabled() ) {
 			$links[] = sprintf(
 				'<a href="%s" target="_blank">PRO 🚀</a>',

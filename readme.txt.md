@@ -65,6 +65,12 @@ Specify URLs to ignore even if they're matched by any of the other context rules
 
 ## Changelog
 
+### 1.3.2 (April 27, 2020)
+
+- Bugfix: Fix the Widget Context settings link in the widget controls after moving the settings under the "Appearance" menu for usability (closer to the widget settings).
+- Feature: Add a link to the plugin settings in the plugin admin list, too.
+
+
 ### 1.3.1 (April 24, 2020)
 
 - Bugfix: better support for URL rules with query parameters.
