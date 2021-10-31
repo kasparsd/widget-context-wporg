@@ -1113,7 +1113,7 @@ class WidgetContext {
 	 *
 	 * @return boolean
 	 */
-	public function is_widget_block_editor_enabled() {
+	public function widget_block_editor_enabled() {
 		return function_exists( 'wp_use_widgets_block_editor' ) && wp_use_widgets_block_editor();
 	}
 
