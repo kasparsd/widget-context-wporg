@@ -1,6 +1,6 @@
 # Widget Context
 
-[![Build Status](https://travis-ci.com/kasparsd/widget-context-wporg.svg?branch=master)](https://travis-ci.com/kasparsd/widget-context-wporg)
+[![Lint and Test](https://github.com/kasparsd/widget-context-wporg/actions/workflows/test.yml/badge.svg)](https://github.com/kasparsd/widget-context-wporg/actions/workflows/test.yml)
 [![Coverage Status](https://coveralls.io/repos/github/kasparsd/widget-context-wporg/badge.svg?branch=master)](https://coveralls.io/github/kasparsd/widget-context-wporg?branch=master)
 
 Source of the [Widget Context plugin](https://widgetcontext.com) for WordPress.
