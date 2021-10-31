@@ -1109,6 +1109,15 @@ class WidgetContext {
 	}
 
 	/**
+	 * If the block widget editor is enabled.
+	 *
+	 * @return boolean
+	 */
+	public function is_widget_block_editor_enabled() {
+		return function_exists( 'wp_use_widgets_block_editor' ) && wp_use_widgets_block_editor();
+	}
+
+	/**
 	 * Check if the WP environment supports widget block editor.
 	 *
 	 * @return boolean
