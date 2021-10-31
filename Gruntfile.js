@@ -1,11 +1,11 @@
 /* eslint-env node */
 
-module.exports = function ( grunt ) {
+module.exports = function( grunt ) {
 	// Load all Grunt plugins.
 	require( 'load-grunt-tasks' )( grunt );
 
 	// TODO: Move to own Grunt plugin.
-	grunt.registerTask( 'readmeMdToTxt', 'Log some stuff.', function () {
+	grunt.registerTask( 'readmeMdToTxt', 'Log some stuff.', function() {
 		const formatReadme = ( content ) => {
 			const replaceRules = {
 				'#': '=== $1 ===',
@@ -14,7 +14,7 @@ module.exports = function ( grunt ) {
 			};
 
 			// Replace Markdown headings with WP.org style headings
-			Object.keys( replaceRules ).forEach( function ( pattern ) {
+			Object.keys( replaceRules ).forEach( function( pattern ) {
 				const patternRegExp = [ '^', pattern, '\\s(.+)$' ].join( '' );
 
 				content = content.replace(
