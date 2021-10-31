@@ -1153,11 +1153,14 @@ class WidgetContext {
 		$admin_screen = get_current_screen();
 
 		if ( ! empty( $admin_screen->base ) && 'widgets' === $admin_screen->base ) {
-			printf(
-				'<div class="notice notice-info"><p>%s <a class="button" href="%s">Configure</a></p></div>',
-				esc_html__( 'The legacy widget editor is currently enabled in the Widget Context settings.', 'widget-context' ),
-				esc_url( $this->plugin_settings_admin_url() )
-			);
+			if ( $this->widget_block_editor_supported() && $this->widget_block_editor_disabled() ) {
+				printf(
+					'<div class="notice notice-info"><p>%s <a class="button" href="%s">%s</a></p></div>',
+					esc_html__( 'The legacy widget editor is currently enabled in the Widget Context settings.', 'widget-context' ),
+					esc_url( $this->plugin_settings_admin_url() ),
+					esc_html__( 'Configure', 'widget-context' )
+				);
+			}
 		}
 	}
 
