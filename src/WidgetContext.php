@@ -1105,7 +1105,7 @@ class WidgetContext {
 	 * @return string
 	 */
 	public function plugin_settings_admin_url() {
-		return admin_url( 'themes.php?page=widget_context_settings' );
+		return admin_url( sprintf( 'themes.php?page=%s', $this->settings_name ) );
 	}
 
 
