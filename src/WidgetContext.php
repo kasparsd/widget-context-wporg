@@ -92,7 +92,7 @@ class WidgetContext {
 		add_filter( 'use_widgets_block_editor', array( $this, 'maybe_disable_block_widget_editor' ) );
 		add_action( 'admin_notices', array( $this, 'maybe_notify_of_disabled_block_widget_editor' ) );
 
-		// Save widget context settings, when in admin area
+		// Save widget context settings, when in admin area of the legacy widget editing screen.
 		add_action( 'sidebar_admin_setup', array( $this, 'save_widget_context_settings' ) );
 
 		// Fix legacy context option naming
