@@ -28,7 +28,9 @@
 .context-group-custom_post_types_taxonomies .context-group-wrap { max-height:10em; overflow:auto; padding:0.5em; margin-bottom:0.5em; background:#fff; border:1px solid #ddd; }
 .context-group-custom_post_types_taxonomies label { display:block; padding:0.25em 0; }
 
-.context-group-wrap .wc-field-text-word-count input { width:3em; }
+.widget-context .context-group-word_count .context-group-wrap label { display: inline-block; }
+.widget-context .context-group-word_count .context-group-wrap select,
+.widget-context .context-group-word_count .context-group-wrap input[type="text"] { width:5em; display:inline-block; }
 
 .context-group-admin_notes textarea { height:4em; }
 
@@ -52,6 +54,12 @@
 .widget-control-actions,
 .widget-content,
 #widgets-right .widget { clear:left; }
+
+.wp-block-legacy-widget__edit-form .widget-context { font-size:13px; line-height: 1.5; color:#000; }
+.wp-block-legacy-widget__edit-form .widget-context .widget-context-header h3 { line-height: 2.1; line-height: inherit; font-size:inherit; color: #000; }
+.wp-block-legacy-widget__edit-form .context-toggle { font-size:1em; }
+.wp-block-legacy-widget__edit-form .widget-context .context-group { padding-left: 1em; border-left:1px solid #ddd; }
+.wp-block-legacy-widget__edit-form .widget-context .context-group-incexc { padding-left:0; border:none; }
 
 @media screen and ( max-width: 900px ) {
 	.widget-context-settings-wrap { padding-right:0; }
