@@ -3,9 +3,7 @@
 namespace Preseto\WidgetContextTest;
 
 use WP_Mock;
-use Mockery;
 use WidgetContext;
-use Preseto\WidgetContextTest\WidgetContextTestCase;
 
 class WidgetContextTest extends WidgetContextTestCase {
 
@@ -25,8 +23,7 @@ class WidgetContextTest extends WidgetContextTestCase {
 	}
 
 	public function testLegacyInstance() {
-		$plugin = Mockery::mock( 'Preseto\WidgetContext\Plugin' );
-		$widget_context = new WidgetContext( $plugin );
+		$widget_context = new WidgetContext( null );
 
 		$this->assertSame(
 			$widget_context,
