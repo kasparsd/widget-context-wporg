@@ -274,23 +274,19 @@ class WidgetContext {
 			return;
 		}
 
-		// Delete a widget
+		// Delete a widget.
 		if ( isset( $_POST['delete_widget'] ) && isset( $_POST['the-widget-id'] ) ) {
-			unset( $this->context_options[ $_POST['the-widget-id'] ] );
+			$this->delete_context_settings_for_widget( $_POST['the-widget-id'] );
 		}
 
-		// Add / Update
-		$this->context_options = array_merge( $this->context_options, $_POST['wl'] );
-
-		$sidebars_widgets = wp_get_sidebars_widgets();
-		$all_widget_ids = array();
-
-		// Get a lits of all widget IDs
-		foreach ( $sidebars_widgets as $widget_area => $widgets ) {
-			foreach ( $widgets as $widget_order => $widget_id ) {
-				$all_widget_ids[] = $widget_id;
+		// Add or update widgets.
+		if ( ! empty( $_POST['wl'] ) && is_array( $_POST['wl'] ) ) {
+			foreach ( $_POST['wl'] as $widget_id => $widget_context_settings ) {
+				$this->update_context_settings_for_widget( $widget_id, $widget_context_settings );
 			}
 		}
+
+		$all_widget_ids = $this->get_all_widget_ids();
 
 		// Remove non-existant widget contexts from the settings
 		foreach ( $this->context_options as $widget_id => $widget_context ) {
@@ -300,6 +296,24 @@ class WidgetContext {
 		}
 
 		$this->store_widget_context_settings();
+	}
+
+	/**
+	 * Get widget IDs from all widget areas.
+	 *
+	 * @return array
+	 */
+	public function get_all_widget_ids() {
+		$all_widget_ids = array();
+
+		// Get a list of all widget IDs.
+		foreach ( wp_get_sidebars_widgets() as $widget_area => $widgets ) {
+			foreach ( $widgets as $widget_order => $widget_id ) {
+				$all_widget_ids[] = $widget_id;
+			}
+		}
+
+		return $all_widget_ids;
 	}
 
 	/**
