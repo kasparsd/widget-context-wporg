@@ -34,5 +34,8 @@ jobs:
       - name: Test
         run: npm run test
 
+      - name: Check mess
+        run: npm run mess -- -- --ignore-violations-on-exit
+
       - name: Build
         run: npm run build
