@@ -37,7 +37,7 @@
   "license": "GPL-2.0",
   "devDependencies": {
     "@wordpress/eslint-plugin": "^9.2.0",
-    "eslint": "^8.1.0",
+    "eslint": "^7.32.0",
     "grunt": "^1.4.1",
     "grunt-cli": "^1.4.3",
     "grunt-contrib-clean": "^2.0",

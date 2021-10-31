@@ -1,11 +1,11 @@
 /* eslint-env node */
 
-module.exports = function( grunt ) {
+module.exports = function ( grunt ) {
 	// Load all Grunt plugins.
 	require( 'load-grunt-tasks' )( grunt );
 
 	// TODO: Move to own Grunt plugin.
-	grunt.registerTask( 'readmeMdToTxt', 'Log some stuff.', function() {
+	grunt.registerTask( 'readmeMdToTxt', 'Log some stuff.', function () {
 		const formatReadme = ( content ) => {
 			const replaceRules = {
 				'#': '=== $1 ===',
@@ -14,7 +14,7 @@ module.exports = function( grunt ) {
 			};
 
 			// Replace Markdown headings with WP.org style headings
-			Object.keys( replaceRules ).forEach( function( pattern ) {
+			Object.keys( replaceRules ).forEach( function ( pattern ) {
 				const patternRegExp = [ '^', pattern, '\\s(.+)$' ].join( '' );
 
 				content = content.replace(
@@ -61,7 +61,9 @@ module.exports = function( grunt ) {
 			const pluginVersion = getPluginVersion( 'widget-context.php' );
 
 			if ( ! pluginVersion ) {
-				grunt.warn( 'Failed to parse the plugin version in the plugin file.' );
+				grunt.warn(
+					'Failed to parse the plugin version in the plugin file.'
+				);
 			}
 
 			pkgConfig.version = pluginVersion;
@@ -134,25 +136,7 @@ module.exports = function( grunt ) {
 		},
 	} );
 
-	grunt.registerTask(
-		'build', [
-			'clean',
-			'copy',
-			'readmeMdToTxt',
-		]
-	);
-
-	grunt.registerTask(
-		'deploy', [
-			'build',
-			'wp_deploy:all',
-		]
-	);
-
-	grunt.registerTask(
-		'deploy-trunk', [
-			'build',
-			'wp_deploy:trunk',
-		]
-	);
+	grunt.registerTask( 'build', [ 'clean', 'copy', 'readmeMdToTxt' ] );
+	grunt.registerTask( 'deploy', [ 'build', 'wp_deploy:all' ] );
+	grunt.registerTask( 'deploy-trunk', [ 'build', 'wp_deploy:trunk' ] );
 };

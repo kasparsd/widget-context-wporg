@@ -1,4 +1,7 @@
 {
+  "env": {
+    "browser": true
+  },
   "extends": "plugin:@wordpress/eslint-plugin/es5",
   "overrides": [
     {
