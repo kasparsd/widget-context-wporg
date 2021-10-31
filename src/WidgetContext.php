@@ -87,6 +87,10 @@ class WidgetContext {
 		// Add admin menu for config
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
 
+		// Allow users to disable the block widget editor.
+		add_filter( 'gutenberg_use_widgets_block_editor', array( $this, 'maybe_disable_block_widget_editor' ) );
+		add_filter( 'use_widgets_block_editor', array( $this, 'maybe_disable_block_widget_editor' ) );
+
 		// Save widget context settings, when in admin area
 		add_action( 'sidebar_admin_setup', array( $this, 'save_widget_context_settings' ) );
 
@@ -1064,6 +1068,36 @@ class WidgetContext {
 		return admin_url( 'customize.php?autofocus[panel]=widgets' );
 	}
 
+	/**
+	 * Disable the widget block editor, if necessary.
+	 *
+	 * @return boolean
+	 */
+	public function maybe_disable_block_widget_editor( $enabled ) {
+		if ( $this->widget_block_editor_disabled() ) {
+			return false;
+		}
+
+		return $enabled;
+	}
+
+	/**
+	 * Check if the WP environment supports widget block editor.
+	 *
+	 * @return boolean
+	 */
+	public function widget_block_editor_supported() {
+		return function_exists( 'wp_use_widgets_block_editor' );
+	}
+
+	/**
+	 * Check if the widget block editor is enabled in our settings.
+	 *
+	 * @return boolean
+	 */
+	public function widget_block_editor_disabled() {
+		return $this->widget_block_editor_supported() && ! empty( $this->context_settings['widget_block_editor_disable'] );
+	}
 
 	/**
 	 * Get the URL to the plugin settings page.
@@ -1142,6 +1176,23 @@ class WidgetContext {
 									</p>
 								</td>
 							</tr>
+							<?php if ( $this->widget_block_editor_supported() ) : ?>
+							<tr>
+								<th scrope="row">
+									<?php esc_html_e( 'Widgets Editing', 'widget-context' ); ?>
+								</th>
+								<td>
+									<label>
+										<input name="<?php esc_attr_e( $this->settings_name ); ?>[widget_block_editor_disable]" type="hidden" value="0"  />
+										<input name="<?php esc_attr_e( $this->settings_name ); ?>[widget_block_editor_disable]" type="checkbox" value="1" <?php checked( $this->widget_block_editor_disabled(), true, true ); ?> />
+										<?php esc_html_e( 'Use legacy widget editor', 'widget-context' ); ?>
+									</label>
+									<p class="help">
+									<?php esc_html_e( 'Enables the widget editing interface used before WordPress version 5.8.', 'widget-context' ); ?>
+									</p>
+								</td>
+							</tr>
+							<?php endif; // Classic Widgets. ?>
 							<tr>
 								<th scrope="row">
 									<?php esc_html_e( 'Configure Widgets', 'widget-context' ); ?>
