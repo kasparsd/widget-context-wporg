@@ -1123,7 +1123,7 @@ class WidgetContext {
 	 * @return boolean
 	 */
 	public function widget_block_editor_disabled() {
-		return $this->widget_block_editor_supported() && ! empty( $this->context_settings['widget_block_editor_disable'] );
+		return ! empty( $this->context_settings['widget_block_editor_disable'] );
 	}
 
 	/**
