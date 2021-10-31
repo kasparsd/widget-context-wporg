@@ -1200,8 +1200,8 @@ class WidgetContext {
 								</th>
 								<td>
 									<label>
-										<input name="<?php esc_attr_e( $this->settings_name ); ?>[widget_block_editor_disable]" type="hidden" value="0"  />
-										<input name="<?php esc_attr_e( $this->settings_name ); ?>[widget_block_editor_disable]" type="checkbox" value="1" <?php checked( $this->widget_block_editor_disabled(), true, true ); ?> />
+										<input name="<?php echo esc_attr( $this->settings_name ); ?>[widget_block_editor_disable]" type="hidden" value="0"  />
+										<input name="<?php echo esc_attr( $this->settings_name ); ?>[widget_block_editor_disable]" type="checkbox" value="1" <?php checked( $this->widget_block_editor_disabled(), true, true ); ?> />
 										<?php esc_html_e( 'Use legacy widget editor', 'widget-context' ); ?>
 									</label>
 									<p class="help">
