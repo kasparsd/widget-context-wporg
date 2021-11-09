@@ -717,6 +717,12 @@ class WidgetContext {
 		$has_controls = array_diff( $controls_not_core, $controls_disabled );
 
 		if ( empty( $controls ) || empty( $has_controls ) ) {
+			$controls = array(
+				sprintf(
+					'<p class="error">%s</p>',
+					__( 'No widget controls enabled.', 'widget-context' )
+				),
+			);
 
 			if ( current_user_can( 'edit_theme_options' ) ) {
 				$controls = array(
@@ -725,15 +731,8 @@ class WidgetContext {
 						sprintf(
 							/* translators: %s is a URL to the settings page. */
 							__( 'No widget controls enabled. You can enable them in <a href="%s">Widget Context settings</a>.', 'widget-context' ),
-							$this->plugin_settings_admin_url()
+							esc_url( $this->plugin_settings_admin_url() )
 						)
-					),
-				);
-			} else {
-				$controls = array(
-					sprintf(
-						'<p class="error">%s</p>',
-						__( 'No widget controls enabled.', 'widget-context' )
 					),
 				);
 			}
