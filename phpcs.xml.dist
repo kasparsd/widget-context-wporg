@@ -7,6 +7,8 @@
 	<arg name="colors" />
 	<arg value="s" /><!-- Show sniff codes in all reports. -->
 
+	<file>.</file>
+
 	<rule ref="PHPCompatibility" />
 	<config name="testVersion" value="5.6-" />
 

@@ -87,7 +87,12 @@ class WidgetContext {
 		// Add admin menu for config
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
 
-		// Save widget context settings, when in admin area
+		// Allow users to disable the block widget editor.
+		add_filter( 'gutenberg_use_widgets_block_editor', array( $this, 'maybe_disable_block_widget_editor' ) );
+		add_filter( 'use_widgets_block_editor', array( $this, 'maybe_disable_block_widget_editor' ) );
+		add_action( 'admin_notices', array( $this, 'maybe_notify_of_disabled_block_widget_editor' ) );
+
+		// Save widget context settings, when in admin area of the legacy widget editing screen.
 		add_action( 'sidebar_admin_setup', array( $this, 'save_widget_context_settings' ) );
 
 		// Fix legacy context option naming
@@ -162,20 +167,6 @@ class WidgetContext {
 		// Sort contexts by their weight
 		uasort( $this->contexts, array( $this, 'sort_context_by_weight' ) );
 	}
-
-
-	public function get_context_options( $widget_id = null ) {
-		if ( ! $widget_id ) {
-			return $this->context_options;
-		}
-
-		if ( isset( $this->context_options[ $widget_id ] ) ) {
-			return $this->context_options[ $widget_id ];
-		}
-
-		return null;
-	}
-
 
 	public function get_context_settings( $widget_id = null ) {
 		if ( ! $widget_id ) {
@@ -283,34 +274,74 @@ class WidgetContext {
 			return;
 		}
 
-		// Delete a widget
+		// Delete a widget.
 		if ( isset( $_POST['delete_widget'] ) && isset( $_POST['the-widget-id'] ) ) {
-			unset( $this->context_options[ $_POST['the-widget-id'] ] );
+			$this->delete_context_settings_for_widget( $_POST['the-widget-id'] );
 		}
 
-		// Add / Update
-		$this->context_options = array_merge( $this->context_options, $_POST['wl'] );
+		// Add or update widgets.
+		if ( ! empty( $_POST['wl'] ) && is_array( $_POST['wl'] ) ) {
+			foreach ( $_POST['wl'] as $widget_id => $widget_context_settings ) {
+				$this->update_context_settings_for_widget( $widget_id, $widget_context_settings );
+			}
+		}
 
-		$sidebars_widgets = wp_get_sidebars_widgets();
+		$all_widget_ids = $this->get_all_widget_ids();
+
+		// Remove non-existant widget contexts from the settings
+		foreach ( $this->context_options as $widget_id => $widget_context ) {
+			if ( ! in_array( $widget_id, $all_widget_ids, true ) ) {
+				$this->delete_context_settings_for_widget( $widget_id );
+			}
+		}
+
+		$this->store_widget_context_settings();
+	}
+
+	/**
+	 * Get widget IDs from all widget areas.
+	 *
+	 * @return array
+	 */
+	public function get_all_widget_ids() {
 		$all_widget_ids = array();
 
-		// Get a lits of all widget IDs
-		foreach ( $sidebars_widgets as $widget_area => $widgets ) {
+		// Get a list of all widget IDs.
+		foreach ( wp_get_sidebars_widgets() as $widget_area => $widgets ) {
 			foreach ( $widgets as $widget_order => $widget_id ) {
 				$all_widget_ids[] = $widget_id;
 			}
 		}
 
-		// Remove non-existant widget contexts from the settings
-		foreach ( $this->context_options as $widget_id => $widget_context ) {
-			if ( ! in_array( $widget_id, $all_widget_ids, true ) ) {
-				unset( $this->context_options[ $widget_id ] );
-			}
-		}
-
-		update_option( $this->options_name, $this->context_options );
+		return $all_widget_ids;
 	}
 
+	/**
+	 * Setting context settings for a widget by ID.
+	 *
+	 * @return void
+	 */
+	protected function update_context_settings_for_widget( $widget_id, $settings ) {
+		$this->context_options[ $widget_id ] = $settings;
+	}
+
+	/**
+	 * Delete context settings for a widget by ID.
+	 *
+	 * @return void
+	 */
+	protected function delete_context_settings_for_widget( $widget_id ) {
+		unset( $this->context_options[ $widget_id ] );
+	}
+
+	/**
+	 * Persist the context settings for all widgets.
+	 *
+	 * @return void
+	 */
+	protected function store_widget_context_settings() {
+		update_option( $this->options_name, $this->context_options );
+	}
 
 	function maybe_unset_widgets_by_context( $sidebars_widgets ) {
 		// Don't run this at the backend or before
@@ -686,6 +717,12 @@ class WidgetContext {
 		$has_controls = array_diff( $controls_not_core, $controls_disabled );
 
 		if ( empty( $controls ) || empty( $has_controls ) ) {
+			$controls = array(
+				sprintf(
+					'<p class="error">%s</p>',
+					__( 'No widget controls enabled.', 'widget-context' )
+				),
+			);
 
 			if ( current_user_can( 'edit_theme_options' ) ) {
 				$controls = array(
@@ -694,15 +731,8 @@ class WidgetContext {
 						sprintf(
 							/* translators: %s is a URL to the settings page. */
 							__( 'No widget controls enabled. You can enable them in <a href="%s">Widget Context settings</a>.', 'widget-context' ),
-							$this->plugin_settings_admin_url()
+							esc_url( $this->plugin_settings_admin_url() )
 						)
-					),
-				);
-			} else {
-				$controls = array(
-					sprintf(
-						'<p class="error">%s</p>',
-						__( 'No widget controls enabled.', 'widget-context' )
 					),
 				);
 			}
@@ -1064,6 +1094,45 @@ class WidgetContext {
 		return admin_url( 'customize.php?autofocus[panel]=widgets' );
 	}
 
+	/**
+	 * Disable the widget block editor, if necessary.
+	 *
+	 * @return boolean
+	 */
+	public function maybe_disable_block_widget_editor( $enabled ) {
+		if ( $this->widget_block_editor_disabled() ) {
+			return false;
+		}
+
+		return $enabled;
+	}
+
+	/**
+	 * If the block widget editor is enabled.
+	 *
+	 * @return boolean
+	 */
+	public function widget_block_editor_enabled() {
+		return function_exists( 'wp_use_widgets_block_editor' ) && wp_use_widgets_block_editor();
+	}
+
+	/**
+	 * Check if the WP environment supports widget block editor.
+	 *
+	 * @return boolean
+	 */
+	public function widget_block_editor_supported() {
+		return function_exists( 'wp_use_widgets_block_editor' );
+	}
+
+	/**
+	 * Check if the widget block editor is enabled in our settings.
+	 *
+	 * @return boolean
+	 */
+	public function widget_block_editor_disabled() {
+		return ! empty( $this->context_settings['widget_block_editor_disable'] );
+	}
 
 	/**
 	 * Get the URL to the plugin settings page.
@@ -1071,9 +1140,28 @@ class WidgetContext {
 	 * @return string
 	 */
 	public function plugin_settings_admin_url() {
-		return admin_url( 'themes.php?page=widget_context_settings' );
+		return admin_url( sprintf( 'themes.php?page=%s', $this->settings_name ) );
 	}
 
+	/**
+	 * Maybe display a notice about the widget interface.
+	 *
+	 * @return void
+	 */
+	public function maybe_notify_of_disabled_block_widget_editor() {
+		$admin_screen = get_current_screen();
+
+		if ( ! empty( $admin_screen->base ) && 'widgets' === $admin_screen->base ) {
+			if ( $this->widget_block_editor_supported() && $this->widget_block_editor_disabled() ) {
+				printf(
+					'<div class="notice notice-info"><p>%s <a class="button" href="%s">%s</a></p></div>',
+					esc_html__( 'The legacy widget editor is currently enabled in the Widget Context settings.', 'widget-context' ),
+					esc_url( $this->plugin_settings_admin_url() ),
+					esc_html__( 'Configure', 'widget-context' )
+				);
+			}
+		}
+	}
 
 	function widget_context_admin_view() {
 		$context_controls = array();
@@ -1142,6 +1230,23 @@ class WidgetContext {
 									</p>
 								</td>
 							</tr>
+							<?php if ( $this->widget_block_editor_supported() ) : ?>
+							<tr>
+								<th scrope="row">
+									<?php esc_html_e( 'Widgets Editing', 'widget-context' ); ?>
+								</th>
+								<td>
+									<label>
+										<input name="<?php echo esc_attr( $this->settings_name ); ?>[widget_block_editor_disable]" type="hidden" value="0"  />
+										<input name="<?php echo esc_attr( $this->settings_name ); ?>[widget_block_editor_disable]" type="checkbox" value="1" <?php checked( $this->widget_block_editor_disabled(), true, true ); ?> />
+										<?php esc_html_e( 'Use legacy widget editor', 'widget-context' ); ?>
+									</label>
+									<p class="help">
+									<?php esc_html_e( 'Enables the widget editing interface used before WordPress version 5.8.', 'widget-context' ); ?>
+									</p>
+								</td>
+							</tr>
+							<?php endif; // Classic Widgets. ?>
 							<tr>
 								<th scrope="row">
 									<?php esc_html_e( 'Configure Widgets', 'widget-context' ); ?>
