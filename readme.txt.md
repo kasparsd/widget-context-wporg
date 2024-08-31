@@ -65,6 +65,10 @@ Specify URLs to ignore even if they're matched by any of the other context rules
 
 ## Changelog
 
+### 1.3.3 (August 31, 2024)
+
+- Mark as tested with WordPress 6.6 and PHP 8.2, see [#72](https://github.com/kasparsd/widget-context-wporg/pull/72).
+
 ### 1.3.2 (April 27, 2020)
 
 - Bugfix: Fix the Widget Context settings link in the widget controls after moving the settings under the "Appearance" menu for usability (closer to the widget settings).
