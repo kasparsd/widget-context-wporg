@@ -1,0 +1,41 @@
+name: Lint and Test
+
+on: push
+
+jobs:
+
+  test:
+    name: Test and Lint
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        php-versions: ['5.6', '7.4', '8.0']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          coverage: xdebug
+
+      - name: Install tooling
+        run: npm install
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm run test
+
+      - name: Check mess
+        run: npm run mess -- -- --ignore-violations-on-exit
+
+      - name: Build
+        run: npm run build

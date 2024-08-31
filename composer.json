@@ -24,13 +24,14 @@
   },
   "require-dev": {
     "10up/wp_mock": "^0.2.0",
-    "mockery/mockery": "^0.9",
-    "php-coveralls/php-coveralls": "^2.1.0",
-    "phpcompatibility/php-compatibility": "^9.2",
-    "phpmd/phpmd": "^2.7",
-    "phpunit/phpunit": "^5",
-    "wp-coding-standards/wpcs": "^2.1",
-    "wpsh/local": "^0.2.3"
+    "mockery/mockery": "^0.9.5",
+    "php-coveralls/php-coveralls": "^2.4",
+    "phpcompatibility/php-compatibility": "^9.3",
+    "phpmd/phpmd": "^2.10",
+    "phpunit/phpunit": "^5.7",
+    "wp-coding-standards/wpcs": "^2.3",
+    "wpsh/local": "^0.2.3",
+    "yoast/phpunit-polyfills": "^1.0"
   },
   "autoload": {
     "classmap": [
