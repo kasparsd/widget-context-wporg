@@ -273,8 +273,8 @@ class WidgetContext {
 	}
 
 
-	function widget_context_controls( $object ) {
-		echo $this->display_widget_context( $object->id );
+	function widget_context_controls( $widget ) {
+		echo $this->display_widget_context( $widget->id );
 	}
 
 
