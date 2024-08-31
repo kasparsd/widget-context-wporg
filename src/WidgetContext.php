@@ -82,7 +82,7 @@ class WidgetContext {
 		add_action( 'wp', array( $this, 'set_widget_contexts_frontend' ) );
 
 		// Append Widget Context settings to widget controls
-		add_action( 'in_widget_form', array( $this, 'widget_context_controls' ), 10, 3 );
+		add_action( 'in_widget_form', array( $this, 'widget_context_controls' ), 10 );
 
 		// Add admin menu for config
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
@@ -273,7 +273,7 @@ class WidgetContext {
 	}
 
 
-	function widget_context_controls( $object, $return, $instance ) {
+	function widget_context_controls( $object ) {
 		echo $this->display_widget_context( $object->id );
 	}
 
