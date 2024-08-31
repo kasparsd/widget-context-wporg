@@ -3,7 +3,7 @@
  * Plugin Name: Widget Context
  * Plugin URI: https://widgetcontext.com
  * Description: Show or hide widgets depending on the section of the site that is being viewed. Configure the widget visibility rules under the individual widget settings.
- * Version: 1.3.2
+ * Version: 1.3.3
  * Author: Kaspars Dambis
  * Author URI: https://widgetcontext.com
  * Text Domain: widget-context
