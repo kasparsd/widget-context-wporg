@@ -2,7 +2,6 @@
 
 class WidgetContextWordCount {
 
-	private static $instance;
 	private $wc;
 
 	private $words_on_page = 0;
