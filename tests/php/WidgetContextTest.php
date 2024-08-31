@@ -14,7 +14,7 @@ class WidgetContextTest extends WidgetContextTestCase {
 
 		WP_Mock::userFunction( 'wp_parse_args' )
 			->andReturnUsing(
-				function( $args, $defaults ) {
+				function ( $args, $defaults ) {
 					return array_merge( $defaults, $args );
 				}
 			);
@@ -68,5 +68,4 @@ class WidgetContextTest extends WidgetContextTestCase {
 			'Normalize the path by removing the trailing slash'
 		);
 	}
-
 }

@@ -183,5 +183,4 @@ class Plugin {
 
 		return $meta;
 	}
-
 }

@@ -98,5 +98,4 @@ class WidgetContextWordCount {
 			$this->wc->make_simple_textfield( $control_args, 'word_count', null, __( 'words', 'widget-context' ) )
 		);
 	}
-
 }

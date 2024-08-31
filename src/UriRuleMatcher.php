@@ -30,7 +30,7 @@ class UriRuleMatcher {
 	 */
 	protected function quote_rules( $rules ) {
 		return array_map(
-			function( $rule ) {
+			function ( $rule ) {
 				// Escape regex chars before we enable back the wildcards.
 				$rule = preg_quote( $rule, self::DELIMITER ); // Note that '/' is the delimiter we're using for the final expression below.
 

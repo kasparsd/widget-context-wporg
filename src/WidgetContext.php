@@ -578,7 +578,7 @@ class WidgetContext {
 		$patterns = explode( "\n", $paths );
 
 		$patterns = array_map(
-			function( $pattern ) {
+			function ( $pattern ) {
 				// Resolve rule paths the same way as the request URI.
 				return $this->path_from_uri( trim( $pattern ) );
 			},
@@ -744,7 +744,6 @@ class WidgetContext {
 			// Controls
 			implode( '', $controls )
 		);
-
 	}
 
 
@@ -846,7 +845,6 @@ class WidgetContext {
 			// Label
 			esc_html( $label )
 		);
-
 	}
 
 
@@ -1225,12 +1223,10 @@ class WidgetContext {
 			</div>
 		</div>
 		<?php
-
 	}
 
 
 	public function get_sidebars_widgets_copy() {
 		return $this->sidebars_widgets_copy;
 	}
-
 }
