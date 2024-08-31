@@ -3,7 +3,7 @@ version: '3'
 services:
 
   mysql:
-    image: mysql:5
+    image: mysql:8.0
     volumes:
       - db_data:/var/lib/mysql
     restart: always
@@ -39,6 +39,20 @@ services:
       - wp_data:/var/www/html
       - .:/var/www/html/wp-content/plugins/widget-context-src
       - ./dist:/var/www/html/wp-content/plugins/widget-context
+
+  cli-php8:
+    image: wordpress:cli-php8.2
+    depends_on:
+      - mysql
+    volumes:
+      - wp_data:/var/www/html
+      - .:/var/www/html/wp-content/plugins/widget-context-src
+      - ./dist:/var/www/html/wp-content/plugins/widget-context
+    restart: always
+    environment:
+      WORDPRESS_DEBUG: 1
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: password
 
 volumes:
   db_data: {}
