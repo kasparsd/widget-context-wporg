@@ -21,7 +21,8 @@
     "lint-js": "eslint *.js assets/js",
     "coverage": "composer coverage",
     "mess": "composer mess",
-    "postinstall": "composer install"
+    "postinstall": "composer install",
+    "cli": "docker-compose run --rm wp-cli"
   },
   "repository": {
     "type": "git",
