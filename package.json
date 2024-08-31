@@ -16,13 +16,13 @@
     "build": "composer release && grunt build",
     "deploy": "composer release && grunt deploy",
     "deploy-trunk": "composer release && grunt deploy-trunk",
-    "test": "composer test",
+    "test": "docker-compose run --remove-orphans --workdir=/var/www/html/wp-content/plugins/widget-context-src wordpress vendor/bin/phpunit",
     "lint": "composer lint && npm run lint-js",
     "lint-js": "eslint *.js assets/js",
     "coverage": "composer coverage",
     "mess": "composer mess",
     "postinstall": "composer install",
-    "cli": "docker-compose run --rm wp-cli"
+    "wp-cli": "docker-compose run --remove-orphans wp-cli"
   },
   "repository": {
     "type": "git",
