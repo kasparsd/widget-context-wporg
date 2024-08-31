@@ -2,10 +2,9 @@
 
 class WidgetContextWordCount {
 
-	private static $instance;
 	private $wc;
 
-	var $words_on_page = 0;
+	private $words_on_page = 0;
 
 	public function __construct( $plugin ) {
 		$this->wc = $plugin;
@@ -98,5 +97,4 @@ class WidgetContextWordCount {
 			$this->wc->make_simple_textfield( $control_args, 'word_count', null, __( 'words', 'widget-context' ) )
 		);
 	}
-
 }

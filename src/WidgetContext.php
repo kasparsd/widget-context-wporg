@@ -82,7 +82,7 @@ class WidgetContext {
 		add_action( 'wp', array( $this, 'set_widget_contexts_frontend' ) );
 
 		// Append Widget Context settings to widget controls
-		add_action( 'in_widget_form', array( $this, 'widget_context_controls' ), 10, 3 );
+		add_action( 'in_widget_form', array( $this, 'widget_context_controls' ), 10 );
 
 		// Add admin menu for config
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
@@ -273,8 +273,8 @@ class WidgetContext {
 	}
 
 
-	function widget_context_controls( $object, $return, $instance ) {
-		echo $this->display_widget_context( $object->id );
+	function widget_context_controls( $widget ) {
+		echo $this->display_widget_context( $widget->id );
 	}
 
 
@@ -578,7 +578,7 @@ class WidgetContext {
 		$patterns = explode( "\n", $paths );
 
 		$patterns = array_map(
-			function( $pattern ) {
+			function ( $pattern ) {
 				// Resolve rule paths the same way as the request URI.
 				return $this->path_from_uri( trim( $pattern ) );
 			},
@@ -744,7 +744,6 @@ class WidgetContext {
 			// Controls
 			implode( '', $controls )
 		);
-
 	}
 
 
@@ -846,7 +845,6 @@ class WidgetContext {
 			// Label
 			esc_html( $label )
 		);
-
 	}
 
 
@@ -1225,12 +1223,10 @@ class WidgetContext {
 			</div>
 		</div>
 		<?php
-
 	}
 
 
 	public function get_sidebars_widgets_copy() {
 		return $this->sidebars_widgets_copy;
 	}
-
 }

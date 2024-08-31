@@ -9,5 +9,4 @@ class WidgetContextTestCase extends TestCase {
 
 	// For marking assertions met.
 	use MockeryPHPUnitIntegration;
-
 }

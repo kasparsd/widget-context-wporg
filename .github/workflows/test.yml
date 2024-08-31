@@ -32,7 +32,7 @@ jobs:
         run: npm run lint
 
       - name: Test
-        run: npm run test
+        run: composer test
 
       - name: Check mess
         run: npm run mess -- -- --ignore-violations-on-exit

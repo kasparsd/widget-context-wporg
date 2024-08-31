@@ -136,5 +136,4 @@ class WidgetContextCustomCptTax {
 
 		return sprintf( '%s', esc_html__( 'None.', 'widget-context' ) );
 	}
-
 }

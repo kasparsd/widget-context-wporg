@@ -3,7 +3,7 @@
 Contributors: kasparsd, jamescollins  
 Tags: widget, widgets, widget context, context, logic, widget logic, visibility, widget visibility  
 Requires at least: 3.0  
-Tested up to: 5.4  
+Tested up to: 6.6  
 Stable tag: {{ version }}  
 License: GPLv2 or later  
 Requires PHP: 5.6  
@@ -64,6 +64,10 @@ Specify URLs to ignore even if they're matched by any of the other context rules
 
 
 ## Changelog
+
+### 1.3.3 (August 31, 2024)
+
+- Mark as tested with WordPress 6.6 and PHP 8.2, see [#72](https://github.com/kasparsd/widget-context-wporg/pull/72).
 
 ### 1.3.2 (April 27, 2020)
 

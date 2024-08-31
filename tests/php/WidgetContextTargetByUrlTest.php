@@ -37,7 +37,7 @@ class WidgetContextTargetByUrlTest extends WidgetContextTestCase {
 
 		WP_Mock::userFunction( 'wp_parse_args' )
 			->andReturnUsing(
-				function( $args, $defaults ) {
+				function ( $args, $defaults ) {
 					return array_merge( $defaults, $args );
 				}
 			);
@@ -152,5 +152,4 @@ class WidgetContextTargetByUrlTest extends WidgetContextTestCase {
 			$this->assertEquals( $this->plugin->path_from_uri( $request ), $path );
 		}
 	}
-
 }
