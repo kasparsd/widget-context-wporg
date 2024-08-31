@@ -14,7 +14,7 @@ services:
       MYSQL_ROOT_PASSWORD: password
 
   wordpress:
-    image: wordpress:latest
+    image: wordpress:php7.4
     depends_on:
       - mysql
     ports:
