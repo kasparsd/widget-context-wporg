@@ -28,9 +28,9 @@ Source of the [Widget Context plugin](https://widgetcontext.com) for WordPress.
 
 3. Start the development environment:
 
-	   vagrant up
+	   docker compose up -d
 	
-	which is available at [widgetcontext.local](http://widgetcontext.local).
+	which is available at [widgetcontext.localhost](http://widgetcontext.localhost).
 
 
 ## Screenshots

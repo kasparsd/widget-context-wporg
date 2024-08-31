@@ -35,7 +35,6 @@
     "phpmd/phpmd": "^2.10",
     "phpunit/phpunit": "^5.7",
     "wp-coding-standards/wpcs": "^3.1",
-    "wpsh/local": "^0.2.3",
     "yoast/phpunit-polyfills": "^2.0"
   },
   "autoload": {

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0fadb104c3d43d572ed550d0ac094ff3",
+    "content-hash": "fb19df4a83be7051e3961e3f58303714",
     "packages": [],
     "packages-dev": [
         {
@@ -4130,32 +4130,6 @@
                 }
             ],
             "time": "2024-03-25T16:39:00+00:00"
-        },
-        {
-            "name": "wpsh/local",
-            "version": "0.2.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/wpsh/wpsh-local.git",
-                "reference": "17338432ed06386273a1ee4db8c8467aa8feab17"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/wpsh/wpsh-local/zipball/17338432ed06386273a1ee4db8c8467aa8feab17",
-                "reference": "17338432ed06386273a1ee4db8c8467aa8feab17",
-                "shasum": ""
-            },
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "A Docker Compose development environment for any project.",
-            "support": {
-                "issues": "https://github.com/wpsh/wpsh-local/issues",
-                "source": "https://github.com/wpsh/wpsh-local/tree/master"
-            },
-            "time": "2019-06-12T10:54:32+00:00"
         },
         {
             "name": "yoast/phpunit-polyfills",
