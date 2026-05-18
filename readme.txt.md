@@ -68,6 +68,7 @@ Specify URLs to ignore even if they're matched by any of the other context rules
 ### 1.4.0 (May 18, 2026)
 
 - Security: Ensure widget context settings can only be changed by logged-in administrators intentionally (CVE-2026-7615).
+- Require PHP 7.4 to match the WordPress core requirements.
 - Feature: Add a toggle to enable the legacy widget interface (non-block).
 
 ### 1.3.3 (August 31, 2024)
