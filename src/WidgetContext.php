@@ -15,6 +15,13 @@ class WidgetContext {
 	 */
 	const RULE_KEY_URLS_INVERT = 'urls_invert';
 
+	/**
+	 * Nonce action when saving the individual widget context settings.
+	 *
+	 * @var string
+	 */
+	const SAVE_NONCE_ACTION = 'widget-context-update';
+
 	private $sidebars_widgets;
 	private $options_name = 'widget_logic_options'; // Context settings for widgets (visibility, etc)
 	private $settings_name = 'widget_context_settings'; // Widget Context global settings
@@ -282,29 +289,34 @@ class WidgetContext {
 
 
 	function save_widget_context_settings() {
-		if ( ! current_user_can( 'edit_theme_options' ) || empty( $_POST ) || ! isset( $_POST['wl'] ) ) {
+		if ( ! current_user_can( 'edit_theme_options' ) || empty( $_POST['wl'] ) || ! is_array( $_POST['wl'] ) ) {
 			return;
 		}
 
-		// Delete a widget
-		if ( isset( $_POST['delete_widget'] ) && isset( $_POST['the-widget-id'] ) ) {
-			unset( $this->context_options[ $_POST['the-widget-id'] ] );
-		}
+		// Add and update.
+		foreach ( $_POST['wl'] as $widget_id => $widget_context_input ) {
+			$update_nonce = $this->get_widget_nonce_action( $widget_id );
 
-		// Add / Update
-		$this->context_options = array_merge( $this->context_options, $_POST['wl'] );
+			if ( ! empty( $_POST[ $update_nonce ] ) && wp_verify_nonce( $_POST[ $update_nonce ], self::SAVE_NONCE_ACTION ) ) {
+				if ( ! isset( $this->context_options[ $widget_id ] ) ) {
+					$this->context_options[ $widget_id ] = array();
+				}
 
-		$sidebars_widgets = wp_get_sidebars_widgets();
-		$all_widget_ids = array();
-
-		// Get a lits of all widget IDs
-		foreach ( $sidebars_widgets as $widget_area => $widgets ) {
-			foreach ( $widgets as $widget_order => $widget_id ) {
-				$all_widget_ids[] = $widget_id;
+				if ( ! empty( $_POST['delete_widget'] ) ) { // Delete.
+					unset( $this->context_options[ $widget_id ] );
+				} else { // Update.
+					$this->context_options[ $widget_id ] = $widget_context_input;
+				}
 			}
 		}
 
-		// Remove non-existant widget contexts from the settings
+		// Get a list of all widget IDs.
+		$all_widget_ids = array();
+		foreach ( wp_get_sidebars_widgets() as $widget_area => $widgets ) {
+			$all_widget_ids = array_merge( $all_widget_ids, array_values( $widgets ) );
+		}
+
+		// Cleanup non-existant widget contexts from the settings.
 		foreach ( $this->context_options as $widget_id => $widget_context ) {
 			if ( ! in_array( $widget_id, $all_widget_ids, true ) ) {
 				unset( $this->context_options[ $widget_id ] );
@@ -639,7 +651,6 @@ class WidgetContext {
 		$controls_core = array();
 
 		foreach ( $this->contexts as $context_name => $context_settings ) {
-
 			$context_classes = array(
 				'context-group',
 				sprintf( 'context-group-%s', esc_attr( $context_name ) ),
@@ -729,6 +740,8 @@ class WidgetContext {
 			}
 		}
 
+		$controls[] = wp_nonce_field( self::SAVE_NONCE_ACTION, $this->get_widget_nonce_action( $widget_id ), false, false );
+
 		return sprintf(
 			'<div class="widget-context">
 				<div class="widget-context-header">
@@ -747,6 +760,17 @@ class WidgetContext {
 			// Controls
 			implode( '', $controls )
 		);
+	}
+
+	/**
+	 * Get the nonce action for widget context settings.
+	 *
+	 * @param string $widget_id Widget ID.
+	 *
+	 * @return string
+	 */
+	private function get_widget_nonce_action( $widget_id ) {
+		return 'widget-context--' . $widget_id;
 	}
 
 
