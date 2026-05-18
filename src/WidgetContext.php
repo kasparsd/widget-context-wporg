@@ -96,9 +96,6 @@ class WidgetContext {
 		// Register admin settings menu
 		add_action( 'admin_menu', array( $this, 'widget_context_settings_menu' ) );
 
-		// Register admin settings.
-		add_action( 'admin_init', array( $this, 'widget_context_settings_init' ) );
-
 		// Add quick links to the plugin list.
 		add_action(
 			'plugin_action_links_' . $this->plugin->basename(),
@@ -106,8 +103,14 @@ class WidgetContext {
 		);
 	}
 
-
 	function define_widget_contexts() {
+		register_setting( $this->settings_name, $this->settings_name );
+
+		if ( $this->is_legacy_widgets_enabled() ) {
+			add_filter( 'gutenberg_use_widgets_block_editor', '__return_false' );
+			add_filter( 'use_widgets_block_editor', '__return_false' );
+		}
+
 		$this->context_options = apply_filters(
 			'widget_context_options',
 			(array) get_option( $this->options_name, array() )
@@ -1046,17 +1049,6 @@ class WidgetContext {
 			3 // Try to place it right under the Widgets.
 		);
 	}
-
-
-	function widget_context_settings_init() {
-		register_setting( $this->settings_name, $this->settings_name );
-
-		if ( $this->is_legacy_widgets_enabled() ) {
-			add_filter( 'gutenberg_use_widgets_block_editor', '__return_false' );
-			add_filter( 'use_widgets_block_editor', '__return_false' );
-		}
-	}
-
 
 	/**
 	 * Return a link to the Customize Widgets admin page.
