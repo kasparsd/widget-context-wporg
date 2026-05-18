@@ -1050,6 +1050,11 @@ class WidgetContext {
 
 	function widget_context_settings_init() {
 		register_setting( $this->settings_name, $this->settings_name );
+
+		if ( $this->is_legacy_widgets_enabled() ) {
+			add_filter( 'gutenberg_use_widgets_block_editor', '__return_false' );
+			add_filter( 'use_widgets_block_editor', '__return_false' );
+		}
 	}
 
 
@@ -1070,6 +1075,15 @@ class WidgetContext {
 	 */
 	public function plugin_settings_admin_url() {
 		return admin_url( 'themes.php?page=widget_context_settings' );
+	}
+
+	/**
+	 * If the legacy widgets interface is enabled in the plugin settings.
+	 *
+	 * @return bool
+	 */
+	public function is_legacy_widgets_enabled() {
+		return ! empty( $this->context_settings['enable-legacy-widgets'] );
 	}
 
 
@@ -1137,6 +1151,21 @@ class WidgetContext {
 									<p>
 										<a href="https://widgetcontext.com/pro">Subscribe to get premium support</a> and the 🚀 PRO version of the plugin for free when it's launched!
 										Your support enables consistent maintenance and new feature development, and is greatly appreciated.
+									</p>
+								</td>
+							</tr>
+							<tr>
+								<th scrope="row">
+									<?php esc_html_e( 'Widget Interface', 'widget-context' ); ?>
+								</th>
+								<td>
+									<label>
+										<input type="hidden" name="<?php echo esc_attr( $this->settings_name ); ?>[enable-legacy-widgets]" value="0" />
+										<input type="checkbox" name="<?php echo esc_attr( $this->settings_name ); ?>[enable-legacy-widgets]" value="1" <?php checked( $this->context_settings['enable-legacy-widgets'], 1 ); ?> />
+										<?php esc_html_e( 'Enable legacy widget interface', 'widget-context' ); ?>
+									</label>
+									<p class="description">
+										<?php esc_html_e( 'Enable the legacy (non-block) widget interface under "Appearance → Widgets" that was disabled in WordPress 5.8.', 'widget-context' ); ?>
 									</p>
 								</td>
 							</tr>
