@@ -67,7 +67,7 @@ Specify URLs to ignore even if they're matched by any of the other context rules
 
 ### 1.4.0 (May 18, 2026)
 
-- Security: Ensure widget settings can be saved only by users intentionally to prevent cross-site request forgery (CSRF).
+- Security: Ensure widget context settings can only be changed by logged-in administrators intentionally (CVE-2026-7615).
 - Feature: Add a toggle to enable the legacy widget interface (non-block).
 
 ### 1.3.3 (August 31, 2024)
