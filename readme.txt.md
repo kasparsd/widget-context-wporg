@@ -6,7 +6,7 @@ Requires at least: 3.0
 Tested up to: 6.6  
 Stable tag: {{ version }}  
 License: GPLv2 or later  
-Requires PHP: 5.6  
+Requires PHP: 7.4  
 Donate link: https://widgetcontext.com/pro
 
 Show and hide widgets on specific posts, pages and sections of your site.
