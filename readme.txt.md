@@ -3,10 +3,10 @@
 Contributors: kasparsd, jamescollins  
 Tags: widget, widgets, widget context, context, logic, widget logic, visibility, widget visibility  
 Requires at least: 3.0  
-Tested up to: 6.6  
+Tested up to: 6.9  
 Stable tag: {{ version }}  
 License: GPLv2 or later  
-Requires PHP: 5.6  
+Requires PHP: 7.4  
 Donate link: https://widgetcontext.com/pro
 
 Show and hide widgets on specific posts, pages and sections of your site.
@@ -64,6 +64,12 @@ Specify URLs to ignore even if they're matched by any of the other context rules
 
 
 ## Changelog
+
+### 1.4.0 (May 18, 2026)
+
+- Security: Ensure widget context settings can only be changed by logged-in administrators intentionally (CVE-2026-7615).
+- Require PHP 7.4 to match the WordPress core requirements.
+- Feature: Add a toggle to enable the legacy widget interface (non-block).
 
 ### 1.3.3 (August 31, 2024)
 

@@ -30,7 +30,7 @@ class WidgetContextTargetByUrlTest extends WidgetContextTestCase {
 		'/page/?query=string' => 'page?query=string',
 	);
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->plugin = new \WidgetContext( null );

@@ -5,3 +5,4 @@
 /phpcs.xml
 /phpunit.xml
 .DS_Store
+.phpunit.result.cache

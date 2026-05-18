@@ -1,5 +1,3 @@
-version: '3'
-
 services:
 
   mysql:
@@ -14,7 +12,7 @@ services:
       MYSQL_ROOT_PASSWORD: password
 
   wordpress:
-    image: wordpress:php7.4
+    image: wordpress:php8.4
     depends_on:
       - mysql
     ports:
@@ -39,20 +37,6 @@ services:
       - wp_data:/var/www/html
       - .:/var/www/html/wp-content/plugins/widget-context-src
       - ./dist:/var/www/html/wp-content/plugins/widget-context
-    environment:
-      WORDPRESS_DEBUG: 1
-      WORDPRESS_DB_USER: wordpress
-      WORDPRESS_DB_PASSWORD: password
-
-  wp-cli-php8:
-    image: wordpress:cli-php8.2
-    depends_on:
-      - mysql
-    volumes:
-      - wp_data:/var/www/html
-      - .:/var/www/html/wp-content/plugins/widget-context-src
-      - ./dist:/var/www/html/wp-content/plugins/widget-context
-    restart: always
     environment:
       WORDPRESS_DEBUG: 1
       WORDPRESS_DB_USER: wordpress

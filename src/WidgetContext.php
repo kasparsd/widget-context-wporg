@@ -15,6 +15,13 @@ class WidgetContext {
 	 */
 	const RULE_KEY_URLS_INVERT = 'urls_invert';
 
+	/**
+	 * Nonce action when saving the individual widget context settings.
+	 *
+	 * @var string
+	 */
+	const SAVE_NONCE_ACTION = 'widget-context-update';
+
 	private $sidebars_widgets;
 	private $options_name = 'widget_logic_options'; // Context settings for widgets (visibility, etc)
 	private $settings_name = 'widget_context_settings'; // Widget Context global settings
@@ -96,9 +103,6 @@ class WidgetContext {
 		// Register admin settings menu
 		add_action( 'admin_menu', array( $this, 'widget_context_settings_menu' ) );
 
-		// Register admin settings.
-		add_action( 'admin_init', array( $this, 'widget_context_settings_init' ) );
-
 		// Add quick links to the plugin list.
 		add_action(
 			'plugin_action_links_' . $this->plugin->basename(),
@@ -106,8 +110,9 @@ class WidgetContext {
 		);
 	}
 
-
 	function define_widget_contexts() {
+		register_setting( $this->settings_name, $this->settings_name );
+
 		$this->context_options = apply_filters(
 			'widget_context_options',
 			(array) get_option( $this->options_name, array() )
@@ -161,6 +166,11 @@ class WidgetContext {
 
 		// Sort contexts by their weight
 		uasort( $this->contexts, array( $this, 'sort_context_by_weight' ) );
+
+		if ( $this->is_legacy_widgets_enabled() ) {
+			add_filter( 'gutenberg_use_widgets_block_editor', '__return_false' );
+			add_filter( 'use_widgets_block_editor', '__return_false' );
+		}
 	}
 
 
@@ -279,29 +289,34 @@ class WidgetContext {
 
 
 	function save_widget_context_settings() {
-		if ( ! current_user_can( 'edit_theme_options' ) || empty( $_POST ) || ! isset( $_POST['wl'] ) ) {
+		if ( ! current_user_can( 'edit_theme_options' ) || empty( $_POST['wl'] ) || ! is_array( $_POST['wl'] ) ) {
 			return;
 		}
 
-		// Delete a widget
-		if ( isset( $_POST['delete_widget'] ) && isset( $_POST['the-widget-id'] ) ) {
-			unset( $this->context_options[ $_POST['the-widget-id'] ] );
-		}
+		// Add and update.
+		foreach ( $_POST['wl'] as $widget_id => $widget_context_input ) {
+			$update_nonce = $this->get_widget_nonce_action( $widget_id );
 
-		// Add / Update
-		$this->context_options = array_merge( $this->context_options, $_POST['wl'] );
+			if ( ! empty( $_POST[ $update_nonce ] ) && wp_verify_nonce( $_POST[ $update_nonce ], self::SAVE_NONCE_ACTION ) ) {
+				if ( ! isset( $this->context_options[ $widget_id ] ) ) {
+					$this->context_options[ $widget_id ] = array();
+				}
 
-		$sidebars_widgets = wp_get_sidebars_widgets();
-		$all_widget_ids = array();
-
-		// Get a lits of all widget IDs
-		foreach ( $sidebars_widgets as $widget_area => $widgets ) {
-			foreach ( $widgets as $widget_order => $widget_id ) {
-				$all_widget_ids[] = $widget_id;
+				if ( ! empty( $_POST['delete_widget'] ) ) { // Delete.
+					unset( $this->context_options[ $widget_id ] );
+				} else { // Update.
+					$this->context_options[ $widget_id ] = $widget_context_input;
+				}
 			}
 		}
 
-		// Remove non-existant widget contexts from the settings
+		// Get a list of all widget IDs.
+		$all_widget_ids = array();
+		foreach ( wp_get_sidebars_widgets() as $widget_area => $widgets ) {
+			$all_widget_ids = array_merge( $all_widget_ids, array_values( $widgets ) );
+		}
+
+		// Cleanup non-existant widget contexts from the settings.
 		foreach ( $this->context_options as $widget_id => $widget_context ) {
 			if ( ! in_array( $widget_id, $all_widget_ids, true ) ) {
 				unset( $this->context_options[ $widget_id ] );
@@ -636,7 +651,6 @@ class WidgetContext {
 		$controls_core = array();
 
 		foreach ( $this->contexts as $context_name => $context_settings ) {
-
 			$context_classes = array(
 				'context-group',
 				sprintf( 'context-group-%s', esc_attr( $context_name ) ),
@@ -726,6 +740,8 @@ class WidgetContext {
 			}
 		}
 
+		$controls[] = wp_nonce_field( self::SAVE_NONCE_ACTION, $this->get_widget_nonce_action( $widget_id ), false, false );
+
 		return sprintf(
 			'<div class="widget-context">
 				<div class="widget-context-header">
@@ -744,6 +760,17 @@ class WidgetContext {
 			// Controls
 			implode( '', $controls )
 		);
+	}
+
+	/**
+	 * Get the nonce action for widget context settings.
+	 *
+	 * @param string $widget_id Widget ID.
+	 *
+	 * @return string
+	 */
+	private function get_widget_nonce_action( $widget_id ) {
+		return 'widget-context--' . $widget_id;
 	}
 
 
@@ -1047,12 +1074,6 @@ class WidgetContext {
 		);
 	}
 
-
-	function widget_context_settings_init() {
-		register_setting( $this->settings_name, $this->settings_name );
-	}
-
-
 	/**
 	 * Return a link to the Customize Widgets admin page.
 	 *
@@ -1070,6 +1091,15 @@ class WidgetContext {
 	 */
 	public function plugin_settings_admin_url() {
 		return admin_url( 'themes.php?page=widget_context_settings' );
+	}
+
+	/**
+	 * If the legacy widgets interface is enabled in the plugin settings.
+	 *
+	 * @return bool
+	 */
+	public function is_legacy_widgets_enabled() {
+		return ! empty( $this->context_settings['enable-legacy-widgets'] );
 	}
 
 
@@ -1137,6 +1167,21 @@ class WidgetContext {
 									<p>
 										<a href="https://widgetcontext.com/pro">Subscribe to get premium support</a> and the 🚀 PRO version of the plugin for free when it's launched!
 										Your support enables consistent maintenance and new feature development, and is greatly appreciated.
+									</p>
+								</td>
+							</tr>
+							<tr>
+								<th scrope="row">
+									<?php esc_html_e( 'Widget Interface', 'widget-context' ); ?>
+								</th>
+								<td>
+									<label>
+										<input type="hidden" name="<?php echo esc_attr( $this->settings_name ); ?>[enable-legacy-widgets]" value="0" />
+										<input type="checkbox" name="<?php echo esc_attr( $this->settings_name ); ?>[enable-legacy-widgets]" value="1" <?php checked( $this->context_settings['enable-legacy-widgets'], 1 ); ?> />
+										<?php esc_html_e( 'Enable legacy widget interface', 'widget-context' ); ?>
+									</label>
+									<p class="description">
+										<?php esc_html_e( 'Enable the legacy (non-block) widget interface under "Appearance → Widgets" that was disabled in WordPress 5.8.', 'widget-context' ); ?>
 									</p>
 								</td>
 							</tr>
