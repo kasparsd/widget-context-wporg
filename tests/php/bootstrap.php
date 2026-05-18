@@ -4,4 +4,3 @@
  */
 
 WP_Mock::bootstrap();
-
