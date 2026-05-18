@@ -106,11 +106,6 @@ class WidgetContext {
 	function define_widget_contexts() {
 		register_setting( $this->settings_name, $this->settings_name );
 
-		if ( $this->is_legacy_widgets_enabled() ) {
-			add_filter( 'gutenberg_use_widgets_block_editor', '__return_false' );
-			add_filter( 'use_widgets_block_editor', '__return_false' );
-		}
-
 		$this->context_options = apply_filters(
 			'widget_context_options',
 			(array) get_option( $this->options_name, array() )
@@ -164,6 +159,11 @@ class WidgetContext {
 
 		// Sort contexts by their weight
 		uasort( $this->contexts, array( $this, 'sort_context_by_weight' ) );
+
+		if ( $this->is_legacy_widgets_enabled() ) {
+			add_filter( 'gutenberg_use_widgets_block_editor', '__return_false' );
+			add_filter( 'use_widgets_block_editor', '__return_false' );
+		}
 	}
 
 
