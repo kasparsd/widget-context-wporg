@@ -19,23 +19,22 @@
   "config": {
     "sort-packages": true,
     "platform": {
-      "php": "5.6.20"
+      "php": "7.4"
     },
     "allow-plugins": {
       "dealerdirect/phpcodesniffer-composer-installer": true
     }
   },
   "require-dev": {
-    "10up/wp_mock": "^0.2.0",
-    "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
-    "mockery/mockery": "^0.9.5",
-    "php-coveralls/php-coveralls": "^2.4",
-    "phpcompatibility/php-compatibility": "dev-develop as 9.99.99",
-    "phpcompatibility/phpcompatibility-wp": "^2.1",
-    "phpmd/phpmd": "^2.10",
-    "phpunit/phpunit": "^5.7",
-    "wp-coding-standards/wpcs": "^3.1",
-    "yoast/phpunit-polyfills": "^2.0"
+    "10up/wp_mock": "^1.1",
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.2",
+    "mockery/mockery": "^1.6",
+    "php-coveralls/php-coveralls": "^2.9",
+    "phpcompatibility/phpcompatibility-wp": "^3.0@alpha",
+    "phpmd/phpmd": "^2.15",
+    "phpunit/phpunit": "^9.6",
+    "wp-coding-standards/wpcs": "^3.3",
+    "yoast/phpunit-polyfills": "^4.0"
   },
   "autoload": {
     "classmap": [
