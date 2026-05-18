@@ -3,7 +3,7 @@
 Contributors: kasparsd, jamescollins  
 Tags: widget, widgets, widget context, context, logic, widget logic, visibility, widget visibility  
 Requires at least: 3.0  
-Tested up to: 6.6  
+Tested up to: 6.9  
 Stable tag: {{ version }}  
 License: GPLv2 or later  
 Requires PHP: 7.4  
