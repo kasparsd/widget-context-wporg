@@ -17,7 +17,8 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version: '14'
+          cache: npm
+          node-version-file: .nvmrc
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
