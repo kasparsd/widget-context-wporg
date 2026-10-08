@@ -7,6 +7,9 @@
 // with --type url, or as a Markdown link with --type markdown. Either goes to
 // stdout, or to the output file ("-" is stdout).
 //
+// Use --blogname for link-specific site branding, e.g. tagged releases; the
+// committed default blueprint intentionally does not set site options.
+//
 // Kept out of the release build: the Gruntfile copies an explicit file list
 // to dist/ and this directory is not part of it.
 //
@@ -39,6 +42,7 @@ const TYPES = {
 // Minimal argument parser for the flags this script supports:
 // --plugin-zip <path-or-url> --type <json|url|markdown>
 // -o, --output <path> --link-text <text>
+// --blogname <name> — optional branding for release links, not the default
 function parse_args( argv ) {
 	const options = {
 		type: 'json',
@@ -77,6 +81,9 @@ function parse_args( argv ) {
 			case '--link-text':
 				options.linkText = value();
 				break;
+			case '--blogname':
+				options.blogname = value();
+				break;
 			default:
 				process.stderr.write( `Unknown argument: ${ arg }\n` );
 				process.exit( 1 );
@@ -100,6 +107,13 @@ function main() {
 			'utf8',
 		),
 	);
+
+	if ( options.blogname !== undefined ) {
+		blueprint.siteOptions = {
+			...blueprint.siteOptions,
+			blogname: options.blogname,
+		};
+	}
 
 	blueprint.steps ??= [];
 	blueprint.steps.push( {

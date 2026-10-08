@@ -1,9 +1,6 @@
 {
 	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
 	"landingPage": "/wp-admin/widgets.php",
-	"siteOptions": {
-		"blogname": "Widget Context Preview"
-	},
 	"features": {
 		"networking": true
 	},
