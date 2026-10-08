@@ -3,7 +3,7 @@
 Contributors: kasparsd, jamescollins  
 Tags: widget, widgets, widget context, context, logic, widget logic, visibility, widget visibility  
 Requires at least: 3.0  
-Tested up to: 6.9  
+Tested up to: 7.2  
 Stable tag: {{ version }}  
 License: GPLv2 or later  
 Requires PHP: 7.4  
@@ -64,6 +64,12 @@ Specify URLs to ignore even if they're matched by any of the other context rules
 
 
 ## Changelog
+
+### 1.4.1 (October 8, 2026)
+
+- Bugfix: avoid an undefined variable warning when rendering checkbox controls.
+- Test with the upcoming WordPress 7.2 release and PHP 8.5.
+- Update the developer tooling dependencies.
 
 ### 1.4.0 (May 18, 2026)
 
