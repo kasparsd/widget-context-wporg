@@ -19,59 +19,59 @@
 
 'use strict';
 
-const fs = require( 'node:fs' );
-const path = require( 'node:path' );
+const fs = require('node:fs');
+const path = require('node:path');
 
 const PLAYGROUND_URL = 'https://playground.wordpress.net/';
 
-const blueprintURL = ( blueprint ) => {
-	const url = new URL( PLAYGROUND_URL );
-	url.searchParams.set( 'mode', 'seamless' );
-	url.hash = encodeURIComponent( JSON.stringify( blueprint ) );
-	return String( url );
+const blueprintURL = (blueprint) => {
+	const url = new URL(PLAYGROUND_URL);
+	url.searchParams.set('mode', 'seamless');
+	url.hash = encodeURIComponent(JSON.stringify(blueprint));
+	return String(url);
 };
 
 // Format the blueprint for each supported --type value.
 const TYPES = {
-	json: ( blueprint ) => `${ JSON.stringify( blueprint, null, '\t' ) }\n`,
+	json: (blueprint) => `${JSON.stringify(blueprint, null, '\t')}\n`,
 	url: blueprintURL,
-	markdown: ( blueprint, options ) =>
-		`[🧪 ${ options.linkText }](${ blueprintURL( blueprint ) })`,
+	markdown: (blueprint, options) =>
+		`[🧪 ${options.linkText}](${blueprintURL(blueprint)})`,
 };
 
 // Minimal argument parser for the flags this script supports:
 // --plugin-zip <path-or-url> --type <json|url|markdown>
 // -o, --output <path> --link-text <text>
 // --blogname <name> — optional branding for release links, not the default
-function parse_args( argv ) {
+function parseArgs(argv) {
 	const options = {
 		type: 'json',
 		linkText: 'Try it on WordPress Playground',
 	};
 
-	for ( let i = 0; i < argv.length; i++ ) {
-		const arg = argv[ i ];
+	for (let i = 0; i < argv.length; i++) {
+		const arg = argv[i];
 		const value = () => {
-			const next = argv[ ++i ];
-			if ( next === undefined ) {
-				process.stderr.write( `Missing value for ${ arg }\n` );
-				process.exit( 1 );
+			const next = argv[++i];
+			if (next === undefined) {
+				process.stderr.write(`Missing value for ${arg}\n`);
+				process.exit(1);
 			}
 			return next;
 		};
 
-		switch ( arg ) {
+		switch (arg) {
 			case '--plugin-zip':
 				options.pluginZip = value();
 				break;
 			case '--type':
 				options.type = value();
 
-				if ( ! TYPES[ options.type ] ) {
+				if (!TYPES[options.type]) {
 					process.stderr.write(
-						`Unsupported --type: ${ options.type }\n`,
+						`Unsupported --type: ${options.type}\n`
 					);
-					process.exit( 1 );
+					process.exit(1);
 				}
 				break;
 			case '-o':
@@ -85,30 +85,37 @@ function parse_args( argv ) {
 				options.blogname = value();
 				break;
 			default:
-				process.stderr.write( `Unknown argument: ${ arg }\n` );
-				process.exit( 1 );
+				process.stderr.write(`Unknown argument: ${arg}\n`);
+				process.exit(1);
 		}
 	}
 
-	if ( options.pluginZip === undefined ) {
-		process.stderr.write( 'Missing --plugin-zip <path-or-url>.\n' );
-		process.exit( 1 );
+	if (options.pluginZip === undefined) {
+		process.stderr.write('Missing --plugin-zip <path-or-url>.\n');
+		process.exit(1);
 	}
 
 	return options;
 }
 
 function main() {
-	const options = parse_args( process.argv.slice( 2 ) );
+	const options = parseArgs(process.argv.slice(2));
 
 	const blueprint = JSON.parse(
 		fs.readFileSync(
-			path.join( __dirname, '..', 'assets', 'wporg', 'blueprints', 'blueprint.json' ),
-			'utf8',
-		),
+			path.join(
+				__dirname,
+				'..',
+				'assets',
+				'wporg',
+				'blueprints',
+				'blueprint.json'
+			),
+			'utf8'
+		)
 	);
 
-	if ( options.blogname !== undefined ) {
+	if (options.blogname !== undefined) {
 		blueprint.siteOptions = {
 			...blueprint.siteOptions,
 			blogname: options.blogname,
@@ -116,7 +123,7 @@ function main() {
 	}
 
 	blueprint.steps ??= [];
-	blueprint.steps.push( {
+	blueprint.steps.push({
 		step: 'installPlugin',
 		pluginData: {
 			resource: 'url',
@@ -127,16 +134,16 @@ function main() {
 		options: {
 			activate: true,
 		},
-	} );
+	});
 
-	const output = TYPES[ options.type ]( blueprint, options );
+	const output = TYPES[options.type](blueprint, options);
 
-	if ( options.output && options.output !== '-' ) {
-		fs.writeFileSync( options.output, output );
+	if (options.output && options.output !== '-') {
+		fs.writeFileSync(options.output, output);
 		return;
 	}
 
-	process.stdout.write( output );
+	process.stdout.write(output);
 }
 
 main();
