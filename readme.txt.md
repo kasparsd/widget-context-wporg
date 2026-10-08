@@ -65,11 +65,11 @@ Specify URLs to ignore even if they're matched by any of the other context rules
 
 ## Changelog
 
-### Unreleased
+### 1.4.1 (October 8, 2026)
 
-- Test with upcoming WordPress 7.2 release and PHP 8.5.
-- Update the developer tooling dependencies.
 - Bugfix: avoid an undefined variable warning when rendering checkbox controls.
+- Test with the upcoming WordPress 7.2 release and PHP 8.5.
+- Update the developer tooling dependencies.
 
 ### 1.4.0 (May 18, 2026)
 
