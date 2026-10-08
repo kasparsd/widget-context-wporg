@@ -14,6 +14,7 @@
   "scripts": {
     "grunt": "grunt",
     "build": "composer release && grunt build",
+    "release": "npm run build && ( cd dist && zip -q -r ../widget-context.zip . )",
     "deploy": "composer release && grunt deploy",
     "deploy-trunk": "composer release && grunt deploy-trunk",
     "test": "docker-compose run --remove-orphans --workdir=/var/www/html/wp-content/plugins/widget-context-src wordpress vendor/bin/phpunit",
@@ -37,8 +38,8 @@
   ],
   "license": "GPL-2.0",
   "devDependencies": {
-    "@wordpress/eslint-plugin": "^9.2.0",
-    "eslint": "^7.32.0",
+    "@wordpress/eslint-plugin": "^27.1.0",
+    "eslint": "^10.12.0",
     "grunt": "^1.4.1",
     "grunt-cli": "^1.4.3",
     "grunt-contrib-clean": "^2.0",

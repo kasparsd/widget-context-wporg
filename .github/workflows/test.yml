@@ -7,6 +7,8 @@ jobs:
   test:
     name: Test and Lint
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write
     strategy:
       matrix:
         php-versions:
@@ -47,3 +49,58 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Zip
+        run: ( cd dist && zip -q -r ../widget-context.zip . )
+
+      - name: Upload ZIP
+        uses: actions/upload-artifact@v7
+        with:
+          name: widget-context
+          path: widget-context.zip
+
+      - name: Attach to release
+        if: startsWith( github.ref, 'refs/tags/' )
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp widget-context.zip "widget-context.${{ github.ref_name }}.zip"
+          gh release upload ${{ github.ref_name }} "widget-context.${{ github.ref_name }}.zip" --clobber
+
+  release:
+    name: Release to WordPress.org
+    runs-on: ubuntu-24.04
+    needs: test
+    if: startsWith( github.ref, 'refs/tags/' )
+    steps:
+      - name: Download ZIP
+        uses: actions/download-artifact@v8
+        with:
+          name: widget-context
+          path: .
+
+      - name: Install tools
+        run: sudo apt-get update && sudo apt-get install --yes subversion rsync unzip zip
+
+      - name: Unzip release
+        run: unzip widget-context.zip -d widget-context
+
+      - name: SVN clone
+        run: svn checkout https://plugins.svn.wordpress.org/widget-context/ svn
+
+      - name: Add to trunk and tag
+        working-directory: svn
+        run: |
+          rsync --archive --delete --exclude=.svn ../widget-context/ trunk/
+          svn add trunk --force
+          svn cp trunk "tags/${{ github.ref_name }}"
+          svn status
+
+      - name: Commit Tag
+        working-directory: svn
+        run: svn commit "tags/${{ github.ref_name }}" -m "Release ${{ github.ref_name }}" --username "${{ secrets.WPORG_USERNAME }}" --password "${{ secrets.WPORG_PASSWORD }}" --non-interactive --no-auth-cache
+
+      - name: Commit Stable Trunk
+        if: ! contains( github.ref_name, '-' )
+        working-directory: svn
+        run: svn commit trunk -m "Release ${{ github.ref_name }}" --username "${{ secrets.WPORG_USERNAME }}" --password "${{ secrets.WPORG_PASSWORD }}" --non-interactive --no-auth-cache
