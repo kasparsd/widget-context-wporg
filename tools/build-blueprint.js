@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// Build a WordPress Playground blueprint from assets/blueprints/blueprint.json,
+// Build a WordPress Playground blueprint from assets/wporg/blueprints/blueprint.json,
 // with a step to install the plugin from the given ZIP path or URL.
 //
 // Writes the blueprint as JSON by default, as a ready to open Playground URL
@@ -10,8 +10,8 @@
 // Kept out of the release build: the Gruntfile copies an explicit file list
 // to dist/ and this directory is not part of it.
 //
-// The base blueprint is the same assets/blueprints/blueprint.json that the
-// SVN deploy workflow commits to the wp.org assets directory, so the plugin
+// The base blueprint is the same assets/wporg/blueprints/blueprint.json that
+// the SVN deploy workflow commits to the wp.org assets directory, so the plugin
 // listing Preview button and these links share one source of truth.
 
 'use strict';
@@ -96,7 +96,7 @@ function main() {
 
 	const blueprint = JSON.parse(
 		fs.readFileSync(
-			path.join( __dirname, '..', 'assets', 'blueprints', 'blueprint.json' ),
+			path.join( __dirname, '..', 'assets', 'wporg', 'blueprints', 'blueprint.json' ),
 			'utf8',
 		),
 	);
