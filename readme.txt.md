@@ -6,7 +6,7 @@ Requires at least: 3.0
 Tested up to: 6.9  
 Stable tag: {{ version }}  
 License: GPLv2 or later  
-Requires PHP: 7.4  
+Requires PHP: 7.2  
 Donate link: https://widgetcontext.com/pro
 
 Show and hide widgets on specific posts, pages and sections of your site.
@@ -64,6 +64,12 @@ Specify URLs to ignore even if they're matched by any of the other context rules
 
 
 ## Changelog
+
+### Unreleased
+
+- Support PHP 7.2 as the minimum PHP version to match the WordPress core requirements.
+- Bugfix: avoid an undefined variable warning when rendering checkbox controls.
+- Maintenance: test against PHP 8.5.
 
 ### 1.4.0 (May 18, 2026)
 

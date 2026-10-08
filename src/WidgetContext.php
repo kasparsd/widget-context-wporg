@@ -806,6 +806,8 @@ class WidgetContext {
 			'is_author' => __( 'All author archives', 'widget-context' ),
 		);
 
+		$out = array();
+
 		foreach ( $options as $option => $label ) {
 			$out[] = $this->make_simple_checkbox( $control_args, $option, $label );
 		}
