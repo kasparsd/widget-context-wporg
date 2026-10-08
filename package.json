@@ -15,6 +15,7 @@
     "grunt": "grunt",
     "build": "composer release && grunt build",
     "release": "npm run build && ( cd dist && zip -q -r ../widget-context.zip . )",
+    "blueprint": "node tools/build-blueprint.js",
     "deploy": "composer release && grunt deploy",
     "deploy-trunk": "composer release && grunt deploy-trunk",
     "test": "docker-compose run --remove-orphans --workdir=/var/www/html/wp-content/plugins/widget-context-src wordpress vendor/bin/phpunit",

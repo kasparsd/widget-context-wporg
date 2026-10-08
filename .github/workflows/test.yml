@@ -67,6 +67,17 @@ jobs:
           cp widget-context.zip "widget-context.${{ github.ref_name }}.zip"
           gh release upload ${{ github.ref_name }} "widget-context.${{ github.ref_name }}.zip" --clobber
 
+      - name: Attach Playground preview to release
+        if: startsWith( github.ref, 'refs/tags/' )
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ZIP_URL="https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/widget-context.${{ github.ref_name }}.zip"
+          node tools/build-blueprint.js --plugin-zip "$ZIP_URL" --type markdown -o preview-link.md
+          gh release view "${{ github.ref_name }}" --json body -q .body > release-body.md
+          printf '\n%s\n' "$(cat preview-link.md)" >> release-body.md
+          gh release edit "${{ github.ref_name }}" --notes-file release-body.md
+
   release:
     name: Release to WordPress.org
     runs-on: ubuntu-24.04
