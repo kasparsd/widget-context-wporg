@@ -65,7 +65,7 @@ Specify URLs to ignore even if they're matched by any of the other context rules
 
 ## Changelog
 
-### 1.4.1 (October 8, 2026)
+### 1.4.2 (October 8, 2026)
 
 - Bugfix: avoid an undefined variable warning when rendering checkbox controls.
 - Mark as tested with WordPress 7.1 and PHP 8.5.
