@@ -22,4 +22,4 @@ jobs:
       build-command: |
         npm ci
         npm run release
-        npm run blueprint -- --plugin-zip '{{ARTIFACT_URL:widget-context}}' -o blueprint.json
+        npm run blueprint -- --plugin-zip '{{ARTIFACT_URL:widget-context}}' --blogname "Widget Context PR #${{ github.event.pull_request.number }}" -o blueprint.json
