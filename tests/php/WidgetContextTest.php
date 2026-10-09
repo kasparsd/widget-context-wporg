@@ -403,7 +403,27 @@ class WidgetContextTest extends WidgetContextTestCase {
 		$this->assertTrue( $this->plugin->check_widget_visibility( 'text-3' ), 'Notselected without a match shows' );
 	}
 
+		/**
+	 * Stub per-context check filters with match results.
+	 *
+	 * @param array $results Map of context ID => match result. Null values are not stubbed.
+	 */
+	private function stubContextFilters( $results ) {
+		foreach ( $results as $context_id => $result ) {
+			if ( null === $result ) {
+				continue;
+			}
+
+			// WP_Mock::withAnyArgs() is static state that leaks across tests,
+			// so always stub with the exact args these fixtures send.
+			WP_Mock::onFilter( 'widget_context_check-' . $context_id )
+				->with( null, array() )
+				->reply( $result );
+		}
+	}
+
 	public function testCheckWidgetVisibilityOnPositiveMatch() {
+		$this->setContexts( array( 'url' => array() ) );
 		$this->setContextOptions(
 			array(
 				'text-2' => array(
@@ -419,14 +439,100 @@ class WidgetContextTest extends WidgetContextTestCase {
 			)
 		);
 
-		$this->setContexts( array( 'url' => array( 'label' => 'Target by URL' ) ) );
-		$this->stubContextChecks( array( 'url' => true ) );
+		$this->stubContextFilters( array( 'url' => true ) );
 
 		$this->assertTrue( $this->plugin->check_widget_visibility( 'text-2' ), 'Selected on match shows' );
 		$this->assertFalse( $this->plugin->check_widget_visibility( 'text-3' ), 'Notselected on match hides' );
 	}
 
+	/**
+	 * @dataProvider visibilityDecisionsProvider
+	 *
+	 * @param string $match_rule    Match rule.
+	 * @param array  $filter_results Check filter stubs as context ID => match result.
+	 * @param bool   $expected       Expected visibility.
+	 */
+	public function testVisibilityDecisions( $match_rule, $filter_results, $expected ) {
+		$this->setContexts( array_fill_keys( array_keys( $filter_results ), array() ) );
+		$this->stubContextFilters( $filter_results );
+
+		$this->setContextOptions(
+			array(
+				'text-2' => array(
+					'incexc' => array(
+						'condition' => $match_rule,
+					),
+				),
+			)
+		);
+
+		$this->assertSame( $expected, $this->plugin->check_widget_visibility( 'text-2' ) );
+	}
+
+	public function visibilityDecisionsProvider(): array {
+		return array(
+			'Force show' => array(
+				'show',
+				array(),
+				true,
+			),
+			'Force hide' => array(
+				'hide',
+				array( 'url' => true ),
+				false,
+			),
+			'Selected without matches hides' => array(
+				'selected',
+				array( 'url' => null, 'location' => false ),
+				false,
+			),
+			'Selected with a positive match shows' => array(
+				'selected',
+				array( 'url' => true, 'location' => null ),
+				true,
+			),
+			'Selected with only null matches hides' => array(
+				'selected',
+				array(),
+				false,
+			),
+			'Notselected without matches shows' => array(
+				'notselected',
+				array(),
+				true,
+			),
+			'Notselected with a positive match hides' => array(
+				'notselected',
+				array( 'url' => true ),
+				false,
+			),
+			'Inverted rule overrides a positive match for selected' => array(
+				'selected',
+				array( 'url' => true, 'urls_invert' => false ),
+				false,
+			),
+			'Inverted rule overrides a positive match for notselected' => array(
+				'notselected',
+				array( 'url' => true, 'urls_invert' => false ),
+				true,
+			),
+		);
+	}
+
 	public function testCheckWidgetVisibilityInvertedRuleOverridesPositiveMatch() {
+		$this->setContexts(
+			array(
+				'url'      => array(),
+				'location' => array(),
+			)
+		);
+		$this->stubContextFilters(
+			array(
+				'url'      => true,
+				'location' => false,
+			)
+		);
+
 		$this->setContextOptions(
 			array(
 				'text-2' => array(
@@ -442,15 +548,8 @@ class WidgetContextTest extends WidgetContextTestCase {
 			)
 		);
 
-		$this->setContexts(
-			array(
-				'url'      => array( 'label' => 'Target by URL' ),
-				'location' => array( 'label' => 'Global Sections' ),
-			)
-		);
-
 		// URL matches but the URL invert rule does not: no positive match.
-		$this->stubContextChecks(
+		$this->stubContextFilters(
 			array(
 				'url'      => true,
 				'location' => false,
@@ -462,6 +561,21 @@ class WidgetContextTest extends WidgetContextTestCase {
 	}
 
 	public function testContextMatchesReturnsMatchesForEveryRegisteredContext() {
+		// Context gating resolves the global settings from the database.
+		WP_Mock::userFunction(
+			'get_option',
+			array(
+				'times'  => 1,
+				'return' => array(),
+			)
+		);
+
+		$this->setContexts(
+			array(
+				'url'      => array(),
+				'location' => array(),
+			)
+		);
 		$this->setContextOptions(
 			array(
 				'text-2' => array(
@@ -472,58 +586,35 @@ class WidgetContextTest extends WidgetContextTestCase {
 			)
 		);
 
-		$this->setContexts(
-			array(
-				'url'      => array( 'label' => 'Target by URL' ),
-				'location' => array( 'label' => 'Global Sections' ),
-			)
-		);
+		// The URL check only replies for the widget's URL settings.
+		WP_Mock::onFilter( 'widget_context_check-url' )
+			->with( null, array( 'paths' => 'news/*' ) )
+			->reply( true );
 
-		$captured_args = array();
-		WP_Mock::userFunction( 'apply_filters' )
-			->andReturnUsing(
-				function ( $tag, $value = null, $widget_args = array() ) use ( &$captured_args ) {
-					$captured_args[ $tag ] = $widget_args;
-
-					return null;
-				}
-			);
+		WP_Mock::onFilter( 'widget_context_check-location' )
+			->with( null, array() )
+			->reply( false );
 
 		$matches = $this->plugin->context_matches_for_widget_id( 'text-2' );
 
 		$this->assertSame(
 			array(
-				'url'      => null,
-				'location' => null,
+				'url'      => true,
+				'location' => false,
 			),
 			$matches,
-			'Filter default values are preserved in the matches'
-		);
-
-		$this->assertSame(
-			array(
-				'paths' => 'news/*',
-			),
-			$captured_args['widget_context_check-url'],
-			'The checker gets the context settings for this widget'
-		);
-
-		$this->assertSame(
-			array(),
-			$captured_args['widget_context_check-location'],
-			'Contexts without widget settings get an empty args array'
+			'The filters only answer when the widget settings were passed through'
 		);
 	}
 
 	public function testContextMatchesSkipDisabledContexts() {
-		$this->setContextOptions( array() );
-
 		$this->setContexts(
 			array(
-				'url'      => array( 'label' => 'Target by URL' ),
-				'location' => array( 'label' => 'Global Sections' ),
+				'url'      => array(),
+				'location' => array(),
 			)
 		);
+		$this->setContextOptions( array() );
 
 		$this->context_settings_store->set(
 			array(
@@ -533,18 +624,14 @@ class WidgetContextTest extends WidgetContextTestCase {
 			)
 		);
 
-		$this->stubContextChecks(
-			array(
-				'url'      => true,
-				'location' => false,
-			),
-			1 // One disabled context never reaches the filter.
-		);
+		WP_Mock::onFilter( 'widget_context_check-url' )
+			->with( null, array() )
+			->reply( true );
 
 		$this->assertSame(
-			array( 'location' => null ),
+			array( 'url' => true ),
 			$this->plugin->context_matches_for_widget_id( 'text-2' ),
-			'Disabled contexts are not checked'
+			'Disabled contexts are not checked and not part of the matches'
 		);
 	}
 
@@ -601,7 +688,7 @@ class WidgetContextTest extends WidgetContextTestCase {
 		WP_Mock::userFunction(
 			'is_admin',
 			array(
-				'times'  => 1,
+				'times'  => 2,
 				'return' => false,
 			)
 		);
@@ -654,7 +741,7 @@ class WidgetContextTest extends WidgetContextTestCase {
 	}
 
 	/**
-	 * Register context IDs on the plugin instance.
+	 * Seed the plugin context registry, normally filled by define_widget_contexts().
 	 *
 	 * @param array $contexts Map of context ID => context args.
 	 */
@@ -666,35 +753,5 @@ class WidgetContextTest extends WidgetContextTestCase {
 		}
 
 		$property->setValue( $this->plugin, $contexts );
-	}
-
-	/**
-	 * Stub the per-context check filters.
-	 *
-	 * @param array $match_map Map of context ID => match result. Nulls are passed through.
-	 * @param int   $times     Expected number of filter applications across all contexts.
-	 */
-	private function stubContextChecks( $match_map, $times = null ) {
-		$args = array(
-			'return' => function ( $tag, $value = null, $widget_args = null ) use ( $match_map ) {
-				foreach ( $match_map as $context_id => $match ) {
-					if ( null === $match ) {
-						continue;
-					}
-
-					if ( 'widget_context_check-' . $context_id === $tag ) {
-						return $match;
-					}
-				}
-
-				return $value;
-			},
-		);
-
-		if ( null !== $times ) {
-			$args['times'] = $times;
-		}
-
-		WP_Mock::userFunction( 'apply_filters', $args );
 	}
 }

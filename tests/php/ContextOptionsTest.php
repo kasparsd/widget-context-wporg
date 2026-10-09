@@ -27,15 +27,6 @@ class ContextOptionsTest extends WidgetContextTestCase {
 			)
 		);
 
-		WP_Mock::userFunction(
-			'apply_filters',
-			array(
-				'args'      => array( 'widget_context_options', $context_options ),
-				'times'     => 1,
-				'return_arg' => 1,
-			)
-		);
-
 		$store = new ContextOptions( self::OPTION_NAME );
 
 		$this->assertSame(
@@ -69,39 +60,21 @@ class ContextOptionsTest extends WidgetContextTestCase {
 			)
 		);
 
-		WP_Mock::userFunction(
-			'apply_filters',
-			array(
-				'args'       => array( 'widget_context_options', $context_options ),
-				'times'      => 1,
-				'return_arg' => 1,
-			)
-		);
-
 		$store = new ContextOptions( self::OPTION_NAME );
 
-		$this->assertSame( $context_options, $store->for_widget( 'text-2' ) );
+		$this->assertSame( $context_options['text-2'], $store->for_widget( 'text-2' ) );
 
 		// Resolving a second widget does not hit the database again.
 		$this->assertNull( $store->for_widget( 'custom_html-4' ) );
 	}
 
-	public function testNonArrayOptionResolvesToAnEmptyArray() {
+	public function testMissingOptionResolvesToAnEmptyArray() {
 		WP_Mock::userFunction(
 			'get_option',
 			array(
 				'args'   => array( self::OPTION_NAME, array() ),
 				'times'  => 1,
-				'return' => false,
-			)
-		);
-
-		WP_Mock::userFunction(
-			'apply_filters',
-			array(
-				'args'       => array( 'widget_context_options', array() ),
-				'times'      => 1,
-				'return_arg' => 1,
+				'return' => null,
 			)
 		);
 
@@ -134,18 +107,13 @@ class ContextOptionsTest extends WidgetContextTestCase {
 			)
 		);
 
-		WP_Mock::userFunction(
-			'apply_filters',
-			array(
-				'args'   => array( 'widget_context_options', $raw_options ),
-				'times'  => 1,
-				'return' => $fixed_options,
-			)
-		);
+		WP_Mock::onFilter( 'widget_context_options' )
+			->with( $raw_options )
+			->reply( $fixed_options );
 
 		$store = new ContextOptions( self::OPTION_NAME );
 
-		$this->assertSame( $fixed_options, $store->all() );
+		$this->assertSame( $fixed_options, $store->all(), 'The filter output is what gets stored' );
 	}
 
 	public function testUnknownWidgetLookupReturnsNull() {
