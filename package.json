@@ -18,7 +18,7 @@
     "deploy-trunk": "composer release && grunt deploy-trunk",
     "test": "docker-compose run --remove-orphans --workdir=/var/www/html/wp-content/plugins/widget-context-src wordpress vendor/bin/phpunit",
     "lint": "composer lint && npm run lint-js",
-    "lint-js": "eslint *.js assets/js",
+    "lint-js": "wp-scripts lint-js *.js assets/js",
     "coverage": "composer coverage",
     "mess": "composer mess",
     "postinstall": "composer install",
@@ -37,8 +37,7 @@
   ],
   "license": "GPL-2.0",
   "devDependencies": {
-    "@wordpress/eslint-plugin": "^9.2.0",
-    "eslint": "^7.32.0",
+    "@wordpress/scripts": "^36.1.0",
     "grunt": "^1.4.1",
     "grunt-cli": "^1.4.3",
     "grunt-contrib-clean": "^2.0",

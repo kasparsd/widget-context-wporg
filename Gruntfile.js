@@ -1,5 +1,3 @@
-/* eslint-env node */
-
 module.exports = function( grunt ) {
 	// Load all Grunt plugins.
 	require( 'load-grunt-tasks' )( grunt );
@@ -19,7 +17,7 @@ module.exports = function( grunt ) {
 
 				content = content.replace(
 					new RegExp( patternRegExp, 'gm' ),
-					replaceRules[ pattern ]
+					replaceRules[ pattern ],
 				);
 			} );
 
@@ -62,7 +60,7 @@ module.exports = function( grunt ) {
 
 			if ( ! pluginVersion ) {
 				grunt.warn(
-					'Failed to parse the plugin version in the plugin file.'
+					'Failed to parse the plugin version in the plugin file.',
 				);
 			}
 
