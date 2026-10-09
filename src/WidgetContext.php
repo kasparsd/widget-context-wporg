@@ -1,5 +1,7 @@
 <?php
 
+use Preseto\WidgetContext\ContextOptions;
+use Preseto\WidgetContext\ContextSettings;
 use Preseto\WidgetContext\UriRuleMatcher;
 use Preseto\WidgetContext\UriRules;
 
@@ -27,8 +29,20 @@ class WidgetContext {
 	private $settings_name = 'widget_context_settings'; // Widget Context global settings
 	private $sidebars_widgets_copy;
 
-	private ?array $context_options; // Visibility settings.
-	private array $context_settings = array(); // Store admin settings.
+	/**
+	 * Per-widget visibility option store.
+	 *
+	 * @var Preseto\WidgetContext\ContextOptions
+	 */
+	private $context_options;
+
+	/**
+	 * Global plugin settings store.
+	 *
+	 * @var Preseto\WidgetContext\ContextSettings
+	 */
+	private $context_settings;
+
 	private array $contexts = array();
 
 	/**
@@ -48,10 +62,15 @@ class WidgetContext {
 	/**
 	 * Start the plugin.
 	 *
-	 * @param Preseto\WidgetContext\Plugin $path Instance of the abstract plugin.
+	 * @param Preseto\WidgetContext\Plugin       $path            Instance of the abstract plugin.
+	 * @param Preseto\WidgetContext\ContextOptions|null  $context_options  Per-widget visibility option store.
+	 * @param Preseto\WidgetContext\ContextSettings|null $context_settings Global plugin settings store.
 	 */
-	public function __construct( $plugin ) {
+	public function __construct( $plugin, ?ContextOptions $context_options = null, ?ContextSettings $context_settings = null ) {
 		$this->plugin = $plugin;
+
+		$this->context_options = $context_options ?? new ContextOptions( $this->options_name );
+		$this->context_settings = $context_settings ?? new ContextSettings( $this->settings_name );
 
 		// Keep an instance for legacy purposes.
 		self::$instance = $this;
@@ -113,13 +132,6 @@ class WidgetContext {
 	function define_widget_contexts() {
 		register_setting( $this->settings_name, $this->settings_name );
 
-		$this->context_settings = wp_parse_args(
-			(array) get_option( $this->settings_name, array() ),
-			array(
-				'contexts' => array(),
-			)
-		);
-
 		// Default context
 		$default_contexts = array(
 			'incexc' => array(
@@ -179,32 +191,23 @@ class WidgetContext {
 	}
 
 	public function get_context_options( ?string $widget_id = null ) {
-		if ( ! isset( $this->context_options ) ) {
-			$this->context_options = apply_filters(
-				'widget_context_options',
-				(array) get_option( $this->options_name, array() )
-			);
-		}
-
 		if ( ! $widget_id ) {
-			return $this->context_options;
+			return $this->context_options->all();
 		}
 
-		if ( isset( $this->context_options[ $widget_id ] ) ) {
-			return $this->context_options[ $widget_id ];
-		}
-
-		return null;
+		return $this->context_options->for_widget( $widget_id );
 	}
 
 
-	public function get_context_settings( $widget_id = null ) {
+	public function get_context_settings( ?string $widget_id = null ) {
+		$settings = $this->context_settings->all();
+
 		if ( ! $widget_id ) {
-			return $this->context_settings;
+			return $settings;
 		}
 
-		if ( isset( $this->context_settings[ $widget_id ] ) ) {
-			return $this->context_settings[ $widget_id ];
+		if ( isset( $settings[ $widget_id ] ) ) {
+			return $settings[ $widget_id ];
 		}
 
 		return null;
@@ -335,13 +338,7 @@ class WidgetContext {
 			array_flip( $this->get_sidebars_widget_ids() )
 		);
 
-		$this->set_context_options( $context_options );
-	}
-
-	private function set_context_options( array $context_options ) {
-		$this->context_options = $context_options; // Update the resolved instance.
-
-		update_option( $this->options_name, $context_options );
+		$this->context_options->save( $context_options );
 	}
 
 	function maybe_unset_widgets_by_context( $sidebars_widgets ) {
@@ -414,20 +411,6 @@ class WidgetContext {
 	}
 
 	/**
-	 * If the context rule is enabled and should be checked.
-	 *
-	 * Contexts not present in the settings are enabled by default.
-	 *
-	 * @param string $context_id Context ID.
-	 *
-	 * @return bool
-	 */
-	private function is_context_enabled( string $context_id ): bool {
-		return ! isset( $this->context_settings['contexts'][ $context_id ] )
-			|| ! empty( $this->context_settings['contexts'][ $context_id ] );
-	}
-
-	/**
 	 * Get context rule matches for a widget ID.
 	 *
 	 * @param string $widget_id Widget ID.
@@ -439,7 +422,7 @@ class WidgetContext {
 		$matches = array();
 
 		foreach ( array_keys( $this->contexts ) as $context_id ) {
-			if ( $this->is_context_enabled( $context_id ) ) {
+			if ( $this->context_settings->is_context_enabled( $context_id ) ) {
 				$matches[ $context_id ] = apply_filters(
 					'widget_context_check-' . $context_id,
 					null,
@@ -667,7 +650,7 @@ class WidgetContext {
 
 			// Hide this context from the admin UX. We can't remove them
 			// because settings will get lost if this page is submitted.
-			if ( ! $this->is_context_enabled( $context_name ) ) {
+			if ( ! $this->context_settings->is_context_enabled( $context_name ) ) {
 				$context_classes[] = 'context-inactive';
 				$controls_disabled[] = $context_name;
 			}
@@ -1110,12 +1093,24 @@ class WidgetContext {
 	 * @return bool
 	 */
 	public function is_legacy_widgets_enabled() {
-		return ! empty( $this->context_settings['enable-legacy-widgets'] );
+		return $this->context_settings->is_legacy_widgets_enabled();
 	}
 
 
 	function widget_context_admin_view() {
 		$context_controls = array();
+
+		// Enable new modules by default (skip core contexts)
+		$non_core_context_ids = array_keys(
+			array_filter(
+				$this->get_contexts(),
+				function ( $context_args ) {
+					return ! isset( $context_args['type'] ) || 'core' !== $context_args['type'];
+				}
+			)
+		);
+
+		$this->context_settings->ensure_context_defaults( $non_core_context_ids );
 
 		foreach ( $this->get_contexts() as $context_id => $context_args ) {
 			// Hide core modules from being disabled
@@ -1133,9 +1128,7 @@ class WidgetContext {
 			}
 
 			// Enable new modules by default
-			if ( ! isset( $this->context_settings['contexts'][ $context_id ] ) ) {
-				$this->context_settings['contexts'][ $context_id ] = 1;
-			}
+			$this->context_settings->ensure_context_defaults( array_keys( $this->get_contexts() ) );
 
 			$context_controls[] = sprintf(
 				'<li class="enabled-contexts-item context-%s">
@@ -1150,7 +1143,7 @@ class WidgetContext {
 				esc_attr( $context_id ),
 				$this->settings_name,
 				esc_attr( $context_id ),
-				checked( $this->context_settings['contexts'][ $context_id ], 1, false ),
+				checked( $this->context_settings->is_context_enabled( $context_id ), true, false ),
 				esc_html( $context_args['label'] ),
 				$context_description
 			);
@@ -1188,7 +1181,7 @@ class WidgetContext {
 								<td>
 									<label>
 										<input type="hidden" name="<?php echo esc_attr( $this->settings_name ); ?>[enable-legacy-widgets]" value="0" />
-										<input type="checkbox" name="<?php echo esc_attr( $this->settings_name ); ?>[enable-legacy-widgets]" value="1" <?php checked( $this->context_settings['enable-legacy-widgets'], 1 ); ?> />
+										<input type="checkbox" name="<?php echo esc_attr( $this->settings_name ); ?>[enable-legacy-widgets]" value="1" <?php checked( $this->context_settings->get( 'enable-legacy-widgets' ), 1 ); ?> />
 										<?php esc_html_e( 'Enable legacy widget interface', 'widget-context' ); ?>
 									</label>
 									<p class="description">

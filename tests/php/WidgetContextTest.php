@@ -307,6 +307,7 @@ class WidgetContextTest extends WidgetContextTestCase {
 			$property->setAccessible( true );
 		}
 
-		$property->setValue( $this->plugin, $context_options );
+		$options_store = $property->getValue( $this->plugin );
+		$options_store->set( $context_options );
 	}
 }
