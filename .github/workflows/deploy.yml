@@ -2,15 +2,11 @@ name: WP.org Deploy
 
 on:
   push:
-    branches: [ develop ]
-    tags: [ '*' ]
+    tags:
+      - '*'
 
 permissions:
   contents: read
-
-env:
-  SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-  SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
 
 jobs:
 
@@ -41,24 +37,16 @@ jobs:
       - name: Build the plugin
         run: npm run build
 
-      - name: Deploy the full build as a new release
+      - name: Deploy to WordPress.org
         if: github.ref_type == 'tag'
         uses: wpelevator/wp-release-deploy-svn@0.1.1
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
         with:
           source-dir: dist
           slug: widget-context
           trunk: true
           svn-tag: ${{ github.ref_name }}
           force: true
-          assets-dir: assets/wporg
-          exclude: |
-            composer.json
-
-      - name: Update the readme between releases
-        if: github.ref_type == 'branch'
-        uses: wpelevator/wp-release-deploy-svn@0.1.1
-        with:
-          source-dir: dist
-          slug: widget-context
-          readme-only: true
           assets-dir: assets/wporg
