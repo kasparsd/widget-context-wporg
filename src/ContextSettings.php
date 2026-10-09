@@ -67,6 +67,20 @@ class ContextSettings {
 	}
 
 	/**
+	 * Overwrite the resolved instance without saving to the database.
+	 *
+	 * @param array $settings Resolved settings.
+	 */
+	public function set( array $settings ): void {
+		$this->settings = \wp_parse_args(
+			(array) $settings,
+			array(
+				'contexts' => array(),
+			)
+		);
+	}
+
+	/**
 	 * Get the context enable states.
 	 *
 	 * @return array
