@@ -46,7 +46,7 @@ jobs:
         run: npm run build
 
       - name: Deploy to WordPress.org
-        uses: wpelevator/wp-release-deploy-svn@0.1.1
+        uses: wpelevator/wp-release-deploy-svn@0.2.0
         env:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
