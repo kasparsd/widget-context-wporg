@@ -45,7 +45,7 @@ class Plugin {
 	 *
 	 * @return string
 	 */
-	public function dir() {
+	public function dir(): string {
 		return dirname( $this->file );
 	}
 
@@ -54,7 +54,7 @@ class Plugin {
 	 *
 	 * @return string
 	 */
-	public function file() {
+	public function file(): string {
 		return $this->file;
 	}
 
@@ -65,7 +65,7 @@ class Plugin {
 	 *
 	 * @return string
 	 */
-	public function basename( $file_path = null ) {
+	public function basename( ?string $file_path = null ): string {
 		if ( ! isset( $file_path ) ) {
 			$file_path = $this->file();
 		}
@@ -79,7 +79,7 @@ class Plugin {
 	 * @param string $path_relative Path relative to this plugin directory root.
 	 * @return string The URL to the asset.
 	 */
-	public function asset_url( $path_relative ) {
+	public function asset_url( string $path_relative ): string {
 		return plugins_url( $path_relative, $this->file() );
 	}
 
@@ -90,7 +90,7 @@ class Plugin {
 	 *
 	 * @return string
 	 */
-	public function uploads_dir( $path_relative = null ) {
+	public function uploads_dir( ?string $path_relative = null ): string {
 		if ( isset( $path_relative ) ) {
 			return sprintf( '%s/%s', $this->uploads_dir['basedir'], $path_relative );
 		}
@@ -105,7 +105,7 @@ class Plugin {
 	 *
 	 * @return string
 	 */
-	public function uploads_dir_url( $path_relative = null ) {
+	public function uploads_dir_url( ?string $path_relative = null ): string {
 		if ( isset( $path_relative ) ) {
 			return sprintf( '%s/%s', $this->uploads_dir['baseurl'], $path_relative );
 		}
@@ -118,7 +118,7 @@ class Plugin {
 	 *
 	 * @return boolean
 	 */
-	public function is_debug() {
+	public function is_debug(): bool {
 		return ( defined( 'WP_DEBUG' ) && WP_DEBUG );
 	}
 
@@ -127,7 +127,7 @@ class Plugin {
 	 *
 	 * @return boolean
 	 */
-	public function is_script_debug() {
+	public function is_script_debug(): bool {
 		return ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG );
 	}
 
@@ -171,13 +171,13 @@ class Plugin {
 		}
 
 		if ( isset( $field ) ) {
-			if ( isset( $meta[ $field ] ) ) {
-				return (string) $meta[ $field ];
+			if ( isset( $this->meta[ $field ] ) ) {
+				return (string) $this->meta[ $field ];
 			}
 
 			return null;
 		}
 
-		return $meta;
+		return $this->meta;
 	}
 }

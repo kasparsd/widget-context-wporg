@@ -12,14 +12,14 @@ class UriRules {
 	 *
 	 * @var array
 	 */
-	private $rules = array();
+	private array $rules = array();
 
 	/**
 	 * Setup the pattern matcher.
 	 *
 	 * @param array $patterns List of regex-like match patterns.
 	 */
-	public function __construct( $rules ) {
+	public function __construct( array $rules ) {
 		$this->rules = array_map( 'trim', $rules );
 	}
 
@@ -28,7 +28,7 @@ class UriRules {
 	 *
 	 * @return array List of URIs.
 	 */
-	public function rules() {
+	public function rules(): array {
 		return $this->rules;
 	}
 
@@ -37,7 +37,7 @@ class UriRules {
 	 *
 	 * @return boolean
 	 */
-	public function has_rules_with_query_strings() {
+	public function has_rules_with_query_strings(): bool {
 		foreach ( $this->rules as $rule ) {
 			// Assume that only query parameters can contain equal signs.
 			if ( false !== strpos( $rule, '=' ) ) {

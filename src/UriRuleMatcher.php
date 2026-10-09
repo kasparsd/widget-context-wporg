@@ -28,9 +28,9 @@ class UriRuleMatcher {
 	 *
 	 * @return array
 	 */
-	protected function quote_rules( $rules ) {
+	protected function quote_rules( array $rules ): array {
 		return array_map(
-			function ( $rule ) {
+			function ( string $rule ) {
 				// Escape regex chars before we enable back the wildcards.
 				$rule = preg_quote( $rule, self::DELIMITER ); // Note that '/' is the delimiter we're using for the final expression below.
 
@@ -52,9 +52,9 @@ class UriRuleMatcher {
 	 *
 	 * @return string
 	 */
-	protected function rules_to_expression( $rules ) {
+	protected function rules_to_expression( array $rules ): string {
 		$rules = array_map(
-			function ( $rule ) {
+			function ( string $rule ) {
 				return sprintf( '(%s$)', $rule );
 			},
 			$this->quote_rules( $rules )
@@ -76,7 +76,7 @@ class UriRuleMatcher {
 	 *
 	 * @return boolean
 	 */
-	public function uri_matches_rules( $uri, $rules ) {
+	public function uri_matches_rules( string $uri, array $rules ): bool {
 		if ( ! empty( $rules ) ) {
 			return (bool) preg_match( $this->rules_to_expression( $rules ), $uri );
 		}

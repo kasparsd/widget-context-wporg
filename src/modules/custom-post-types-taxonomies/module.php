@@ -4,15 +4,15 @@
 class WidgetContextCustomCptTax {
 
 	private static $instance;
-	private $wc;
-	public $post_types;
-	public $taxonomies;
+	private WidgetContext $wc;
+	public ?array $post_types = null;
+	public ?array $taxonomies = null;
 
-	public function __construct( $plugin ) {
+	public function __construct( WidgetContext $plugin ) {
 		$this->wc = $plugin;
 	}
 
-	public function init() {
+	public function init(): void {
 		add_filter( 'widget_contexts', array( $this, 'add_context' ) );
 
 		add_filter( 'widget_context_control-custom_post_types_taxonomies', array( $this, 'context_controls' ), 10, 2 );
@@ -20,7 +20,7 @@ class WidgetContextCustomCptTax {
 		add_filter( 'widget_context_check-custom_post_types_taxonomies', array( $this, 'context_check' ), 10, 2 );
 	}
 
-	function set_objects() {
+	public function set_objects(): void {
 		if ( is_array( $this->post_types ) ) {
 			return;
 		}
@@ -44,7 +44,7 @@ class WidgetContextCustomCptTax {
 	}
 
 
-	function add_context( $contexts ) {
+	public function add_context( $contexts ) {
 		$contexts['custom_post_types_taxonomies'] = array(
 			'label' => __( 'Custom Post Types and Taxonomies', 'widget-context' ),
 			'description' => __( 'Match posts and archives of custom post types and taxonomies.', 'widget-context' ),
@@ -55,7 +55,7 @@ class WidgetContextCustomCptTax {
 	}
 
 
-	function context_check( $check, $settings ) {
+	public function context_check( $check, $settings ) {
 		if ( empty( $settings ) ) {
 			return $check;
 		}
@@ -94,7 +94,7 @@ class WidgetContextCustomCptTax {
 	}
 
 
-	function context_controls( $control_args ) {
+	public function context_controls( $control_args ): string {
 		$options = array();
 		$out = array();
 

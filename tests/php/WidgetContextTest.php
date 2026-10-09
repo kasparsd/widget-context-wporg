@@ -79,6 +79,7 @@ class WidgetContextTest extends WidgetContextTestCase {
 				'args' => array(
 					WP_Mock\Functions::type( 'string' ),
 				),
+				'return' => 'https://example.test/wp-admin/',
 				'times' => 1,
 			)
 		);
