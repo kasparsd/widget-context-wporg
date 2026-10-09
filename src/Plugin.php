@@ -12,14 +12,7 @@ class Plugin {
 	 *
 	 * @var string
 	 */
-	protected $file;
-
-	/**
-	 * Absolute path to the root directory of this plugin.
-	 *
-	 * @var string
-	 */
-	protected $dir;
+	protected string $file;
 
 	/**
 	 * Store the WP uploads dir object.
@@ -27,17 +20,23 @@ class Plugin {
 	 * @see https://developer.wordpress.org/reference/functions/wp_upload_dir/
 	 * @var array
 	 */
-	protected $uploads_dir;
+	protected array $uploads_dir;
+
+	/**
+	 * Plugin header data.
+	 *
+	 * @var array
+	 */
+	protected array $meta;
 
 	/**
 	 * Setup the plugin.
 	 *
 	 * @param string $plugin_file_path Absolute path to the main plugin file.
 	 */
-	public function __construct( $plugin_file_path ) {
+	public function __construct( string $plugin_file_path ) {
 		$this->file = $plugin_file_path;
 
-		$this->dir = dirname( $plugin_file_path );
 		$this->uploads_dir = wp_upload_dir( null, false );
 	}
 
@@ -47,7 +46,7 @@ class Plugin {
 	 * @return string
 	 */
 	public function dir() {
-		return $this->dir;
+		return dirname( $this->file );
 	}
 
 	/**
@@ -137,7 +136,7 @@ class Plugin {
 	 *
 	 * @return mixed
 	 */
-	public function version() {
+	public function version(): ?string {
 		return $this->meta( 'Version' );
 	}
 
@@ -146,9 +145,9 @@ class Plugin {
 	 *
 	 * @return string
 	 */
-	public function asset_version() {
+	public function asset_version(): ?string {
 		if ( $this->is_debug() || $this->is_script_debug() ) {
-			return time();
+			return (string) time();
 		}
 
 		return $this->version();
@@ -161,11 +160,9 @@ class Plugin {
 	 *
 	 * @return array|string|null
 	 */
-	public function meta( $field = null ) {
-		static $meta;
-
-		if ( ! isset( $meta ) ) {
-			$meta = get_file_data(
+	public function meta( ?string $field = null ) {
+		if ( ! isset( $this->meta ) ) {
+			$this->meta = get_file_data(
 				$this->file,
 				array(
 					'Version' => 'Version',
@@ -175,7 +172,7 @@ class Plugin {
 
 		if ( isset( $field ) ) {
 			if ( isset( $meta[ $field ] ) ) {
-				return $meta[ $field ];
+				return (string) $meta[ $field ];
 			}
 
 			return null;
