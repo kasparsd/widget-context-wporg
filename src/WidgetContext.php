@@ -432,7 +432,7 @@ class WidgetContext {
 	 * @return array
 	 */
 	public function context_matches_for_widget_id( string $widget_id ): array {
-		$context_options = $this->get_context_options( $widget_id ) ?? [];
+		$context_options = $this->get_context_options( $widget_id ) ?? array();
 		$matches = array();
 
 		foreach ( array_keys( $this->contexts ) as $context_id ) {
