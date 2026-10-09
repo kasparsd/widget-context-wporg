@@ -10,8 +10,13 @@ permissions:
 
 jobs:
 
+  test:
+    name: Test and Lint
+    uses: ./.github/workflows/test.yml
+
   deploy:
     name: Build and Deploy
+    needs: test
     runs-on: ubuntu-24.04
     concurrency:
       group: deploy
