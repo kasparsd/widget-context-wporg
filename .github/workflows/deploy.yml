@@ -2,7 +2,8 @@ name: WP.org Deploy
 
 on:
   release:
-    types: [ published ]
+    types:
+      - published
 
 permissions:
   contents: read
