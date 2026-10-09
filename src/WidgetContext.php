@@ -1,6 +1,9 @@
 <?php
 
+use Preseto\WidgetContext\ContextOptions;
+use Preseto\WidgetContext\ContextSettings;
 use Preseto\WidgetContext\UriRuleMatcher;
+use Preseto\WidgetContext\Plugin;
 use Preseto\WidgetContext\UriRules;
 
 /**
@@ -22,36 +25,53 @@ class WidgetContext {
 	 */
 	const SAVE_NONCE_ACTION = 'widget-context-update';
 
-	private $sidebars_widgets;
-	private $options_name = 'widget_logic_options'; // Context settings for widgets (visibility, etc)
-	private $settings_name = 'widget_context_settings'; // Widget Context global settings
-	private $sidebars_widgets_copy;
+	private ?array $sidebars_widgets = null;
+	private string $options_name = 'widget_logic_options'; // Context settings for widgets (visibility, etc)
+	private string $settings_name = 'widget_context_settings'; // Widget Context global settings
+	private ?array $sidebars_widgets_copy = null;
 
-	private $context_options = array(); // Store visibility settings
-	private $context_settings = array(); // Store admin settings
-	private $contexts = array();
+	/**
+	 * Per-widget visibility option store.
+	 *
+	 * @var Preseto\WidgetContext\ContextOptions
+	 */
+	private ContextOptions $context_options;
+
+	/**
+	 * Global plugin settings store.
+	 *
+	 * @var Preseto\WidgetContext\ContextSettings
+	 */
+	private ContextSettings $context_settings;
+
+	private array $contexts = array();
 
 	/**
 	 * Instance of the abstract plugin.
 	 *
 	 * @var Preseto\WidgetContext\Plugin
 	 */
-	private $plugin;
+	private ?Plugin $plugin;
 
 	/**
 	 * Instance of the current class for legacy purposes.
 	 *
 	 * @var WidgetContext
 	 */
-	protected static $instance;
+	protected static ?self $instance = null;
 
 	/**
 	 * Start the plugin.
 	 *
-	 * @param Preseto\WidgetContext\Plugin $path Instance of the abstract plugin.
+	 * @param Preseto\WidgetContext\Plugin              $path            Instance of the abstract plugin.
+	 * @param Preseto\WidgetContext\ContextOptions|null  $context_options  Per-widget visibility option store.
+	 * @param Preseto\WidgetContext\ContextSettings|null $context_settings Global plugin settings store.
 	 */
-	public function __construct( $plugin ) {
+	public function __construct( $plugin, ?ContextOptions $context_options = null, ?ContextSettings $context_settings = null ) {
 		$this->plugin = $plugin;
+
+		$this->context_options = $context_options ?? new ContextOptions( $this->options_name );
+		$this->context_settings = $context_settings ?? new ContextSettings( $this->settings_name );
 
 		// Keep an instance for legacy purposes.
 		self::$instance = $this;
@@ -62,18 +82,18 @@ class WidgetContext {
 	 *
 	 * @return WidgetContext
 	 */
-	public static function instance() {
+	public static function instance(): ?self {
 		return self::$instance;
 	}
 
 	/**
 	 * Interface for registering modules.
 	 *
-	 * @param  mixed $module Instance of the module.
+	 * @param object $module Instance of the module.
 	 *
 	 * @return void
 	 */
-	public function register_module( $module ) {
+	public function register_module( object $module ): void {
 		$module->init();
 	}
 
@@ -110,20 +130,8 @@ class WidgetContext {
 		);
 	}
 
-	function define_widget_contexts() {
+	public function define_widget_contexts(): void {
 		register_setting( $this->settings_name, $this->settings_name );
-
-		$this->context_options = apply_filters(
-			'widget_context_options',
-			(array) get_option( $this->options_name, array() )
-		);
-
-		$this->context_settings = wp_parse_args(
-			(array) get_option( $this->settings_name, array() ),
-			array(
-				'contexts' => array(),
-			)
-		);
 
 		// Default context
 		$default_contexts = array(
@@ -173,39 +181,46 @@ class WidgetContext {
 		}
 	}
 
+	private function get_sidebars_widget_ids(): array {
+		$widget_ids = array();
 
-	public function get_context_options( $widget_id = null ) {
-		if ( ! $widget_id ) {
-			return $this->context_options;
+		foreach ( wp_get_sidebars_widgets() as $sidebars_widgets ) {
+			$widget_ids = array_merge( $widget_ids, array_values( $sidebars_widgets ) );
 		}
 
-		if ( isset( $this->context_options[ $widget_id ] ) ) {
-			return $this->context_options[ $widget_id ];
+		return $widget_ids;
+	}
+
+	public function get_context_options( ?string $widget_id = null ): ?array {
+		if ( ! $widget_id ) {
+			return $this->context_options->all();
+		}
+
+		return $this->context_options->for_widget( $widget_id );
+	}
+
+
+	public function get_context_settings( ?string $widget_id = null ): ?array {
+		$settings = $this->context_settings->all();
+
+		if ( ! $widget_id ) {
+			return $settings;
+		}
+
+		if ( isset( $settings[ $widget_id ] ) ) {
+			return $settings[ $widget_id ];
 		}
 
 		return null;
 	}
 
 
-	public function get_context_settings( $widget_id = null ) {
-		if ( ! $widget_id ) {
-			return $this->context_settings;
-		}
-
-		if ( isset( $this->context_settings[ $widget_id ] ) ) {
-			return $this->context_settings[ $widget_id ];
-		}
-
-		return null;
-	}
-
-
-	public function get_contexts() {
+	public function get_contexts(): array {
 		return $this->contexts;
 	}
 
 
-	function sort_context_by_weight( $a, $b ) {
+	public function sort_context_by_weight( $a, $b ) {
 		if ( ! isset( $a['weight'] ) ) {
 			$a['weight'] = 10;
 		}
@@ -223,7 +238,7 @@ class WidgetContext {
 	 *
 	 * @return boolean
 	 */
-	public function pro_nag_enabled() {
+	public function pro_nag_enabled(): bool {
 		return (bool) apply_filters( 'widget_context_pro_nag', true );
 	}
 
@@ -255,13 +270,13 @@ class WidgetContext {
 		return $links;
 	}
 
-	function set_widget_contexts_frontend() {
+	public function set_widget_contexts_frontend(): void {
 		// Hide/show widgets for is_active_sidebar() to work
 		add_filter( 'sidebars_widgets', array( $this, 'maybe_unset_widgets_by_context' ), 10 );
 	}
 
 
-	function admin_scripts( $page ) {
+	public function admin_scripts( $page ) {
 		// Enqueue only on widgets and customizer view
 		if ( ! in_array( $page, array( 'widgets.php', 'appearance_page_widget_context_settings' ), true ) ) {
 			return;
@@ -283,51 +298,51 @@ class WidgetContext {
 	}
 
 
-	function widget_context_controls( $widget ) {
+	public function widget_context_controls( $widget ): void {
 		echo $this->display_widget_context( $widget->id );
 	}
 
 
-	function save_widget_context_settings() {
-		if ( ! current_user_can( 'edit_theme_options' ) || empty( $_POST['wl'] ) || ! is_array( $_POST['wl'] ) ) {
+	public function save_widget_context_settings(): void {
+		if ( ! current_user_can( 'edit_theme_options' ) ) {
 			return;
 		}
 
+		$widget_context_inputs = array();
+
+		if ( isset( $_POST['wl'] ) && is_array( $_POST['wl'] ) ) {
+			$widget_context_inputs = $_POST['wl'];
+		}
+
+		$context_options = $this->get_context_options();
+
 		// Add and update.
-		foreach ( $_POST['wl'] as $widget_id => $widget_context_input ) {
+		foreach ( $widget_context_inputs as $widget_id => $widget_context_input ) {
 			$update_nonce = $this->get_widget_nonce_action( $widget_id );
 
 			if ( ! empty( $_POST[ $update_nonce ] ) && wp_verify_nonce( $_POST[ $update_nonce ], self::SAVE_NONCE_ACTION ) ) {
-				if ( ! isset( $this->context_options[ $widget_id ] ) ) {
-					$this->context_options[ $widget_id ] = array();
+				if ( ! isset( $context_options[ $widget_id ] ) ) {
+					$context_options[ $widget_id ] = array();
 				}
 
 				if ( ! empty( $_POST['delete_widget'] ) ) { // Delete.
-					unset( $this->context_options[ $widget_id ] );
+					unset( $context_options[ $widget_id ] );
 				} else { // Update.
-					$this->context_options[ $widget_id ] = $widget_context_input;
+					$context_options[ $widget_id ] = $widget_context_input;
 				}
 			}
 		}
 
-		// Get a list of all widget IDs.
-		$all_widget_ids = array();
-		foreach ( wp_get_sidebars_widgets() as $widget_area => $widgets ) {
-			$all_widget_ids = array_merge( $all_widget_ids, array_values( $widgets ) );
-		}
+		// Remove widgets that no longer exist.
+		$context_options = array_intersect_key(
+			$context_options,
+			array_flip( $this->get_sidebars_widget_ids() )
+		);
 
-		// Cleanup non-existant widget contexts from the settings.
-		foreach ( $this->context_options as $widget_id => $widget_context ) {
-			if ( ! in_array( $widget_id, $all_widget_ids, true ) ) {
-				unset( $this->context_options[ $widget_id ] );
-			}
-		}
-
-		update_option( $this->options_name, $this->context_options );
+		$this->context_options->save( $context_options );
 	}
 
-
-	function maybe_unset_widgets_by_context( $sidebars_widgets ) {
+	public function maybe_unset_widgets_by_context( $sidebars_widgets ) {
 		// Don't run this at the backend or before
 		// post query has been run
 		if ( is_admin() ) {
@@ -343,14 +358,12 @@ class WidgetContext {
 		$this->sidebars_widgets_copy = $sidebars_widgets;
 
 		foreach ( $sidebars_widgets as $widget_area => $widget_list ) {
-
 			if ( 'wp_inactive_widgets' === $widget_area || empty( $widget_list ) ) {
 				continue;
 			}
 
 			foreach ( $widget_list as $pos => $widget_id ) {
-
-				if ( ! $this->check_widget_visibility( $widget_id ) ) {
+				if ( ! $this->check_widget_visibility( (string) $widget_id ) ) {
 					unset( $sidebars_widgets[ $widget_area ][ $pos ] );
 				}
 			}
@@ -369,14 +382,15 @@ class WidgetContext {
 	 *
 	 * @return boolean
 	 */
-	public function check_widget_visibility( $widget_id ) {
-		// Check if this widget even has context set.
-		if ( ! isset( $this->context_options[ $widget_id ] ) ) {
-			return true;
+	public function check_widget_visibility( string $widget_id ): bool {
+		$context_options = $this->get_context_options( (string) $widget_id );
+
+		if ( empty( $context_options['incexc']['condition'] ) ) {
+			return true; // Show if no context options are set.
 		}
 
 		// Get the match rule for this widget (show/hide/selected/notselected).
-		$match_rule = $this->context_options[ $widget_id ]['incexc']['condition'];
+		$match_rule = $context_options['incexc']['condition'];
 
 		// Force show or hide the widget!
 		if ( 'show' === $match_rule ) {
@@ -385,28 +399,15 @@ class WidgetContext {
 			return false;
 		}
 
-		// Show or hide on match.
-		$condition = ( 'selected' === $match_rule );
+		$condition = ( 'selected' === $match_rule ); // Show or hide on match.
 
-		if ( $this->context_matches_condition_for_widget_id( $widget_id ) ) {
+		// Inverted rules can only override another positive match.
+		$matches = $this->context_matches_for_widget_id( $widget_id );
+		if ( in_array( true, $matches, true ) && ! in_array( false, $matches, true ) ) {
 			return $condition;
 		}
 
 		return ! $condition;
-	}
-
-	/**
-	 * Check if widget visibility rules match the current context.
-	 *
-	 * @param string $widget_id Widget ID.
-	 *
-	 * @return boolean
-	 */
-	public function context_matches_condition_for_widget_id( $widget_id ) {
-		$matches = $this->context_matches_for_widget_id( $widget_id );
-
-		// Inverted rules can only override another positive match.
-		return ( in_array( true, $matches, true ) && ! in_array( false, $matches, true ) );
 	}
 
 	/**
@@ -416,27 +417,18 @@ class WidgetContext {
 	 *
 	 * @return array
 	 */
-	public function context_matches_for_widget_id( $widget_id ) {
+	public function context_matches_for_widget_id( string $widget_id ): array {
+		$context_options = $this->get_context_options( $widget_id ) ?? array();
 		$matches = array();
 
-		foreach ( $this->get_contexts() as $context_id => $context_settings ) {
-			// This context check has been disabled in the plugin settings
-			if ( isset( $this->context_settings['contexts'][ $context_id ] ) && ! $this->context_settings['contexts'][ $context_id ] ) {
-				continue;
+		foreach ( array_keys( $this->contexts ) as $context_id ) {
+			if ( $this->context_settings->is_context_enabled( $context_id ) ) {
+				$matches[ $context_id ] = apply_filters(
+					'widget_context_check-' . $context_id,
+					null,
+					$context_options[ $context_id ] ?? array()
+				);
 			}
-
-			$widget_context_args = array();
-
-			// Make sure that context settings for this widget are defined
-			if ( ! empty( $this->context_options[ $widget_id ][ $context_id ] ) ) {
-				$widget_context_args = $this->context_options[ $widget_id ][ $context_id ];
-			}
-
-			$matches[ $context_id ] = apply_filters(
-				'widget_context_check-' . $context_id,
-				null,
-				$widget_context_args
-			);
 		}
 
 		return $matches;
@@ -447,12 +439,12 @@ class WidgetContext {
 	 * Default context checks
 	 */
 
-	function context_check_incexc( $check, $settings ) {
+	public function context_check_incexc( $check, $settings ) {
 		return $check;
 	}
 
 
-	function context_check_location( $check, $settings ) {
+	public function context_check_location( $check, $settings ) {
 		$status = array(
 			'is_front_page' => is_front_page(),
 			'is_home' => is_home(),
@@ -489,7 +481,7 @@ class WidgetContext {
 	 *
 	 * @return string
 	 */
-	protected function get_setting_as_string( $settings, $key ) {
+	protected function get_setting_as_string( $settings, string $key ): string {
 		if ( ! is_array( $settings ) ) {
 			$settings = array();
 		}
@@ -547,7 +539,7 @@ class WidgetContext {
 	 *
 	 * @return string
 	 */
-	protected function get_request_path() {
+	protected function get_request_path(): string {
 		static $path;
 
 		if ( ! isset( $path ) ) {
@@ -565,7 +557,7 @@ class WidgetContext {
 	 *
 	 * @return string
 	 */
-	public function path_from_uri( $uri ) {
+	public function path_from_uri( string $uri ): string {
 		$parts = wp_parse_args(
 			wp_parse_url( $uri ),
 			array(
@@ -589,7 +581,7 @@ class WidgetContext {
 	 *
 	 * @return array List of formatted URI paths.
 	 */
-	protected function uri_rules_from_paths( $paths ) {
+	protected function uri_rules_from_paths( string $paths ): array {
 		$patterns = explode( "\n", $paths );
 
 		$patterns = array_map(
@@ -611,7 +603,7 @@ class WidgetContext {
 	 *
 	 * @return bool|null Return `null` if no rules to match against.
 	 */
-	public function match_path( $path, $rules ) {
+	public function match_path( string $path, string $rules ): ?bool {
 		$uri_rules = new UriRules( $this->uri_rules_from_paths( $rules ) );
 		$uri_rules_paths = $uri_rules->rules();
 
@@ -634,18 +626,18 @@ class WidgetContext {
 
 
 	// Dummy function
-	function context_check_admin_notes( $check, $widget_id ) {}
+	public function context_check_admin_notes( $check, $widget_id ) {}
 
 
 	// Dummy function
-	function context_check_general( $check, $widget_id ) {}
+	public function context_check_general( $check, $widget_id ) {}
 
 
 	/*
 		Widget Controls
 	 */
 
-	function display_widget_context( $widget_id = null ) {
+	private function display_widget_context( ?string $widget_id = null ): string {
 		$controls = array();
 		$controls_disabled = array();
 		$controls_core = array();
@@ -658,7 +650,7 @@ class WidgetContext {
 
 			// Hide this context from the admin UX. We can't remove them
 			// because settings will get lost if this page is submitted.
-			if ( isset( $this->context_settings['contexts'][ $context_name ] ) && ! $this->context_settings['contexts'][ $context_name ] ) {
+			if ( ! $this->context_settings->is_context_enabled( $context_name ) ) {
 				$context_classes[] = 'context-inactive';
 				$controls_disabled[] = $context_name;
 			}
@@ -769,12 +761,12 @@ class WidgetContext {
 	 *
 	 * @return string
 	 */
-	private function get_widget_nonce_action( $widget_id ) {
+	private function get_widget_nonce_action( string $widget_id ): string {
 		return 'widget-context--' . $widget_id;
 	}
 
 
-	function control_incexc( $control_args ) {
+	public function control_incexc( $control_args ): string {
 		$options = array(
 			'show' => __( 'Show widget everywhere', 'widget-context' ),
 			'selected' => __( 'Show widget on selected', 'widget-context' ),
@@ -786,7 +778,7 @@ class WidgetContext {
 	}
 
 
-	function control_location( $control_args ) {
+	public function control_location( $control_args ): string {
 		$options = array(
 			'is_front_page' => __( 'Front page', 'widget-context' ),
 			'is_home' => __( 'Blog page', 'widget-context' ),
@@ -816,7 +808,7 @@ class WidgetContext {
 	}
 
 
-	function control_url( $control_args ) {
+	public function control_url( $control_args ): string {
 		return sprintf(
 			'<div>%s</div>
 			<p class="help">%s</p>',
@@ -826,7 +818,7 @@ class WidgetContext {
 	}
 
 
-	function control_urls_invert( $control_args ) {
+	public function control_urls_invert( $control_args ): string {
 		return sprintf(
 			'<div>%s</div>
 			<p class="help">%s</p>',
@@ -836,7 +828,7 @@ class WidgetContext {
 	}
 
 
-	function control_admin_notes( $control_args ) {
+	public function control_admin_notes( $control_args ): string {
 		return sprintf(
 			'<div>%s</div>',
 			$this->make_simple_textarea( $control_args, 'notes' )
@@ -850,7 +842,7 @@ class WidgetContext {
 	 */
 
 
-	function make_simple_checkbox( $control_args, $option, $label ) {
+	public function make_simple_checkbox( $control_args, string $option, string $label ): string {
 		$value = false;
 
 		if ( isset( $control_args['settings'][ $option ] ) && $control_args['settings'][ $option ] ) {
@@ -877,7 +869,7 @@ class WidgetContext {
 	}
 
 
-	function make_simple_textarea( $control_args, $option, $label = null ) {
+	public function make_simple_textarea( $control_args, string $option, ?string $label = null ): string {
 		$value = '';
 
 		if ( isset( $control_args['settings'][ $option ] ) ) {
@@ -901,7 +893,7 @@ class WidgetContext {
 	}
 
 
-	function make_simple_textfield( $control_args, $option, $label_before = null, $label_after = null ) {
+	public function make_simple_textfield( $control_args, string $option, ?string $label_before = null, ?string $label_after = null ): string {
 		$value = false;
 
 		if ( isset( $control_args['settings'][ $option ] ) ) {
@@ -928,7 +920,7 @@ class WidgetContext {
 	}
 
 
-	function make_simple_dropdown( $control_args, $option, $selection = array(), $label_before = null, $label_after = null ) {
+	public function make_simple_dropdown( $control_args, string $option, array $selection = array(), ?string $label_before = null, ?string $label_after = null ): string {
 		$options = array();
 		$value = false;
 
@@ -980,11 +972,11 @@ class WidgetContext {
 	 * @param  array $parts i.e. array( 'part1', 'part2', 'part3' )
 	 * @return string        i.e. [part1][part2][partN]
 	 */
-	function get_field_name( $parts ) {
+	public function get_field_name( array $parts ): string {
 		return esc_attr( sprintf( '[%s]', implode( '][', $parts ) ) );
 	}
 
-	function get_field_classname( $name ) {
+	public function get_field_classname( string $name ): string {
 		if ( is_array( $name ) ) {
 			$name = end( $name );
 		}
@@ -1000,9 +992,9 @@ class WidgetContext {
 	 * @param  array $options i.e. array( 'part1' => array( 'part2' => array( 'part3' => 'VALUE' ) ) )
 	 * @return string          Returns option value
 	 */
-	function get_field_value( $parts, $options = null ) {
+	private function get_field_value( array $parts, $options = null ) {
 		if ( null === $options ) {
-			$options = $this->context_options;
+			$options = $this->get_context_options();
 		}
 
 		$value = false;
@@ -1023,7 +1015,7 @@ class WidgetContext {
 	}
 
 
-	function fix_legacy_options( $options ) {
+	public function fix_legacy_options( $options ) {
 		if ( empty( $options ) || ! is_array( $options ) ) {
 			return $options;
 		}
@@ -1065,7 +1057,7 @@ class WidgetContext {
 	 */
 
 
-	function widget_context_settings_menu() {
+	public function widget_context_settings_menu(): void {
 		add_theme_page(
 			__( 'Widget Context Settings', 'widget-context' ),
 			__( 'Widget Context', 'widget-context' ),
@@ -1081,7 +1073,7 @@ class WidgetContext {
 	 *
 	 * @return string
 	 */
-	public function customize_widgets_admin_url() {
+	public function customize_widgets_admin_url(): string {
 		return admin_url( 'customize.php?autofocus[panel]=widgets' );
 	}
 
@@ -1091,7 +1083,7 @@ class WidgetContext {
 	 *
 	 * @return string
 	 */
-	public function plugin_settings_admin_url() {
+	public function plugin_settings_admin_url(): string {
 		return admin_url( 'themes.php?page=widget_context_settings' );
 	}
 
@@ -1100,13 +1092,25 @@ class WidgetContext {
 	 *
 	 * @return bool
 	 */
-	public function is_legacy_widgets_enabled() {
-		return ! empty( $this->context_settings['enable-legacy-widgets'] );
+	public function is_legacy_widgets_enabled(): bool {
+		return $this->context_settings->is_legacy_widgets_enabled();
 	}
 
 
-	function widget_context_admin_view() {
+	public function widget_context_admin_view(): void {
 		$context_controls = array();
+
+		// Enable new modules by default (skip core contexts)
+		$non_core_context_ids = array_keys(
+			array_filter(
+				$this->get_contexts(),
+				function ( $context_args ) {
+					return ! isset( $context_args['type'] ) || 'core' !== $context_args['type'];
+				}
+			)
+		);
+
+		$this->context_settings->ensure_context_defaults( $non_core_context_ids );
 
 		foreach ( $this->get_contexts() as $context_id => $context_args ) {
 			// Hide core modules from being disabled
@@ -1124,9 +1128,7 @@ class WidgetContext {
 			}
 
 			// Enable new modules by default
-			if ( ! isset( $this->context_settings['contexts'][ $context_id ] ) ) {
-				$this->context_settings['contexts'][ $context_id ] = 1;
-			}
+			$this->context_settings->ensure_context_defaults( array_keys( $this->get_contexts() ) );
 
 			$context_controls[] = sprintf(
 				'<li class="enabled-contexts-item context-%s">
@@ -1141,7 +1143,7 @@ class WidgetContext {
 				esc_attr( $context_id ),
 				$this->settings_name,
 				esc_attr( $context_id ),
-				checked( $this->context_settings['contexts'][ $context_id ], 1, false ),
+				checked( $this->context_settings->is_context_enabled( $context_id ), true, false ),
 				esc_html( $context_args['label'] ),
 				$context_description
 			);
@@ -1179,7 +1181,7 @@ class WidgetContext {
 								<td>
 									<label>
 										<input type="hidden" name="<?php echo esc_attr( $this->settings_name ); ?>[enable-legacy-widgets]" value="0" />
-										<input type="checkbox" name="<?php echo esc_attr( $this->settings_name ); ?>[enable-legacy-widgets]" value="1" <?php checked( $this->context_settings['enable-legacy-widgets'], 1 ); ?> />
+										<input type="checkbox" name="<?php echo esc_attr( $this->settings_name ); ?>[enable-legacy-widgets]" value="1" <?php checked( $this->context_settings->get( 'enable-legacy-widgets' ), 1 ); ?> />
 										<?php esc_html_e( 'Enable legacy widget interface', 'widget-context' ); ?>
 									</label>
 									<p class="description">
@@ -1273,7 +1275,7 @@ class WidgetContext {
 	}
 
 
-	public function get_sidebars_widgets_copy() {
+	public function get_sidebars_widgets_copy(): ?array {
 		return $this->sidebars_widgets_copy;
 	}
 }
