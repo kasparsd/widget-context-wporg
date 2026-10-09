@@ -484,12 +484,18 @@ class WidgetContextTest extends WidgetContextTestCase {
 			),
 			'Selected without matches hides' => array(
 				'selected',
-				array( 'url' => null, 'location' => false ),
+				array(
+					'url' => null,
+					'location' => false,
+				),
 				false,
 			),
 			'Selected with a positive match shows' => array(
 				'selected',
-				array( 'url' => true, 'location' => null ),
+				array(
+					'url' => true,
+					'location' => null,
+				),
 				true,
 			),
 			'Selected with only null matches hides' => array(
@@ -509,12 +515,18 @@ class WidgetContextTest extends WidgetContextTestCase {
 			),
 			'Inverted rule overrides a positive match for selected' => array(
 				'selected',
-				array( 'url' => true, 'urls_invert' => false ),
+				array(
+					'url' => true,
+					'urls_invert' => false,
+				),
 				false,
 			),
 			'Inverted rule overrides a positive match for notselected' => array(
 				'notselected',
-				array( 'url' => true, 'urls_invert' => false ),
+				array(
+					'url' => true,
+					'urls_invert' => false,
+				),
 				true,
 			),
 		);
