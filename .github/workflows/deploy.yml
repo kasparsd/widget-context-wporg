@@ -20,8 +20,6 @@ jobs:
     concurrency:
       group: deploy
       cancel-in-progress: false
-    outputs:
-      version: ${{ steps.version.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -43,24 +41,12 @@ jobs:
       - name: Build the plugin
         run: npm run build
 
-      - name: Determine the deploy version
-        id: version
-        env:
-          TAG_VERSION: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
-        run: |
-          HEADER_VERSION="$( sed -n 's/^\s*\*\s*Version:\s*//p' dist/widget-context.php | head -n 1 | sed 's/[[:space:]]*$//' )"
-          VERSION="${TAG_VERSION:-$HEADER_VERSION}"
-
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "Deploying version: $VERSION"
-
       - name: Deploy the full build as a new release
         if: github.ref_type == 'tag'
         uses: wpelevator/wp-release-deploy-svn@0.1.1
         with:
           source-dir: dist
           slug: widget-context
-          version: ${{ steps.version.outputs.version }}
           trunk: true
           svn-tag: ${{ github.ref_name }}
           force: true
