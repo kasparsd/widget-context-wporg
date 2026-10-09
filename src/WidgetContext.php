@@ -416,12 +416,15 @@ class WidgetContext {
 	/**
 	 * If the context rule is enabled and should be checked.
 	 *
+	 * Contexts not present in the settings are enabled by default.
+	 *
 	 * @param string $context_id Context ID.
 	 *
 	 * @return bool
 	 */
 	private function is_context_enabled( string $context_id ): bool {
-		return isset( $this->context_settings['contexts'][ $context_id ] ) && $this->context_settings['contexts'][ $context_id ];
+		return ! isset( $this->context_settings['contexts'][ $context_id ] )
+			|| ! empty( $this->context_settings['contexts'][ $context_id ] );
 	}
 
 	/**
