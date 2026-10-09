@@ -62,7 +62,7 @@ class WidgetContext {
 	/**
 	 * Start the plugin.
 	 *
-	 * @param Preseto\WidgetContext\Plugin       $path            Instance of the abstract plugin.
+	 * @param Preseto\WidgetContext\Plugin              $path            Instance of the abstract plugin.
 	 * @param Preseto\WidgetContext\ContextOptions|null  $context_options  Per-widget visibility option store.
 	 * @param Preseto\WidgetContext\ContextSettings|null $context_settings Global plugin settings store.
 	 */
@@ -398,8 +398,7 @@ class WidgetContext {
 			return false;
 		}
 
-		// Show or hide on match.
-		$condition = ( 'selected' === $match_rule );
+		$condition = ( 'selected' === $match_rule ); // Show or hide on match.
 
 		// Inverted rules can only override another positive match.
 		$matches = $this->context_matches_for_widget_id( $widget_id );
