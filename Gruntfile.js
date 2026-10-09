@@ -105,7 +105,6 @@ module.exports = function( grunt ) {
 					'widget-context.php',
 					'LICENSE',
 					'composer.json',
-					'composer.lock',
 				],
 				dest: '<%= dist_dir %>',
 				expand: true,
