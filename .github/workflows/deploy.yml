@@ -1,0 +1,78 @@
+name: WP.org Deploy
+
+on:
+  push:
+    branches: [ develop ]
+    tags: [ '*' ]
+
+permissions:
+  contents: read
+
+env:
+  SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+  SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-24.04
+    concurrency:
+      group: deploy
+      cancel-in-progress: false
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          cache: npm
+          node-version-file: .nvmrc
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+
+      - name: Install tooling
+        run: npm install
+
+      - name: Build the plugin
+        run: npm run build
+
+      - name: Determine the deploy version
+        id: version
+        env:
+          TAG_VERSION: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+        run: |
+          HEADER_VERSION="$( sed -n 's/^\s*\*\s*Version:\s*//p' dist/widget-context.php | head -n 1 | sed 's/[[:space:]]*$//' )"
+          VERSION="${TAG_VERSION:-$HEADER_VERSION}"
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Deploying version: $VERSION"
+
+      - name: Deploy the full build as a new release
+        if: github.ref_type == 'tag'
+        uses: wpelevator/wp-release-deploy-svn@0.1.1
+        with:
+          source-dir: dist
+          slug: widget-context
+          version: ${{ steps.version.outputs.version }}
+          trunk: true
+          svn-tag: ${{ github.ref_name }}
+          force: true
+          assets-dir: assets/wporg
+          exclude: |
+            composer.json
+
+      - name: Update the readme between releases
+        if: github.ref_type == 'branch'
+        uses: wpelevator/wp-release-deploy-svn@0.1.1
+        with:
+          source-dir: dist
+          slug: widget-context
+          readme-only: true
+          assets-dir: assets/wporg
