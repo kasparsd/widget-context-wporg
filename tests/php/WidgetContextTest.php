@@ -230,6 +230,76 @@ class WidgetContextTest extends WidgetContextTestCase {
 		$this->assertSame( array(), $this->plugin->get_context_options() );
 	}
 
+	public function testSaveWidgetContextSettingsCleansStaleOptionsWithoutAnyContextInput() {
+		$this->setContextOptions(
+			array(
+				'text-2'     => array(
+					'incexc' => array(
+						'condition' => 'hide',
+					),
+				),
+				'archives-3' => array(
+					'incexc' => array(
+						'condition' => 'show',
+					),
+				),
+			)
+		);
+
+		// No 'wl' input at all, for example a plain widget save without
+		// any context fields posted.
+		$_POST = array();
+
+		WP_Mock::userFunction(
+			'current_user_can',
+			array(
+				'args'   => array( 'edit_theme_options' ),
+				'times'  => 1,
+				'return' => true,
+			)
+		);
+
+		WP_Mock::userFunction(
+			'wp_get_sidebars_widgets',
+			array(
+				'times'  => 1,
+				'return' => array(
+					'sidebar-1' => array( 'text-2' ),
+				),
+			)
+		);
+
+		WP_Mock::userFunction(
+			'update_option',
+			array(
+				'args'  => array(
+					'widget_logic_options',
+					array(
+						'text-2' => array(
+							'incexc' => array(
+								'condition' => 'hide',
+							),
+						),
+					),
+				),
+				'times' => 1,
+			)
+		);
+
+		$this->plugin->save_widget_context_settings();
+
+		$this->assertSame(
+			array(
+				'text-2' => array(
+					'incexc' => array(
+						'condition' => 'hide',
+					),
+				),
+			),
+			$this->plugin->get_context_options()
+		);
+	}
+
 	private function setContextOptions( $context_options ) {
 		$property = new \ReflectionProperty( \WidgetContext::class, 'context_options' );
 
