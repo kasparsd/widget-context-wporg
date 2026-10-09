@@ -46,9 +46,10 @@ jobs:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
         with:
+          svn-tag: ${{ github.ref_name }}
           source-dir: dist
           slug: widget-context
-          trunk: true
-          svn-tag: ${{ github.ref_name }}
-          force: true
           assets-dir: assets/wporg
+          trunk: true
+          force: true
+
