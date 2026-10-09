@@ -65,6 +65,12 @@ Specify URLs to ignore even if they're matched by any of the other context rules
 
 ## Changelog
 
+### 1.5.0 (October 9, 2026)
+
+- Declare param, return and property types across the codebase where types are known, and refine lazy loading of the plugin option stores.
+- Feature: All context rules are now enabled by default, including those added by other plugins.
+- Plugin now verifies that WordPress is loading it before bootstrapping.
+
 ### 1.4.2 (October 8, 2026)
 
 - Bugfix: avoid an undefined variable warning when rendering checkbox controls.
