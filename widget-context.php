@@ -19,4 +19,4 @@ $widget_context = new WidgetContext( $plugin );
 $widget_context->register_module( new WidgetContextCustomCptTax( $widget_context ) );
 $widget_context->register_module( new WidgetContextWordCount( $widget_context ) );
 
-$widget_context->init();
+add_action( 'plugins_loaded', array( $widget_context, 'init' ) );
