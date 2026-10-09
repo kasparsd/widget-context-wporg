@@ -184,12 +184,6 @@ class WidgetContext {
 				'widget_context_options',
 				(array) get_option( $this->options_name, array() )
 			);
-
-			// Remove widgets that no longer exist.
-			$this->context_options = array_intersect_key(
-				$this->context_options,
-				array_flip( $this->get_sidebars_widget_ids() )
-			);
 		}
 
 		if ( ! $widget_id ) {
@@ -334,6 +328,12 @@ class WidgetContext {
 				}
 			}
 		}
+
+		// Remove widgets that no longer exist.
+		$context_options = array_intersect_key(
+			$context_options,
+			array_flip( $this->get_sidebars_widget_ids() )
+		);
 
 		$this->set_context_options( $context_options );
 	}
