@@ -9,6 +9,10 @@
  * Text Domain: widget-context
  */
 
+if ( ! function_exists( 'add_action' ) ) {
+	return; // Ensure WP is loading the plugin.
+}
+
 if ( file_exists( __DIR__ . '/vendor/autoload.php' ) && ! class_exists( Preseto\WidgetContext\Plugin::class ) ) {
 	require_once __DIR__ . '/vendor/autoload.php';
 }
