@@ -1,21 +1,23 @@
 name: WP.org Deploy
 
 on:
-  push:
-    tags:
-      - '*'
+  release:
+    types: [ published ]
 
 permissions:
   contents: read
 
 jobs:
 
-  build:
-    name: Build
+  deploy:
+    name: Build and Deploy
     runs-on: ubuntu-24.04
     concurrency:
       group: deploy
       cancel-in-progress: false
+    # Pre-releases never touch WordPress.org: the action can't tag
+    # pre-release versions and trunk must keep serving the stable version.
+    if: ${{ ! github.event.release.prerelease }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -38,7 +40,6 @@ jobs:
         run: npm run build
 
       - name: Deploy to WordPress.org
-        if: github.ref_type == 'tag'
         uses: wpelevator/wp-release-deploy-svn@0.1.1
         env:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
