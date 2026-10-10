@@ -21,9 +21,10 @@ jobs:
     concurrency:
       group: deploy
       cancel-in-progress: false
-    # Stable releases sync trunk and copy it to tags/<version>. Pre-releases
-    # build tags/<version> directly from the build files: trunk keeps serving
-    # the stable version and the tag is only for pre-release testers.
+    # Stable releases sync trunk and copy it to tags/<version>, and update
+    # the assets. Pre-releases only build tags/<version> directly from the
+    # build files: trunk keeps serving the stable version, the tag is only
+    # for pre-release testers and it must not replace an existing tag.
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -64,5 +65,6 @@ jobs:
           assets-dir: assets/wporg
           trunk: ${{ ! github.event.release.prerelease }}
           svn-tag: ${{ github.ref_name }}
-          force: true
+          assets: ${{ ! github.event.release.prerelease }}
+          force: ${{ ! github.event.release.prerelease }}
 
