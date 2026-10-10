@@ -6,7 +6,7 @@ on:
       - published
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
 
@@ -44,6 +44,14 @@ jobs:
 
       - name: Build the plugin
         run: npm run build
+
+      - name: Package the release ZIP
+        run: npx @wpelevator/wp-release@0.4.0 zip dist --slug widget-context --force
+
+      - name: Attach the ZIP to the release
+        run: gh release upload "$GITHUB_REF_NAME" "widget-context.*.zip" --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Deploy to WordPress.org
         uses: wpelevator/wp-release-deploy-svn@0.4.0
