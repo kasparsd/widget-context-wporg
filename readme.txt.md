@@ -65,6 +65,10 @@ Specify URLs to ignore even if they're matched by any of the other context rules
 
 ## Changelog
 
+### 1.5.1-rc.2 (October 10, 2026)
+
+- Release ZIP packaging and checksums manifest attached to the release, via [wp-release-deploy-svn](https://github.com/wpelevator/wp-release-deploy-svn) and the @wpelevator/wp-release tooling.
+
 ### 1.5.1-rc.1 (October 10, 2026)
 
 - Pre-release pipeline test: deploy to WordPress.org via [wp-release-deploy-svn](https://github.com/wpelevator/wp-release-deploy-svn) with the changelog and assets updated.
