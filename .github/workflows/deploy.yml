@@ -1,0 +1,60 @@
+name: WP.org Deploy
+
+on:
+  release:
+    types:
+      - published
+
+permissions:
+  contents: read
+
+jobs:
+
+  test:
+    name: Test and Lint
+    uses: ./.github/workflows/test.yml
+
+  deploy:
+    name: Build and Deploy
+    needs: test
+    runs-on: ubuntu-24.04
+    concurrency:
+      group: deploy
+      cancel-in-progress: false
+    # Stable releases sync trunk and copy it to tags/<version>. Pre-releases
+    # build tags/<version> directly from the build files: trunk keeps serving
+    # the stable version and the tag is only for pre-release testers.
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          cache: npm
+          node-version-file: .nvmrc
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+
+      - name: Install tooling
+        run: npm install
+
+      - name: Build the plugin
+        run: npm run build
+
+      - name: Deploy to WordPress.org
+        uses: wpelevator/wp-release-deploy-svn@0.4.0
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+        with:
+          source-dir: dist
+          slug: widget-context
+          assets-dir: assets/wporg
+          trunk: ${{ ! github.event.release.prerelease }}
+          svn-tag: ${{ github.ref_name }}
+          force: true
+
