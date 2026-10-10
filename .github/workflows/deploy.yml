@@ -21,9 +21,10 @@ jobs:
     concurrency:
       group: deploy
       cancel-in-progress: false
-    # Pre-releases never touch WordPress.org: the action can't tag
-    # pre-release versions and trunk must keep serving the stable version.
-    if: ${{ ! github.event.release.prerelease }}
+    # Stable releases sync trunk, tag it and update the assets. Pre-releases
+    # can't be tagged on WordPress.org (the action rejects pre-release tags
+    # and trunk must keep serving the stable version), so they only sync
+    # the assets.
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -45,7 +46,8 @@ jobs:
       - name: Build the plugin
         run: npm run build
 
-      - name: Deploy to WordPress.org
+      - name: Deploy the stable release to WordPress.org
+        if: ${{ ! github.event.release.prerelease }}
         uses: wpelevator/wp-release-deploy-svn@0.2.0
         env:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
@@ -57,4 +59,15 @@ jobs:
           assets-dir: assets/wporg
           trunk: true
           force: true
+
+      - name: Sync the assets for a pre-release
+        if: ${{ github.event.release.prerelease }}
+        uses: wpelevator/wp-release-deploy-svn@0.2.0
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+        with:
+          source-dir: dist
+          slug: widget-context
+          assets-dir: assets/wporg
 
