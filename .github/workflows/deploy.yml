@@ -50,7 +50,7 @@ jobs:
         run: npm run zip
 
       - name: Attach the ZIP to the release
-        run: gh release upload "$GITHUB_REF_NAME" "widget-context.*.zip" --clobber
+        run: gh release upload "$GITHUB_REF_NAME" widget-context.*.zip "widget-context.*.checksums.json" --clobber
         env:
           GH_TOKEN: ${{ github.token }}
 

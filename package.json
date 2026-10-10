@@ -15,7 +15,7 @@
     "grunt": "grunt",
     "build": "composer release && grunt build",
     "deploy": "composer release && grunt deploy",
-    "zip": "wp-release zip dist --slug widget-context --force",
+    "zip": "wp-release zip dist --slug widget-context --checksums --force",
     "deploy-trunk": "composer release && grunt deploy-trunk",
     "test": "docker-compose run --remove-orphans --workdir=/var/www/html/wp-content/plugins/widget-context-src wordpress vendor/bin/phpunit",
     "lint": "composer lint && npm run lint-js",
