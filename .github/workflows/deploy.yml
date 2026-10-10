@@ -47,7 +47,7 @@ jobs:
         run: npm run build
 
       - name: Package the release ZIP
-        run: npx @wpelevator/wp-release@0.4.0 zip dist --slug widget-context --force
+        run: npm run zip
 
       - name: Attach the ZIP to the release
         run: gh release upload "$GITHUB_REF_NAME" "widget-context.*.zip" --clobber
