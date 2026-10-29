@@ -6,3 +6,8 @@
 /phpunit.xml
 .DS_Store
 .phpunit.result.cache
+
+# Release build artifacts (wp-release zip)
+/widget-context.*.zip
+/widget-context.*.checksums.json
+/widget-context.*.zip.sig

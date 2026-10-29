@@ -1,6 +1,9 @@
 name: WP.org Deploy
 
 on:
+  push:
+    branches:
+      - develop
   release:
     types:
       - published
@@ -10,21 +13,24 @@ permissions:
 
 jobs:
 
+  # Full test and lint matrix only for actual releases; the readme-only
+  # trunk syncs on develop pushes run without it.
   test:
     name: Test and Lint
+    if: github.event_name == 'release'
     uses: ./.github/workflows/test.yml
 
-  deploy:
-    name: Build and Deploy
+  deploy-release:
+    name: Deploy Release
     needs: test
     runs-on: ubuntu-24.04
     concurrency:
-      group: deploy
+      group: wporg-deploy
       cancel-in-progress: false
-    # Stable releases sync trunk and copy it to tags/<version>, and update
-    # the assets. Pre-releases only build tags/<version> directly from the
-    # build files: trunk keeps serving the stable version, the tag is only
-    # for pre-release testers and it must not replace an existing tag.
+    # Stable releases deploy exactly the files of the release ZIP to
+    # tags/<version> and update the assets. Trunk is never synced from the
+    # release anymore. Pre-releases only build tags/<version> directly from
+    # the ZIP: trunk keeps serving the stable version.
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -35,36 +41,104 @@ jobs:
           cache: npm
           node-version-file: .nvmrc
 
-      - name: Setup PHP
+      - name: Setup PHP and Composer
         uses: shivammathur/setup-php@v2
         with:
           php-version: '7.4'
+          tools: composer:v2
 
-      - name: Install tooling
+      - name: Install NPM dependencies
         run: npm install
 
       - name: Build the plugin
         run: npm run build
 
-      - name: Package the release ZIP
-        run: npm run zip
-
-      - name: Attach the ZIP to the release
-        run: gh release upload "$GITHUB_REF_NAME" widget-context.*.zip "widget-context.*.checksums.json" --clobber
-        env:
-          GH_TOKEN: ${{ github.token }}
-
-      - name: Deploy to WordPress.org
-        uses: wpelevator/wp-release-deploy-svn@0.4.0
-        env:
-          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+      # Packages dist into the release ZIP with the checksums manifest
+      # (WordPress.org plugin-checksums API format) embedded at the package
+      # root — the manifest name and embedding come from the `integrity`
+      # settings of wp-release.config.mjs. No signing key is used yet.
+      - name: Package the release ZIP with embedded checksums
+        id: zip
+        uses: wpelevator/wp-release-zip@0.5.0
         with:
           source-dir: dist
           slug: widget-context
-          assets-dir: assets/wporg
-          trunk: ${{ ! github.event.release.prerelease }}
-          svn-tag: ${{ github.ref_name }}
-          assets: ${{ ! github.event.release.prerelease }}
-          force: ${{ ! github.event.release.prerelease }}
+          force: true
 
+      # Attach the ZIP to the GitHub release (pre-releases included),
+      # replacing an existing asset of the same name. The checksums manifest
+      # is embedded in the ZIP itself, so no extra manifest asset is needed.
+      - name: Attach the ZIP to the release
+        run: gh release upload "$GITHUB_REF_NAME" "${{ steps.zip.outputs.zip-path }}" --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      # Stable releases: deploy exactly the files of the release ZIP to
+      # tags/<version> and update the assets.
+      - name: Deploy stable release to WordPress.org
+        if: ! github.event.release.prerelease
+        uses: wpelevator/wp-release-deploy-svn@0.7.0
+        with:
+          from-zip: ${{ steps.zip.outputs.zip-path }}
+          slug: widget-context
+          svn-tag: ${{ github.ref_name }}
+          assets-dir: assets/wporg
+          svn-username: ${{ secrets.SVN_USERNAME }}
+          svn-password: ${{ secrets.SVN_PASSWORD }}
+
+      # Pre-releases: build tags/<version> from the release ZIP and leave
+      # trunk and the assets alone. A leading "v" in the tag name is
+      # stripped.
+      - name: Deploy pre-release to WordPress.org
+        if: github.event.release.prerelease
+        uses: wpelevator/wp-release-deploy-svn@0.7.0
+        with:
+          from-zip: ${{ steps.zip.outputs.zip-path }}
+          slug: widget-context
+          svn-tag: ${{ github.ref_name }}
+          svn-username: ${{ secrets.SVN_USERNAME }}
+          svn-password: ${{ secrets.SVN_PASSWORD }}
+
+  # develop pushes: update the wp.org readme without tagging, for changes
+  # between releases such as bumping "Tested up to" or readme changelog
+  # entries. Nothing else on wp.org (trunk, tags) is touched on a push, so
+  # the pre-release zips built above stay the deploy source of record.
+  readme-trunk:
+    name: Update the WordPress.org readme
+    if: github.event_name == 'push'
+    runs-on: ubuntu-24.04
+    concurrency:
+      group: wporg-deploy
+      cancel-in-progress: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          cache: npm
+          node-version-file: .nvmrc
+
+      - name: Setup PHP and Composer
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          tools: composer:v2
+
+      - name: Install NPM dependencies
+        run: npm install
+
+      # Includes the checked-in readme.txt; the deploy below syncs it to
+      # the wp.org trunk.
+      - name: Build the plugin
+        run: npm run build
+
+      - name: Update the WordPress.org readme
+        uses: wpelevator/wp-release-deploy-svn@0.7.0
+        with:
+          source-dir: dist
+          slug: widget-context
+          readme-only: true
+          svn-username: ${{ secrets.SVN_USERNAME }}
+          svn-password: ${{ secrets.SVN_PASSWORD }}

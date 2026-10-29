@@ -1,10 +1,10 @@
-# Widget Context
+=== Widget Context ===
 
 Contributors: kasparsd, jamescollins  
 Tags: widget, widgets, context, logic, visibility  
 Requires at least: 3.0  
 Tested up to: 7.1  
-Stable tag: {{ version }}  
+Stable tag: 1.5.0  
 License: GPLv2 or later  
 Requires PHP: 7.4  
 Donate link: https://widgetcontext.com/pro
@@ -12,36 +12,36 @@ Donate link: https://widgetcontext.com/pro
 Show and hide widgets on specific posts, pages and sections of your site.
 
 
-## Description
+== Description ==
 
 Use [Widget Context](https://widgetcontext.com) to show and hide widgets on certain sections of your site -- front page, posts, pages, archives, search, etc. Use targeting by URLs (with wildcard support) for maximum flexibility.
 
 https://www.youtube.com/watch?v=rEHvqsWoXAE
 
 
-### Premium Support
+= Premium Support =
 
 Subscribe to our [Premium Support service](https://widgetcontext.com/pro) and get the PRO 🚀 version of the plugin for free when it’s launched! Your support enables consistent maintenance and new feature development, and is greatly appreciated.
 
 
-### Contribute
+= Contribute =
 
 - Suggest code improvements [on GitHub](https://github.com/kasparsd/widget-context-wporg).
 - Report bugs and suggestions on [WordPress.org forums](http://wordpress.org/support/plugin/widget-context).
 - [Help translate](https://translate.wordpress.org/projects/wp-plugins/widget-context) to your language.
 
 
-### Documentation
+= Documentation =
 
 Widget visibility can be configured under individual widget settings under "Appearance → Widgets" in your WordPress administration area or through the widget editing interface in the Customizer.
 
-#### Target by URL
+= Target by URL =
 
 The "Target by URL" is a powerful feature for targeting sections of your website based on the request URLs. It was inspired by a similar feature in the [Drupal CMS](https://www.drupal.org).
 
 Use relative URLs such as `page/sub-page` instead of absolute URLs `https://example.com/page/sub-page` because relative URLs are more flexible and make the logic portable between different domains and server environments.
 
-##### Wildcards
+= Wildcards =
 
 Use the wildcard symbol `*` for matching dynamic parts of the URL. For example:
 
@@ -51,182 +51,182 @@ Use the wildcard symbol `*` for matching dynamic parts of the URL. For example:
 
 - Use a trailing `?*` to capture URL with all query arguments such as `utm_source`, etc. For example, for every `blog/post-slug` also include `blog/post-slug?*`.
 
-#### Exclude by URL
+= Exclude by URL =
 
 Specify URLs to ignore even if they're matched by any of the other context rules. For example, enter `example/sub-page` to hide a widget on this page even when "All Posts" is selected under "Global Sections".
 
 
-## Installation
+== Installation ==
 
 - Search for **Widget Context** under "Plugins → Add New" in your WordPress dashboard.
 - Widget Context settings will appear automatically under **each widget** under "Appearance → Widgets".
 - Visit "Settings → Widget Context" to configure the available widget visibility contexts.
 
 
-## Changelog
+== Changelog ==
 
-### 1.5.1-rc.2 (October 10, 2026)
+= 1.5.1-rc.2 (October 10, 2026) =
 
 - Release ZIP packaging and checksums manifest attached to the release, via [wp-release-deploy-svn](https://github.com/wpelevator/wp-release-deploy-svn) and the @wpelevator/wp-release tooling.
 
-### 1.5.1-rc.1 (October 10, 2026)
+= 1.5.1-rc.1 (October 10, 2026) =
 
 - Pre-release pipeline test: deploy to WordPress.org via [wp-release-deploy-svn](https://github.com/wpelevator/wp-release-deploy-svn) with the changelog and assets updated.
 
-### 1.5.0 (October 9, 2026)
+= 1.5.0 (October 9, 2026) =
 
 - Declare param, return and property types across the codebase where types are known, and refine lazy loading of the plugin option stores.
 - Feature: All context rules are now enabled by default, including those added by other plugins.
 - Plugin now verifies that WordPress is loading it before bootstrapping.
 
-### 1.4.2 (October 8, 2026)
+= 1.4.2 (October 8, 2026) =
 
 - Bugfix: avoid an undefined variable warning when rendering checkbox controls.
 - Mark as tested with WordPress 7.1 and PHP 8.5.
 - Update the developer tooling dependencies.
 
-### 1.4.0 (May 18, 2026)
+= 1.4.0 (May 18, 2026) =
 
 - Security: Ensure widget context settings can only be changed by logged-in administrators intentionally (CVE-2026-7615).
 - Require PHP 7.4 to match the WordPress core requirements.
 - Feature: Add a toggle to enable the legacy widget interface (non-block).
 
-### 1.3.3 (August 31, 2024)
+= 1.3.3 (August 31, 2024) =
 
 - Mark as tested with WordPress 6.6 and PHP 8.2, see [#72](https://github.com/kasparsd/widget-context-wporg/pull/72).
 
-### 1.3.2 (April 27, 2020)
+= 1.3.2 (April 27, 2020) =
 
 - Bugfix: Fix the Widget Context settings link in the widget controls after moving the settings under the "Appearance" menu for usability (closer to the widget settings).
 - Feature: Add a link to the plugin settings in the plugin admin list, too.
 
 
-### 1.3.1 (April 24, 2020)
+= 1.3.1 (April 24, 2020) =
 
 - Bugfix: better support for URL rules with query parameters.
 
-### 1.3.0 (April 23, 2020)
+= 1.3.0 (April 23, 2020) =
 
 - Introduce the long-awaited "Exclude by URL" feature to prevent certain URLs from showing or hiding a widget when it's matched by any other visibility rule.
 - Introduce [premium support](https://widgetcontext.com/pro) to help maintain the plugin. Subscribe now to get the PRO version of the Widget Context for free when it's launched!
 
-### 1.2.0 (August 20, 2019)
+= 1.2.0 (August 20, 2019) =
 
 - Set PHP 5.6 as the minimum supported version of PHP to match WordPress core.
 - Developer tooling update: introduce PHP autoloading, PHP unit tests with proper mocking, linting for JS, switch to Docker inside a Vagrant wrapper for local development environment and update to the latest version of WordPress coding standards (see [#50](https://github.com/kasparsd/widget-context-wporg/pull/50)).
 
-### 1.1.1 (June 9, 2019)
+= 1.1.1 (June 9, 2019) =
 
 - Mark as tested with WordPress 5.2.
 - Add test coverage reporting and remove [Debug Bar](https://wordpress.org/plugins/debug-bar/) integration since it wasn't complete. Refactor plugin structure to support dependency integration. See [#47](https://github.com/kasparsd/widget-context-wporg/pull/47).
 - Added local development environment, see [#48](https://github.com/kasparsd/widget-context-wporg/pull/48).
 
-### 1.1.0 (June 13, 2018)
+= 1.1.0 (June 13, 2018) =
 - Fix URL matching for URLs with query strings.
 - Introduce unit tests for the URL context.
 
-### 1.0.7 (June 5, 2018)
+= 1.0.7 (June 5, 2018) =
 - Mark as tested with WordPress 4.9.6.
 - Use the localisation service provided by [WP.org](https://translate.wordpress.org/projects/wp-plugins/widget-context).
 - Support for Composer.
 
-### 1.0.6 (January 20, 2018)
+= 1.0.6 (January 20, 2018) =
 - Fix path to admin scripts and styles, props @tedgeving.
 - Mark as tested with WordPress 4.9.2.
 
-### 1.0.5 (May 8, 2017)
+= 1.0.5 (May 8, 2017) =
 - Confirm the plugin works with the latest version of WordPress.
 - Add support for continuous testing via [wp-dev-lib](https://github.com/xwp/wp-dev-lib).
 
-### 1.0.4 (May 6, 2016)
+= 1.0.4 (May 6, 2016) =
 - Confirm the plugin works with the latest version of WordPress.
 - Fix the PHP class constructor warning.
 - Move the widget context settings link.
 - Fix the initial context state in the customizer.
 
-### 1.0.3
+= 1.0.3 =
 - Include Russian translation (Thanks Flector!).
 - Add textdomain to the remaining strings.
 - Enable debugging if [Debug Bar](https://wordpress.org/plugins/debug-bar/) is available.
 
-### 1.0.2
+= 1.0.2 =
 - Load available custom post types and taxonomies right before visibility checks to avoid PHP warnings.
 - Run visibility checks only after the main post query has run. Fixes issues with WooCommerce.
 - Load our CSS and Javascript files only on widget and customizer admin pages.
 
-### 1.0.1
+= 1.0.1 =
 - Fix PHP warning in custom post type and taxonomy module.
 
-### 1.0
+= 1.0 =
 - Public release of the 1.0 refactoring.
 
-### 1.0-beta
+= 1.0-beta =
 - Improved settings page.
 
-### 1.0-alpha
+= 1.0-alpha =
 - Refactor code to allow custom widget context modules.
 
-### 0.8.3
+= 0.8.3 =
 
 - Fix PHP warning that occurred on PHP 5.2.x.
 
-### 0.8.2
+= 0.8.2 =
 
 - Improved SSL/HTTPS detection.
 - Fix: Ensure that is_active_sidebar() & is_dynamic_sidebar() don't return true when there are no widgets displayed on a page.
 - Two new filters so that other plugins can override widget context display/visibility logic.
 
-### 0.8.1
+= 0.8.1 =
 
 - Revert back to changing callback function in `$wp_registered_widgets` for attaching widget context setting controls.
 - Fix the word count logic.
 
-### 0.8
+= 0.8 =
 
 - Major code rewrite and refactoring to improve performance and usability.
 - Fix bugs with URL targeting and empty lines in the "Target by URL" textarea.
 
-### 0.7.2
+= 0.7.2 =
 
 - Fix PHP warnings/notices. Props to [James Collins](http://om4.com.au/).
 
-### 0.7.1
+= 0.7.1 =
 
 - Confirm that the plugin works with the latest version of WP.
 
-### 0.7
+= 0.7 =
 
 - Bug fix: check for active sidebars only after $paged has been set.
 
-### 0.6
+= 0.6 =
 
 - Don't check for used sidebars on each widget load. Allow absolute URLs in the URL check.
 
-### 0.5
+= 0.5 =
 
 - Added distinction between is_front_page() and is_home(). Remove widgets from wp_get_sidebars_widgets() if they are not being displayed -- this way you can check if a particular sidebar is empty.
 
-### 0.4.5
+= 0.4.5 =
 
 - Widget output callback couldn't determine the widget_id.
 
-### 0.4.4
+= 0.4.4 =
 
 - Fixed widget control parameter transfer for widgets that don't use the new widget api.
 
-### 0.4.2
+= 0.4.2 =
 
 - Initial release on Plugin repository.
 
 
-## Upgrade Notice
+== Upgrade Notice ==
 
-### 1.2.0
+= 1.2.0 =
 
 PHP 5.6 is now the minimum supported version of PHP. Also included is developer tooling update and improved PHP unit tests.
 
 
-## Screenshots
+== Screenshots ==
 
 1. Widget Context settings at the bottom of every widget
 2. Widget Context plugin settings

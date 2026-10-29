@@ -1,0 +1,14 @@
+.*
+/tests
+/assets/*.png
+/assets/wporg
+composer.lock
+docker-compose.yml
+eslint.config.js
+package.json
+package-lock.json
+phpcs.xml
+phpcs.xml.dist
+phpunit.xml.dist
+readme.md
+wp-release.config.mjs

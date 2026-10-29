@@ -12,18 +12,17 @@
     "node": ">=24"
   },
   "scripts": {
-    "grunt": "grunt",
-    "build": "composer release && grunt build",
-    "deploy": "composer release && grunt deploy",
-    "zip": "wp-release zip dist --slug widget-context --checksums --force",
-    "deploy-trunk": "composer release && grunt deploy-trunk",
+    "build": "composer release && npm run build-dist",
+    "zip": "wp-release zip dist --slug widget-context --force",
     "test": "docker-compose run --remove-orphans --workdir=/var/www/html/wp-content/plugins/widget-context-src wordpress vendor/bin/phpunit",
     "lint": "composer lint && npm run lint-js",
     "lint-js": "wp-scripts lint-js *.js assets/js",
     "coverage": "composer coverage",
     "mess": "composer mess",
     "postinstall": "composer install",
-    "wp-cli": "docker-compose run --remove-orphans wp-cli"
+    "wp-cli": "docker-compose run --remove-orphans wp-cli",
+    "release": "wp-release",
+    "build-dist": "rm -rf dist && mkdir -p dist/assets && cp -R src vendor dist/ && cp -R assets/css assets/js dist/assets/ && cp widget-context.php composer.json LICENSE readme.txt dist/"
   },
   "repository": {
     "type": "git",
@@ -39,13 +38,6 @@
   "license": "GPL-2.0",
   "devDependencies": {
     "@wordpress/scripts": "^36.1.0",
-    "@wpelevator/wp-release": "0.4.0",
-    "grunt": "^1.4.1",
-    "grunt-cli": "^1.4.3",
-    "grunt-contrib-clean": "^2.0",
-    "grunt-contrib-copy": "^1.0",
-    "grunt-wp-deploy": "^2.1",
-    "handlebars": "^4.7.7",
-    "load-grunt-tasks": "^5.1"
+    "@wpelevator/wp-release": "^0.17.0"
   }
 }

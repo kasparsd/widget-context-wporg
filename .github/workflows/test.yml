@@ -1,7 +1,13 @@
 name: Lint and Test
 
 on:
+  # Restrict push triggers to trunk branches so pull request branches
+  # (which also trigger `pull_request` below) don't run the jobs twice.
   push:
+    branches:
+      - develop
+      - master
+  pull_request:
   workflow_call:
 
 jobs:
@@ -49,3 +55,65 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  # Sanity check: the release packaging must produce a ZIP with the
+  # checksums manifest embedded (WordPress.org plugin-checksums API
+  # format), and the version sources in the build must agree. Unsigned on
+  # purpose: only genuine releases consume signing keys.
+  zip:
+    name: Zip smoke test
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          cache: npm
+          node-version-file: .nvmrc
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+
+      - name: Install tooling
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Zip
+        run: npm run zip
+
+      - name: Verify the embedded checksums manifest
+        run: unzip -l widget-context.*.zip | grep 'widget-context/checksums.json'
+
+      - name: Check the package versions
+        run: npx wp-release version-check dist
+
+  # A pull request that changes the package needs a changeset, either with
+  # a release note or an empty one for an explicit no-release decision.
+  changeset:
+    name: Check the changeset
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          # The comparison needs the base branch history.
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          cache: npm
+          node-version-file: .nvmrc
+
+      - name: Install tooling
+        run: npm install
+
+      - name: Changeset status
+        run: npx wp-release changeset-status --since "origin/${{ github.base_ref }}"
