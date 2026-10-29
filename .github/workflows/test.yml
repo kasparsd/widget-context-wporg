@@ -1,7 +1,13 @@
 name: Lint and Test
 
 on:
+  # Restrict push triggers to trunk branches so pull request branches
+  # (which also trigger `pull_request` below) don't run the jobs twice.
   push:
+    branches:
+      - develop
+      - master
+  pull_request:
   workflow_call:
 
 jobs:
