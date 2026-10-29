@@ -11,9 +11,10 @@ import {
 // workflow runs the release.
 export default defineConfig( {
 	baseBranch: 'develop',
+	// New changelog entries go into the "== Changelog ==" section of the
+	// checked-in readme.txt (plugin readmes are the default target without
+	// an insertion marker); the GitHub readme.md is left alone.
 	readmeChangelog: true,
-	// Without a marker, plugin readmes use the "== Changelog ==" heading;
-	// the readme.txt shipped to WordPress.org is generated during the build.
 	packages: [
 		{
 			glob: '.',
@@ -24,12 +25,10 @@ export default defineConfig( {
 				from: wordpressPluginVersion(),
 				to: [
 					wordpressPluginVersion(),
-					// The shipped readme.txt (and its Stable tag) is generated
-					// during the build from readme.txt.md. The target file is set
-					// explicitly so that the readme.md in the repo root (without a
-					// Stable tag) is left alone, and the target is skipped while
-					// readme.txt is absent at the root.
-					wordpressStableTag( { file: 'readme.txt', ifPresent: true } ),
+					// The Stable tag lives in the checked-in readme.txt, which
+					// the stable tag descriptor reads preferentially over
+					// readme.md.
+					wordpressStableTag(),
 					composerJsonVersion( { ifPresent: true } ),
 				],
 			},

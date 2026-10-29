@@ -129,8 +129,8 @@ jobs:
       - name: Install NPM dependencies
         run: npm install
 
-      # Builds the shipped readme.txt from readme.txt.md; the deploy below
-      # syncs it to the wp.org trunk.
+      # Includes the checked-in readme.txt; the deploy below syncs it to
+      # the wp.org trunk.
       - name: Build the plugin
         run: npm run build
 
