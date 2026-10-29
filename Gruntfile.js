@@ -111,28 +111,7 @@ module.exports = function( grunt ) {
 			},
 		},
 
-		wp_deploy: {
-			options: {
-				plugin_slug: 'widget-context',
-				svn_user: 'kasparsd',
-				build_dir: '<%= dist_dir %>',
-				assets_dir: 'assets/wporg',
-			},
-			all: {
-				options: {
-					deploy_tag: true,
-					deploy_trunk: true,
-				},
-			},
-			trunk: {
-				options: {
-					deploy_tag: false,
-				},
-			},
-		},
 	} );
 
 	grunt.registerTask( 'build', [ 'clean', 'copy', 'readmeMdToTxt' ] );
-	grunt.registerTask( 'deploy', [ 'build', 'wp_deploy:all' ] );
-	grunt.registerTask( 'deploy-trunk', [ 'build', 'wp_deploy:trunk' ] );
 };
