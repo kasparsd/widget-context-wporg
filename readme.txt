@@ -66,11 +66,10 @@ Specify URLs to ignore even if they're matched by any of the other context rules
 == Changelog ==
 
 
-= 1.5.1 =
+= 1.5.1 (October 29, 2026) =
 
 * Changeset-driven releases with wp-release.
-  
-  - Release ZIP packaging and checksums manifest attached to the release, via [wp-release-deploy-svn](https://github.com/wpelevator/wp-release-deploy-svn) and the @wpelevator/wp-release tooling.
+* Release ZIP packaging and checksums manifest attached to the release, via [wp-release-deploy-svn](https://github.com/wpelevator/wp-release-deploy-svn) and the @wpelevator/wp-release tooling.
 
 = 1.5.0 (October 9, 2026) =
 
