@@ -47,17 +47,6 @@ jobs:
           php-version: '7.4'
           tools: composer:v2
 
-      # GitHub's Ubuntu runners don't include the svn client that
-      # wp-release needs to deploy.
-      - name: Install Subversion
-        run: |
-          if command -v svn >/dev/null 2>&1; then
-            echo "Subversion is already installed."
-          else
-            sudo apt-get update --quiet
-            sudo apt-get install --yes --quiet --no-install-recommends subversion
-          fi
-
       - name: Install NPM dependencies
         run: npm install
 
@@ -69,13 +58,18 @@ jobs:
       # root — the manifest name and embedding come from the `integrity`
       # settings of wp-release.config.mjs. No signing key is used yet.
       - name: Package the release ZIP with embedded checksums
-        run: npm run zip
+        id: zip
+        uses: wpelevator/wp-release-zip@0.5.0
+        with:
+          source-dir: dist
+          slug: widget-context
+          force: true
 
-      # Attach the ZIP to the GitHub release (pre-releases included). The
-      # checksums manifest is embedded in the ZIP itself, so no extra
-      # manifest asset is needed.
+      # Attach the ZIP to the GitHub release (pre-releases included),
+      # replacing an existing asset of the same name. The checksums manifest
+      # is embedded in the ZIP itself, so no extra manifest asset is needed.
       - name: Attach the ZIP to the release
-        run: gh release upload "$GITHUB_REF_NAME" widget-context.*.zip --clobber
+        run: gh release upload "$GITHUB_REF_NAME" "${{ steps.zip.outputs.zip-path }}" --clobber
         env:
           GH_TOKEN: ${{ github.token }}
 
@@ -83,20 +77,27 @@ jobs:
       # tags/<version> and update the assets.
       - name: Deploy stable release to WordPress.org
         if: ! github.event.release.prerelease
-        env:
-          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-        run: npx wp-release deploy-svn --from-zip widget-context.*.zip --slug widget-context --svn-tag "$GITHUB_REF_NAME" --assets-dir assets/wporg
+        uses: wpelevator/wp-release-deploy-svn@0.7.0
+        with:
+          from-zip: ${{ steps.zip.outputs.zip-path }}
+          slug: widget-context
+          svn-tag: ${{ github.ref_name }}
+          assets-dir: assets/wporg
+          svn-username: ${{ secrets.SVN_USERNAME }}
+          svn-password: ${{ secrets.SVN_PASSWORD }}
 
       # Pre-releases: build tags/<version> from the release ZIP and leave
       # trunk and the assets alone. A leading "v" in the tag name is
       # stripped.
       - name: Deploy pre-release to WordPress.org
         if: github.event.release.prerelease
-        env:
-          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-        run: npx wp-release deploy-svn --from-zip widget-context.*.zip --slug widget-context --svn-tag "$GITHUB_REF_NAME"
+        uses: wpelevator/wp-release-deploy-svn@0.7.0
+        with:
+          from-zip: ${{ steps.zip.outputs.zip-path }}
+          slug: widget-context
+          svn-tag: ${{ github.ref_name }}
+          svn-username: ${{ secrets.SVN_USERNAME }}
+          svn-password: ${{ secrets.SVN_PASSWORD }}
 
   # develop pushes: update the wp.org readme without tagging, for changes
   # between releases such as bumping "Tested up to" or readme changelog
@@ -125,25 +126,19 @@ jobs:
           php-version: '7.4'
           tools: composer:v2
 
-      # GitHub's Ubuntu runners don't include the svn client that
-      # wp-release needs to deploy.
-      - name: Install Subversion
-        run: |
-          if command -v svn >/dev/null 2>&1; then
-            echo "Subversion is already installed."
-          else
-            sudo apt-get update --quiet
-            sudo apt-get install --yes --quiet --no-install-recommends subversion
-          fi
-
       - name: Install NPM dependencies
         run: npm install
 
+      # Builds the shipped readme.txt from readme.txt.md; the deploy below
+      # syncs it to the wp.org trunk.
       - name: Build the plugin
         run: npm run build
 
       - name: Update the WordPress.org readme
-        env:
-          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-        run: npx wp-release deploy-svn dist --slug widget-context --readme-only
+        uses: wpelevator/wp-release-deploy-svn@0.7.0
+        with:
+          source-dir: dist
+          slug: widget-context
+          readme-only: true
+          svn-username: ${{ secrets.SVN_USERNAME }}
+          svn-password: ${{ secrets.SVN_PASSWORD }}
